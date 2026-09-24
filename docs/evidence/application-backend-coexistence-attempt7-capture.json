@@ -1,0 +1,9 @@
+{
+  "capture_scope": "host 192.168.77.1 and tcp port 7420",
+  "interface": "en5",
+  "snaplen_bytes": 96,
+  "pcap_bytes": 12617,
+  "pcap_sha256": "00dc09da33cf108b68613e4d4ada7a24168d41ba9aa8a09334879b9fb1170dda",
+  "decoded_packet_lines": 130,
+  "limits": "Host-side NCM-interface capture; not a USB-bus trace."
+}

@@ -1,0 +1,15 @@
+Focused diagnostic: two sessions, concurrent stream/HTTPS, close both, immediate reconnect; no retries
+Identity: {"protocol_major": 1, "firmware_version": "application-dev-v1", "device_id": "a1b2c3d4e5f60718", "boot_id": "90bc40f5e54153be", "board_id": "nano_rp2040_connect", "max_payload": 4096, "auth_mode": "open-development", "channels": [{"id": 1, "backend": "application", "controls": [], "rx_queue": 256, "tx_queue": 256, "owned": false}], "targets": []}
+Traceback (most recent call last):
+  File "<stdin>", line 15, in <module>
+  File "/Users/REDACTED/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/REDACTED/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/REDACTED/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/REDACTED/Developer/Firmingo/tools/session_smoke.py", line 121, in echo
+    raise RuntimeError(f'echo timeout: expected {byte_count} bytes, received {len(received)}, sent wire {sent}/{len(wire)}')
+RuntimeError: echo timeout: expected 65536 bytes, received 63488, sent wire 66176/66176

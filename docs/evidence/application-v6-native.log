@@ -1,0 +1,59 @@
+[  6%] Built target unity
+[ 10%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/session.cpp.o
+[ 13%] Generating usb_startup.inc
+patching file 'cores/rp2040/main.cpp'
+patching file 'cores/rp2040/USB.h'
+patching file 'cores/rp2040/USB.cpp'
+patching file 'libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp'
+patching file 'libraries/lwIP_USB_NCM/src/utility/NCMEthernet.h'
+patching file 'libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.cpp'
+[ 13%] Built target usb_startup_fragments
+[ 20%] Built target local_dhcp
+[ 23%] Linking CXX static library libfirmingo_core.a
+[ 30%] Built target dhcp_tests
+[ 40%] Built target firmingo_core
+[ 43%] Linking CXX executable stream_tests
+[ 46%] Building CXX object CMakeFiles/application_tests.dir/tests/native/test_application.cpp.o
+[ 50%] Built target stream_tests
+[ 53%] Linking CXX executable application_tests
+[ 56%] Linking CXX executable protocol_tests
+[ 56%] Built target application_tests
+[ 60%] Built target protocol_tests
+[ 63%] Building CXX object CMakeFiles/session_tests.dir/tests/native/test_session.cpp.o
+[ 66%] Linking CXX executable tcp_echo_tests
+[ 73%] Built target tcp_echo_tests
+[ 76%] Building CXX object CMakeFiles/tcp_session_tests.dir/tests/native/test_tcp_session.cpp.o
+[ 80%] Linking CXX executable session_tests
+[ 80%] Built target session_tests
+[ 83%] Building CXX object CMakeFiles/tcp_session_tests.dir/src/ports/arduino_pico/tcp_session.cpp.o
+[ 86%] Building CXX object CMakeFiles/usb_startup_deferred_tests.dir/tests/native/test_usb_startup.cpp.o
+[ 90%] Linking CXX executable tcp_session_tests
+[ 90%] Built target tcp_session_tests
+[ 93%] Building CXX object CMakeFiles/usb_startup_default_tests.dir/tests/native/test_usb_startup.cpp.o
+[ 96%] Linking CXX executable usb_startup_deferred_tests
+[ 96%] Built target usb_startup_deferred_tests
+[100%] Linking CXX executable usb_startup_default_tests
+[100%] Built target usb_startup_default_tests
+Test project /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+    Start 1: stream
+1/9 Test #1: stream ...........................   Passed    0.30 sec
+    Start 2: application
+2/9 Test #2: application ......................   Passed    0.13 sec
+    Start 3: protocol
+3/9 Test #3: protocol .........................   Passed    0.24 sec
+    Start 4: session
+4/9 Test #4: session ..........................   Passed    0.87 sec
+    Start 5: tcp_echo
+5/9 Test #5: tcp_echo .........................   Passed    0.13 sec
+    Start 6: tcp_session
+6/9 Test #6: tcp_session ......................   Passed    0.17 sec
+    Start 7: usb_startup_deferred
+7/9 Test #7: usb_startup_deferred .............   Passed    0.22 sec
+    Start 8: usb_startup_default
+8/9 Test #8: usb_startup_default ..............   Passed    0.18 sec
+    Start 9: local_dhcp
+9/9 Test #9: local_dhcp .......................   Passed    0.03 sec
+
+100% tests passed out of 9
+
+Total Test time (real) =   2.29 sec

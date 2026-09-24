@@ -1,0 +1,20 @@
+[ 14%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/stream.cpp.o
+[ 28%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/session.cpp.o
+[ 42%] Linking CXX static library libfirmingo_core.a
+[ 71%] Built target firmingo_core
+[ 85%] Linking CXX executable protocol_fuzz
+[100%] Built target protocol_fuzz
+[ 71%] Built target firmingo_core
+[ 85%] Building CXX object CMakeFiles/session_fuzz.dir/tests/native/fuzz_session.cpp.o
+[100%] Linking CXX executable session_fuzz
+[100%] Built target session_fuzz
+Internal ctest changing into directory: /Users/REDACTED/Developer/Firmingo/build/application-backend-fuzz
+Test project /Users/REDACTED/Developer/Firmingo/build/application-backend-fuzz
+    Start 5: protocol_fuzz
+1/2 Test #5: protocol_fuzz ....................   Passed    1.21 sec
+    Start 6: session_fuzz
+2/2 Test #6: session_fuzz .....................   Passed    1.82 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   3.03 sec

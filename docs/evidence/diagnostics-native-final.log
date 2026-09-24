@@ -1,0 +1,38 @@
+[  7%] Built target unity
+[ 25%] Built target firmingo_core
+[ 28%] Built target usb_startup_fragments
+[ 35%] Built target local_dhcp
+[ 42%] Built target stream_tests
+[ 50%] Built target protocol_tests
+[ 53%] Building CXX object CMakeFiles/session_tests.dir/tests/native/test_session.cpp.o
+[ 64%] Built target tcp_echo_tests
+[ 67%] Building CXX object CMakeFiles/tcp_session_tests.dir/tests/native/test_tcp_session.cpp.o
+[ 71%] Linking CXX executable session_tests
+[ 71%] Built target session_tests
+[ 75%] Linking CXX executable tcp_session_tests
+[ 82%] Built target usb_startup_deferred_tests
+[ 85%] Built target tcp_session_tests
+[ 92%] Built target dhcp_tests
+[100%] Built target usb_startup_default_tests
+Internal ctest changing into directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+Test project /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+    Start 1: stream
+1/8 Test #1: stream ...........................   Passed    0.03 sec
+    Start 2: protocol
+2/8 Test #2: protocol .........................   Passed    0.10 sec
+    Start 3: session
+3/8 Test #3: session ..........................   Passed    0.88 sec
+    Start 4: tcp_echo
+4/8 Test #4: tcp_echo .........................   Passed    0.02 sec
+    Start 5: tcp_session
+5/8 Test #5: tcp_session ......................   Passed    0.15 sec
+    Start 6: usb_startup_deferred
+6/8 Test #6: usb_startup_deferred .............   Passed    0.02 sec
+    Start 7: usb_startup_default
+7/8 Test #7: usb_startup_default ..............   Passed    0.02 sec
+    Start 8: local_dhcp
+8/8 Test #8: local_dhcp .......................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 8
+
+Total Test time (real) =   1.23 sec

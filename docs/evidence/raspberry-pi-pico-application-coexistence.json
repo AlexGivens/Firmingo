@@ -1,0 +1,151 @@
+{
+  "utc": "2026-09-24T01:10:42.462823+00:00",
+  "status": "passed",
+  "board": "raspberry_pi_pico",
+  "device_id": "b2c3d4e5f6071829",
+  "address": "192.168.77.1",
+  "interface": "en14",
+  "firmware": "application-dev-v7",
+  "firmware_sha256": "56cf986f5b07f538aa37f62d7859ec06ee7c4e53142eb2995d4ef249e7d2490a",
+  "preflight": {
+    "network": {
+      "host_address": "192.168.77.16",
+      "dhcp_xid": "0xd67c206",
+      "interface_output": "en14: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=404<VLAN_MTU,CHANNEL_IO>\n\tether 02:00:00:00:00:00\n\tinet6 fe80::2%en14 prefixlen 64 secured scopeid 0x1e \n\tinet 192.168.77.16 netmask 0xffffff00 broadcast 192.168.77.255\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: autoselect (10baseT/UTP <full-duplex>)\n\tstatus: active\n",
+      "dhcp_packet": "op = BOOTREPLY\nhtype = 1\nflags = 0x0\nhlen = 6\nhops = 0\nxid = 0xd67c206\nsecs = 0\nciaddr = 192.168.77.16\nyiaddr = 192.168.77.16\nsiaddr = 0.0.0.0\ngiaddr = 0.0.0.0\nchaddr = 02:00:00:00:00:02\nsname = \nfile = \noptions:\nOptions count is 8\ndhcp_message_type (uint8): ACK 0x5\nserver_identifier (ip): 192.168.77.1\nsubnet_mask (ip): 255.255.255.0\nlease_time (uint32): 0x258\nrenewal_t1_time_value (uint32): 0x12c\nrebinding_t2_time_value (uint32): 0x20d\nclient_identifier (uint8_mult): {0x1, 0x02, 0x00, 0x00, 0x00, 0x00, 0x02}\nend (none): \n"
+    },
+    "board_route": "   route to: 192.168.77.1\ndestination: 192.168.77.1\n  interface: en14\n      flags: <UP,HOST,DONE,LLINFO,WASCLONED,IFSCOPE,IFREF>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500       903 \n",
+    "internet_route": "   route to: default\ndestination: default\n       mask: default\n    gateway: 192.168.4.1\n  interface: en0\n      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n"
+  },
+  "hello": {
+    "protocol_major": 1,
+    "firmware_version": "application-dev-v7",
+    "device_id": "b2c3d4e5f6071829",
+    "boot_id": "46b84fe5e99441a7",
+    "board_id": "raspberry_pi_pico",
+    "max_payload": 4096,
+    "auth_mode": "open-development",
+    "channels": [
+      {
+        "id": 1,
+        "backend": "application",
+        "controls": [],
+        "rx_queue": 256,
+        "tx_queue": 256,
+        "owned": false
+      }
+    ],
+    "targets": []
+  },
+  "traffic": {
+    "transfer": {
+      "begin_monotonic": 520163.153256958,
+      "end_monotonic": 520169.151766541,
+      "result": {
+        "bytes": 65536,
+        "seconds": 5.9982655000058,
+        "bytes_per_second": 10925.825140607169,
+        "fragmented_sends": 500,
+        "slow_read": true,
+        "read_delay": 0.25,
+        "seed": 1346978639
+      }
+    },
+    "https": [
+      {
+        "options": [
+          "-4"
+        ],
+        "begin_monotonic": 520163.1534885,
+        "end_monotonic": 520163.552050375,
+        "exit": 0,
+        "output": "200 104.20.23.154",
+        "error": ""
+      },
+      {
+        "options": [],
+        "begin_monotonic": 520163.552057875,
+        "end_monotonic": 520163.76713725,
+        "exit": 0,
+        "output": "200 2606:4700:10::ac42:93f3",
+        "error": ""
+      }
+    ],
+    "internet_contained_in_transfer": true,
+    "backend_status": {
+      "channel_id": 1,
+      "backend_rx_bytes": 65536,
+      "backend_tx_bytes": 65536,
+      "pending_to_backend": 0,
+      "pending_to_peer": 0
+    },
+    "diagnostics_before": {
+      "samples": 10838589,
+      "heap_free": 173728,
+      "heap_min": 173728,
+      "stack_free": 8056,
+      "stack_min": 8056,
+      "peak_to_backend": 256,
+      "peak_to_peer": 256,
+      "application_rx_pending": 0,
+      "application_tx_pending": 0,
+      "application_rx_peak": 256,
+      "application_tx_peak": 256,
+      "application_rx_discarded": 0,
+      "application_tx_discarded": 0,
+      "ncm_worker_runs": 16208,
+      "ncm_rx_frames": 1439,
+      "ncm_rx_deferred": 1337,
+      "ncm_rx_batch_peak": 2,
+      "ncm_mutex_contentions": 0,
+      "ncm_budget_exhaustions": 0,
+      "ncm_wake_requests": 0,
+      "tcp_accepts": 10,
+      "tcp_rx_callbacks": 208,
+      "tcp_sent_callbacks": 846,
+      "tcp_errors": 0,
+      "tcp_rx_bytes": 213868,
+      "tcp_sent_bytes": 242192,
+      "lwip_free": null
+    },
+    "diagnostics_after": {
+      "samples": 10849241,
+      "heap_free": 173728,
+      "heap_min": 173728,
+      "stack_free": 8056,
+      "stack_min": 8056,
+      "peak_to_backend": 256,
+      "peak_to_peer": 256,
+      "application_rx_pending": 0,
+      "application_tx_pending": 0,
+      "application_rx_peak": 256,
+      "application_tx_peak": 256,
+      "application_rx_discarded": 0,
+      "application_tx_discarded": 0,
+      "ncm_worker_runs": 16541,
+      "ncm_rx_frames": 1780,
+      "ncm_rx_deferred": 1670,
+      "ncm_rx_batch_peak": 2,
+      "ncm_mutex_contentions": 0,
+      "ncm_budget_exhaustions": 0,
+      "ncm_wake_requests": 0,
+      "tcp_accepts": 10,
+      "tcp_rx_callbacks": 254,
+      "tcp_sent_callbacks": 1084,
+      "tcp_errors": 0,
+      "tcp_rx_bytes": 280191,
+      "tcp_sent_bytes": 313675,
+      "lwip_free": null
+    }
+  },
+  "postflight": {
+    "network": {
+      "host_address": "192.168.77.16",
+      "dhcp_xid": "0xd67c207",
+      "interface_output": "en14: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=404<VLAN_MTU,CHANNEL_IO>\n\tether 02:00:00:00:00:00\n\tinet6 fe80::2%en14 prefixlen 64 secured scopeid 0x1e \n\tinet 192.168.77.16 netmask 0xffffff00 broadcast 192.168.77.255\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: autoselect (10baseT/UTP <full-duplex>)\n\tstatus: active\n",
+      "dhcp_packet": "op = BOOTREPLY\nhtype = 1\nflags = 0x0\nhlen = 6\nhops = 0\nxid = 0xd67c207\nsecs = 0\nciaddr = 192.168.77.16\nyiaddr = 192.168.77.16\nsiaddr = 0.0.0.0\ngiaddr = 0.0.0.0\nchaddr = 02:00:00:00:00:02\nsname = \nfile = \noptions:\nOptions count is 8\ndhcp_message_type (uint8): ACK 0x5\nserver_identifier (ip): 192.168.77.1\nsubnet_mask (ip): 255.255.255.0\nlease_time (uint32): 0x258\nrenewal_t1_time_value (uint32): 0x12c\nrebinding_t2_time_value (uint32): 0x20d\nclient_identifier (uint8_mult): {0x1, 0x02, 0x00, 0x00, 0x00, 0x00, 0x02}\nend (none): \n"
+    },
+    "board_route": "   route to: 192.168.77.1\ndestination: 192.168.77.1\n  interface: en14\n      flags: <UP,HOST,DONE,LLINFO,WASCLONED,IFSCOPE,IFREF>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500      1194 \n",
+    "internet_route": "   route to: default\ndestination: default\n       mask: default\n    gateway: 192.168.4.1\n  interface: en0\n      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n"
+  }
+}

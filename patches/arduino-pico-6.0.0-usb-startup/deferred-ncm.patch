@@ -1,0 +1,229 @@
+--- a/cores/rp2040/main.cpp
++++ b/cores/rp2040/main.cpp
+@@ -20,6 +20,10 @@
+ 
+ #include "Arduino.h"
+ #include "USB.h"
++
++#if defined(FIRMINGO_USB_DEFERRED_START) && (defined(USE_TINYUSB) || defined(NO_USB) || defined(__FREERTOS) || defined(ENABLE_PICOTOOL_USB) || !defined(DISABLE_USB_SERIAL))
++#error "Firmingo deferred USB requires Pico SDK, bare metal, no CDC and no Picotool interface"
++#endif
+ #include <pico/stdlib.h>
+ #include <pico/multicore.h>
+ #include <hardware/vreg.h>
+@@ -146,8 +150,14 @@
+ #ifndef NO_USB
+ #ifdef USE_TINYUSB
+     TinyUSB_Device_Init(0);
++#else
++#ifdef FIRMINGO_USB_DEFERRED_START
++    // Initialize the mutex before any Ethernet worker can use it. Leave the
++    // controller and pull-up untouched until the sketch calls USB.begin().
++    USB.prepare();
+ #else
+     USB.begin();
++#endif
+ #if !defined(DISABLE_USB_SERIAL) && !defined(__FREERTOS)
+     // Enable serial port for reset/upload always
+     Serial.begin(115200);
+--- a/cores/rp2040/USB.h
++++ b/cores/rp2040/USB.h
+@@ -24,12 +24,18 @@
+ #include <tusb.h>
+ #include <pico/mutex.h>
+ 
++#define FIRMINGO_USB_STARTUP_PATCH_VERSION 1
++
+ #ifdef __cplusplus
+ 
+ class USBClass {
+ public:
+     USBClass() { }
+ 
++private:
++    bool _prepared = false;
++public:
++
+     // Called by an object at global init time to register a HID device, returns a localID to be mapped using findHIDReportID
+     // pidMask is the bits in the PID that should be XOR'd when this device is present.
+     // 0 means don't invert anything, OTW select a single bitmask 1<<n.
+@@ -71,6 +77,10 @@
+     void setProduct(const char *str);
+     void setSerialNumber(const char *str);
+ 
++    // Only initializes synchronization; safe before interface registration.
++    // Application startup context only, before launching USB processing.
++    void prepare();
++
+     // Called by main() to init the USB HW/SW.
+     void begin();
+ 
+--- a/cores/rp2040/USB.cpp
++++ b/cores/rp2040/USB.cpp
+@@ -494,6 +494,13 @@
+ #endif
+ }
+ 
++void USBClass::prepare() {
++    if (!_prepared) {
++        mutex_init(&mutex);
++        _prepared = true;
++    }
++}
++
+ void USBClass::begin() {
+     if (tusb_inited()) {
+         // Already called
+@@ -503,7 +510,7 @@
+     setupDescHIDReport();
+     setupUSBDescriptor();
+ 
+-    mutex_init(&mutex);
++    prepare();
+ 
+     tusb_init();
+ 
+--- a/libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp
++++ b/libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp
+@@ -33,6 +33,12 @@
+ 
+ bool NCMEthernet::begin(const uint8_t* mac_address, netif *net) {
+     (void) net;
++#ifdef FIRMINGO_USB_DEFERRED_START
++    if (tusb_inited()) {
++        // Registration must precede the one initial controller start.
++        return false;
++    }
++#endif
+     memcpy(tud_network_mac_address, mac_address, 6);
+ 
+ #ifdef __FREERTOS
+@@ -56,7 +62,9 @@
+     }
+     _ncm_ethernet_instance = this;
+ 
++#ifndef FIRMINGO_USB_DEFERRED_START
+     USB.disconnect();
++#endif
+ 
+     _epIn = USB.registerEndpointIn();
+     _epOut = USB.registerEndpointOut();
+@@ -78,7 +86,9 @@
+ 
+     _id = USB.registerInterface(2, _usb_interface_cb, (void *)this, TUD_CDC_NCM_DESC_LEN, 3, 0);
+ 
++#ifndef FIRMINGO_USB_DEFERRED_START
+     USB.connect();
++#endif
+ 
+     return true;
+ }
+@@ -285,12 +295,18 @@
+             // Not in lwIP, can't call handlePackets safely, as it includes pbuf_alloc.
+             // So we return false, which causes tinyUSB to keep the packet until we retry with tud_network_recv_renew.
+             // We schedule _recv_irq_worker / ncmTask to run. It will get both mutexes and call tud_network_recv_renew.
++            if (_ncm_ethernet_instance->_recv_deferred != UINT32_MAX) {
++                ++_ncm_ethernet_instance->_recv_deferred;
++            }
+             NCMEthernet::_set_recv_pending();
+             return false;
+         }
+ 
+         // tell NCMEthernetlwIP::_call_irq that we did receive a packet, so there may be even more packets.
+         _ncm_ethernet_instance->_tud_recv_cb_called = true;
++        if (_ncm_ethernet_instance->_recv_frames != UINT32_MAX) {
++            ++_ncm_ethernet_instance->_recv_frames;
++        }
+ 
+         if (_ncm_ethernet_instance->_recv_pkg != nullptr) {
+             panic("_recv_pkg should be null");
+--- a/libraries/lwIP_USB_NCM/src/utility/NCMEthernet.h
++++ b/libraries/lwIP_USB_NCM/src/utility/NCMEthernet.h
+@@ -75,6 +75,14 @@
+ 
+     bool isLinked();
+ 
++    uint32_t receiveWorkerRuns() const { return _recv_worker_runs; }
++    uint32_t receivedFrames() const { return _recv_frames; }
++    uint32_t deferredReceiveCallbacks() const { return _recv_deferred; }
++    uint32_t receiveBatchPeak() const { return _recv_batch_peak; }
++    uint32_t receiveMutexContentions() const { return _recv_mutex_contentions; }
++    uint32_t receiveBudgetExhaustions() const { return _recv_budget_exhaustions; }
++    uint32_t receiveWakeRequests() const { return _recv_wake_requests; }
++
+     constexpr bool isLinkDetectable() const {
+         return true;
+     }
+@@ -88,6 +96,13 @@
+     volatile bool _holding_both_mutexes = false;
+     bool _tud_recv_cb_called = false;
+     ncmethernet_packet_t *_recv_pkg = nullptr;
++    volatile uint32_t _recv_worker_runs = 0;
++    volatile uint32_t _recv_frames = 0;
++    volatile uint32_t _recv_deferred = 0;
++    volatile uint32_t _recv_batch_peak = 0;
++    volatile uint32_t _recv_mutex_contentions = 0;
++    volatile uint32_t _recv_budget_exhaustions = 0;
++    volatile uint32_t _recv_wake_requests = 0;
+ 
+ #ifdef __FREERTOS
+     SemaphoreHandle_t _recv_semaphore;
+--- a/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.cpp
++++ b/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.cpp
+@@ -54,6 +54,9 @@
+     CoreMutex m(&USB.mutex);
+ #else
+     if (!mutex_try_enter(&USB.mutex, NULL)) {
++        if (_ncm_ethernet_instance->_recv_mutex_contentions != UINT32_MAX) {
++            ++_ncm_ethernet_instance->_recv_mutex_contentions;
++        }
+         // Could not get USB mutex, try again later.
+         // We can not block to get it as that would be a deadlock because we are in IRQ context (_recv_irq_worker).
+ 
+@@ -68,21 +71,46 @@
+         panic("marker already set. how?");
+     }
+     _ncm_ethernet_instance->_holding_both_mutexes = true;
++    if (_ncm_ethernet_instance->_recv_worker_runs != UINT32_MAX) {
++        ++_ncm_ethernet_instance->_recv_worker_runs;
++    }
+ 
+     _ncm_ethernet_instance->_try_process_xmit_queue();
+     int limit = 10;
++    uint32_t received_this_run = 0;
++    bool receive_budget_exhausted;
+     do {
+         _ncm_ethernet_instance->_tud_recv_cb_called = false;
+         limit--;
+         tud_network_recv_renew();
+         tud_task();
++        if (_ncm_ethernet_instance->_tud_recv_cb_called) ++received_this_run;
+     } while (_ncm_ethernet_instance->_tud_recv_cb_called && limit > 0);
++    if (received_this_run > _ncm_ethernet_instance->_recv_batch_peak) {
++        _ncm_ethernet_instance->_recv_batch_peak = received_this_run;
++    }
++    receive_budget_exhausted =
++        _ncm_ethernet_instance->_tud_recv_cb_called && limit == 0;
++    if (receive_budget_exhausted &&
++        _ncm_ethernet_instance->_recv_budget_exhaustions != UINT32_MAX) {
++        ++_ncm_ethernet_instance->_recv_budget_exhaustions;
++    }
+     _ncm_ethernet_instance->_try_process_xmit_queue();
+ 
+     _ncm_ethernet_instance->_holding_both_mutexes = false;
+ #ifdef __FREERTOS
++    if (receive_budget_exhausted) NCMEthernet::_set_recv_pending();
+ #else
+     mutex_exit(&USB.mutex);
++    if (receive_budget_exhausted) {
++        // Keep each IRQ worker run bounded, but wake another run after the
++        // USB mutex is released. Setting work_pending alone does not wake the
++        // threadsafe-background IRQ, so packet 11 could otherwise remain owed.
++        async_context_set_work_pending(context, worker);
++        if (_ncm_ethernet_instance->_recv_wake_requests != UINT32_MAX) {
++            ++_ncm_ethernet_instance->_recv_wake_requests;
++        }
++    }
+ #endif
+ }
+ 

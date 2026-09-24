@@ -1,0 +1,31 @@
+{
+  "core_version": "6.0.0",
+  "patch": "deferred-ncm.patch",
+  "files": {
+    "cores/rp2040/main.cpp": {
+      "upstream_sha256": "ab71a1405ca7d58104b95c53b480ae448dbc7dfddaeda9afc137316726e605e9",
+      "patched_sha256": "f08f74e6a368a35bd410a9624643ff220400bbd1448e46a270e2480fa2f22bd5"
+    },
+    "cores/rp2040/USB.h": {
+      "upstream_sha256": "e2f26af1924f6fcf17c432b50a67eb40e9eb0870a01f5abfad9ad9f42b617314",
+      "patched_sha256": "08730ec12f6211c1a73ceaca712d4e60b4c28e52b76f4d79384bea02a080ce78"
+    },
+    "cores/rp2040/USB.cpp": {
+      "upstream_sha256": "3f51f43fb3e6b12bc7a5ab6a1d6c1b4e53d1241c2162bb7e729c43e2b60c4084",
+      "patched_sha256": "b4914df0128ef9ae0d6c65609ed5a5f4585ea9b1e2b4c20bf5a270a014c55fde"
+    },
+    "libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp": {
+      "upstream_sha256": "cf6ade4858f076dfa775a8f74cbe26ab6615804ae07996af3fc2d96869e5cc47",
+      "patched_sha256": "75121a91be92ec5e489fca288bcf281f5325dbcac3b1dd3ae3cac2d72a648f24"
+    },
+    "libraries/lwIP_USB_NCM/src/utility/NCMEthernet.h": {
+      "upstream_sha256": "f5e35b76c77ac6fe257baee7ac8f51750229210532e68fee1e4f509e516b7516",
+      "patched_sha256": "8f277f7c81abeadef828c00cefc6613d560007b8026f30d77a9603049bc58445"
+    },
+    "libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.cpp": {
+      "upstream_sha256": "0dbe37611af3324a05caef083cabbdc65a7bd80eaaad5879530da65c36cf1153",
+      "patched_sha256": "9a67731c89453e09ff68f9502aece62265f72b69735e6e4dd2c59f9e1532b485"
+    }
+  },
+  "patch_sha256": "d974b4175c7ca3f30ed5e7142ced748bc9805ffea3f0db5eb7943bde4b10021f"
+}

@@ -1,0 +1,20 @@
+{
+  "board": "raspberry_pi_pico",
+  "status": "compile-tested",
+  "core": "rp2040:rp2040",
+  "core_version": "6.0.0",
+  "arduino_cli_version": "1.5.1",
+  "package_index": "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json",
+  "fqbn": "rp2040:rp2040:rpipico:usbstack=picosdk,flash=2097152_0,freq=125,ipbtstack=ipv4only,opt=Small,rtti=Disabled,exceptions=Disabled",
+  "flash_layout": "2MB no FS; 2093056 bytes sketch, 4096 bytes EEPROM reservation",
+  "flash_budget_bytes": 1048576,
+  "static_ram_budget_bytes": 196608,
+  "budget_note": "Initial engineering caps match the Nano port. Dynamic stack/heap headroom still requires measurement.",
+  "capabilities": {
+    "native_usb_device": true,
+    "cdc_ncm": "compile-tested",
+    "application_stream": "compile-tested",
+    "uart_bridge": "compile-tested",
+    "wifi_module": false
+  }
+}

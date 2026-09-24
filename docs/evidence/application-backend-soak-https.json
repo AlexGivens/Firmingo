@@ -1,0 +1,11 @@
+{
+  "firmware_sha256": "6cf40edf7438d9b8c173556f14ac0fbee2799f71cc4399c0b31b8f48e0f97d57",
+  "started_utc": "2026-09-19T06:54:03Z",
+  "context": "fresh IPv4 HTTPS fetch while v2 required-diagnostics soak process is running; not traced to one payload interval",
+  "seconds": 0.41919433302246034,
+  "exit_code": 0,
+  "output": "200 172.66.147.243",
+  "error": "",
+  "finished_utc": "2026-09-19T06:54:04Z",
+  "status": "passed"
+}

@@ -1,0 +1,57 @@
+[  6%] Built target unity
+[ 10%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/stream.cpp.o
+[ 13%] Built target usb_startup_fragments
+[ 16%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/session.cpp.o
+[ 23%] Built target local_dhcp
+[ 30%] Built target dhcp_tests
+[ 33%] Linking CXX static library libfirmingo_core.a
+[ 40%] Built target firmingo_core
+[ 43%] Building CXX object CMakeFiles/stream_tests.dir/tests/native/test_stream.cpp.o
+[ 46%] Building CXX object CMakeFiles/application_tests.dir/tests/native/test_application.cpp.o
+[ 50%] Linking CXX executable stream_tests
+[ 53%] Linking CXX executable application_tests
+[ 53%] Built target stream_tests
+[ 53%] Built target application_tests
+[ 56%] Linking CXX executable protocol_tests
+[ 60%] Building CXX object CMakeFiles/session_tests.dir/tests/native/test_session.cpp.o
+[ 63%] Built target protocol_tests
+[ 66%] Building CXX object CMakeFiles/tcp_echo_tests.dir/tests/native/test_tcp_echo.cpp.o
+[ 70%] Building CXX object CMakeFiles/tcp_echo_tests.dir/src/ports/arduino_pico/tcp_echo.cpp.o
+[ 73%] Linking CXX executable session_tests
+[ 76%] Linking CXX executable tcp_echo_tests
+[ 76%] Built target session_tests
+[ 76%] Built target tcp_echo_tests
+[ 80%] Building CXX object CMakeFiles/tcp_session_tests.dir/tests/native/test_tcp_session.cpp.o
+[ 83%] Building CXX object CMakeFiles/usb_startup_deferred_tests.dir/tests/native/test_usb_startup.cpp.o
+[ 86%] Linking CXX executable usb_startup_deferred_tests
+[ 86%] Built target usb_startup_deferred_tests
+[ 90%] Building CXX object CMakeFiles/usb_startup_default_tests.dir/tests/native/test_usb_startup.cpp.o
+[ 93%] Building CXX object CMakeFiles/tcp_session_tests.dir/src/ports/arduino_pico/tcp_session.cpp.o
+[ 96%] Linking CXX executable tcp_session_tests
+[ 96%] Built target tcp_session_tests
+[100%] Linking CXX executable usb_startup_default_tests
+[100%] Built target usb_startup_default_tests
+Internal ctest changing into directory: /Users/REDACTED/Developer/Firmingo/build/application-backend-sanitize
+Test project /Users/REDACTED/Developer/Firmingo/build/application-backend-sanitize
+    Start 1: stream
+1/9 Test #1: stream ...........................   Passed    0.13 sec
+    Start 2: application
+2/9 Test #2: application ......................   Passed    0.12 sec
+    Start 3: protocol
+3/9 Test #3: protocol .........................   Passed    0.13 sec
+    Start 4: session
+4/9 Test #4: session ..........................   Passed    0.89 sec
+    Start 5: tcp_echo
+5/9 Test #5: tcp_echo .........................   Passed    0.13 sec
+    Start 6: tcp_session
+6/9 Test #6: tcp_session ......................   Passed    0.15 sec
+    Start 7: usb_startup_deferred
+7/9 Test #7: usb_startup_deferred .............   Passed    0.13 sec
+    Start 8: usb_startup_default
+8/9 Test #8: usb_startup_default ..............   Passed    0.13 sec
+    Start 9: local_dhcp
+9/9 Test #9: local_dhcp .......................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 9
+
+Total Test time (real) =   1.85 sec

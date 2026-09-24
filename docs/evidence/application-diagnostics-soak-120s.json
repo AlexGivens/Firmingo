@@ -1,0 +1,1305 @@
+{
+  "status": "passed",
+  "board": "nano_rp2040_connect",
+  "address": "192.168.77.1",
+  "device_id": "a1b2c3d4e5f60718",
+  "declared_firmware_sha256": "f553b19b18b2b265e042c38ef33cead60dd0c01244caa48c001c00b0c21850d4",
+  "firmware_hash_verified_on_device": false,
+  "requested_duration_seconds": 120,
+  "batch_bytes": 16384,
+  "batch_timeout_seconds": 20,
+  "reconnect_every": 4,
+  "seed": 1179862863,
+  "completed_batches": 76,
+  "completed_sessions": 19,
+  "exact_bytes": 1245184,
+  "samples": [
+    {
+      "batch": 1,
+      "bytes": 16384,
+      "seconds": 0.7485793330124579,
+      "bytes_per_second": 21886.79179007916,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1179862863,
+      "diagnostics": {
+        "samples": 82637,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 2,
+      "bytes": 16384,
+      "seconds": 1.9555531250080094,
+      "bytes_per_second": 8378.192231383586,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3834298632,
+      "diagnostics": {
+        "samples": 86223,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 3,
+      "bytes": 16384,
+      "seconds": 1.7395287500112318,
+      "bytes_per_second": 9418.642836397048,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2193767105,
+      "diagnostics": {
+        "samples": 89405,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 4,
+      "bytes": 16384,
+      "seconds": 1.9864129580091685,
+      "bytes_per_second": 8248.033186624218,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 553235578,
+      "diagnostics": {
+        "samples": 93045,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 5,
+      "bytes": 16384,
+      "seconds": 0.997080959030427,
+      "bytes_per_second": 16431.965580740794,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3207671347,
+      "diagnostics": {
+        "samples": 94883,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 6,
+      "bytes": 16384,
+      "seconds": 1.9537300839438103,
+      "bytes_per_second": 8386.00998912151,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1567139820,
+      "diagnostics": {
+        "samples": 98465,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 7,
+      "bytes": 16384,
+      "seconds": 1.7348216670216061,
+      "bytes_per_second": 9444.198393099703,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 4221575589,
+      "diagnostics": {
+        "samples": 101639,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 8,
+      "bytes": 16384,
+      "seconds": 1.7423457910190336,
+      "bytes_per_second": 9403.414686368085,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2581044062,
+      "diagnostics": {
+        "samples": 104827,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 9,
+      "bytes": 16384,
+      "seconds": 0.7662187090027146,
+      "bytes_per_second": 21382.92866970696,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 940512535,
+      "diagnostics": {
+        "samples": 106235,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 10,
+      "bytes": 16384,
+      "seconds": 1.9264909999910742,
+      "bytes_per_second": 8504.581646151428,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3594948304,
+      "diagnostics": {
+        "samples": 109767,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 11,
+      "bytes": 16384,
+      "seconds": 1.740124499949161,
+      "bytes_per_second": 9415.418264887754,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1954416777,
+      "diagnostics": {
+        "samples": 112951,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 12,
+      "bytes": 16384,
+      "seconds": 1.7374485420295969,
+      "bytes_per_second": 9429.919565192455,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 313885250,
+      "diagnostics": {
+        "samples": 116131,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 13,
+      "bytes": 16384,
+      "seconds": 0.746363541984465,
+      "bytes_per_second": 21951.768914700046,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2968321019,
+      "diagnostics": {
+        "samples": 117499,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 14,
+      "bytes": 16384,
+      "seconds": 1.9518530830391683,
+      "bytes_per_second": 8394.074401588154,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1327789492,
+      "diagnostics": {
+        "samples": 121081,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 15,
+      "bytes": 16384,
+      "seconds": 1.7348928750143386,
+      "bytes_per_second": 9443.810759707332,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3982225261,
+      "diagnostics": {
+        "samples": 124261,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 16,
+      "bytes": 16384,
+      "seconds": 1.7360356660210527,
+      "bytes_per_second": 9437.594123599827,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2341693734,
+      "diagnostics": {
+        "samples": 127439,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 17,
+      "bytes": 16384,
+      "seconds": 0.9899727500160225,
+      "bytes_per_second": 16549.95049079364,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 701162207,
+      "diagnostics": {
+        "samples": 129263,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 18,
+      "bytes": 16384,
+      "seconds": 1.952097000030335,
+      "bytes_per_second": 8393.025551366247,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3355597976,
+      "diagnostics": {
+        "samples": 132847,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 19,
+      "bytes": 16384,
+      "seconds": 1.7386737079941668,
+      "bytes_per_second": 9423.274720649866,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1715066449,
+      "diagnostics": {
+        "samples": 136029,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 20,
+      "bytes": 16384,
+      "seconds": 1.7364933749777265,
+      "bytes_per_second": 9435.106540622508,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 74534922,
+      "diagnostics": {
+        "samples": 139209,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 21,
+      "bytes": 16384,
+      "seconds": 0.7393708750023507,
+      "bytes_per_second": 22159.379756401562,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2728970691,
+      "diagnostics": {
+        "samples": 140567,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 22,
+      "bytes": 16384,
+      "seconds": 1.9508599580149166,
+      "bytes_per_second": 8398.347576251152,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1088439164,
+      "diagnostics": {
+        "samples": 144147,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 23,
+      "bytes": 16384,
+      "seconds": 1.7337433340144344,
+      "bytes_per_second": 9450.07238301145,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3742874933,
+      "diagnostics": {
+        "samples": 147323,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 24,
+      "bytes": 16384,
+      "seconds": 1.9845884589594789,
+      "bytes_per_second": 8255.61588148615,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2102343406,
+      "diagnostics": {
+        "samples": 150963,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 25,
+      "bytes": 16384,
+      "seconds": 0.9911931250244379,
+      "bytes_per_second": 16529.57389065431,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 461811879,
+      "diagnostics": {
+        "samples": 152795,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 26,
+      "bytes": 16384,
+      "seconds": 1.9532516669714823,
+      "bytes_per_second": 8388.064004779988,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3116247648,
+      "diagnostics": {
+        "samples": 156381,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 27,
+      "bytes": 16384,
+      "seconds": 1.982894791988656,
+      "bytes_per_second": 8262.66732163253,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1475716121,
+      "diagnostics": {
+        "samples": 160021,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 28,
+      "bytes": 16384,
+      "seconds": 1.7359064169577323,
+      "bytes_per_second": 9438.29681136488,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 4130151890,
+      "diagnostics": {
+        "samples": 163203,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 29,
+      "bytes": 16384,
+      "seconds": 0.7423128749942407,
+      "bytes_per_second": 22071.555744101996,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2489620363,
+      "diagnostics": {
+        "samples": 164565,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 30,
+      "bytes": 16384,
+      "seconds": 1.9527120830025524,
+      "bytes_per_second": 8390.38184001373,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 849088836,
+      "diagnostics": {
+        "samples": 168153,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 31,
+      "bytes": 16384,
+      "seconds": 1.7339121659751981,
+      "bytes_per_second": 9449.152224377644,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3503524605,
+      "diagnostics": {
+        "samples": 171329,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 32,
+      "bytes": 16384,
+      "seconds": 1.7353622500086203,
+      "bytes_per_second": 9441.256429266346,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1862993078,
+      "diagnostics": {
+        "samples": 174509,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 33,
+      "bytes": 16384,
+      "seconds": 0.7364603750174865,
+      "bytes_per_second": 22246.953883446855,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 222461551,
+      "diagnostics": {
+        "samples": 175865,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 34,
+      "bytes": 16384,
+      "seconds": 1.9514984169509262,
+      "bytes_per_second": 8395.599943964497,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2876897320,
+      "diagnostics": {
+        "samples": 179451,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 35,
+      "bytes": 16384,
+      "seconds": 1.7337237499887124,
+      "bytes_per_second": 9450.17913038722,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1236365793,
+      "diagnostics": {
+        "samples": 182625,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 36,
+      "bytes": 16384,
+      "seconds": 1.7144907920155674,
+      "bytes_per_second": 9556.190138961816,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3890801562,
+      "diagnostics": {
+        "samples": 185763,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 37,
+      "bytes": 16384,
+      "seconds": 1.0117255410295911,
+      "bytes_per_second": 16194.115237346567,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2250270035,
+      "diagnostics": {
+        "samples": 187633,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 38,
+      "bytes": 16384,
+      "seconds": 1.9474499159841798,
+      "bytes_per_second": 8413.053329651379,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 609738508,
+      "diagnostics": {
+        "samples": 191207,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 39,
+      "bytes": 16384,
+      "seconds": 1.713992666976992,
+      "bytes_per_second": 9558.967383971854,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3264174277,
+      "diagnostics": {
+        "samples": 194347,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 40,
+      "bytes": 16384,
+      "seconds": 1.7586406670161523,
+      "bytes_per_second": 9316.286326869935,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1623642750,
+      "diagnostics": {
+        "samples": 197569,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 41,
+      "bytes": 16384,
+      "seconds": 0.7413280000328086,
+      "bytes_per_second": 22100.87842260767,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 4278078519,
+      "diagnostics": {
+        "samples": 198933,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 42,
+      "bytes": 16384,
+      "seconds": 1.9490446249837987,
+      "bytes_per_second": 8406.169766449648,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2637546992,
+      "diagnostics": {
+        "samples": 202515,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 43,
+      "bytes": 16384,
+      "seconds": 1.7326221669791266,
+      "bytes_per_second": 9456.187455206085,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 997015465,
+      "diagnostics": {
+        "samples": 205691,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 44,
+      "bytes": 16384,
+      "seconds": 1.7353922500042245,
+      "bytes_per_second": 9441.093216798747,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3651451234,
+      "diagnostics": {
+        "samples": 208869,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 45,
+      "bytes": 16384,
+      "seconds": 0.7416205829940736,
+      "bytes_per_second": 22092.15921954923,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2010919707,
+      "diagnostics": {
+        "samples": 210231,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 46,
+      "bytes": 16384,
+      "seconds": 1.9507732500205748,
+      "bytes_per_second": 8398.720866111527,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 370388180,
+      "diagnostics": {
+        "samples": 213819,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 47,
+      "bytes": 16384,
+      "seconds": 1.7329104579985142,
+      "bytes_per_second": 9454.614301839505,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3024823949,
+      "diagnostics": {
+        "samples": 216993,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 48,
+      "bytes": 16384,
+      "seconds": 1.9855767090339214,
+      "bytes_per_second": 8251.50694277211,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1384292422,
+      "diagnostics": {
+        "samples": 220637,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 49,
+      "bytes": 16384,
+      "seconds": 0.9892219169996679,
+      "bytes_per_second": 16562.512130435844,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 4038728191,
+      "diagnostics": {
+        "samples": 222467,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 50,
+      "bytes": 16384,
+      "seconds": 1.9626019169809297,
+      "bytes_per_second": 8348.10149640713,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2398196664,
+      "diagnostics": {
+        "samples": 226077,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 51,
+      "bytes": 16384,
+      "seconds": 1.9698162080021575,
+      "bytes_per_second": 8317.527256320584,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 757665137,
+      "diagnostics": {
+        "samples": 229695,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 52,
+      "bytes": 16384,
+      "seconds": 1.7336272080428898,
+      "bytes_per_second": 9450.70539040286,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3412100906,
+      "diagnostics": {
+        "samples": 232877,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 53,
+      "bytes": 16384,
+      "seconds": 0.7373677919968031,
+      "bytes_per_second": 22219.576414684292,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1771569379,
+      "diagnostics": {
+        "samples": 234235,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 54,
+      "bytes": 16384,
+      "seconds": 1.9497924999450333,
+      "bytes_per_second": 8402.945441867216,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 131037852,
+      "diagnostics": {
+        "samples": 237817,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 55,
+      "bytes": 16384,
+      "seconds": 1.7327369580161758,
+      "bytes_per_second": 9455.5609979937,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2785473621,
+      "diagnostics": {
+        "samples": 240995,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 56,
+      "bytes": 16384,
+      "seconds": 1.765536291000899,
+      "bytes_per_second": 9279.899871506894,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1144942094,
+      "diagnostics": {
+        "samples": 244237,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 57,
+      "bytes": 16384,
+      "seconds": 0.7040927089983597,
+      "bytes_per_second": 23269.66291599274,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3799377863,
+      "diagnostics": {
+        "samples": 245535,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 58,
+      "bytes": 16384,
+      "seconds": 1.7322136659640819,
+      "bytes_per_second": 9458.417470041903,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2158846336,
+      "diagnostics": {
+        "samples": 248711,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 59,
+      "bytes": 16384,
+      "seconds": 1.9521798340138048,
+      "bytes_per_second": 8392.669422423785,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 518314809,
+      "diagnostics": {
+        "samples": 252297,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 60,
+      "bytes": 16384,
+      "seconds": 1.7323917080066167,
+      "bytes_per_second": 9457.445405838564,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3172750578,
+      "diagnostics": {
+        "samples": 255473,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 61,
+      "bytes": 16384,
+      "seconds": 0.7391450409777462,
+      "bytes_per_second": 22166.15020284399,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1532219051,
+      "diagnostics": {
+        "samples": 256835,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 62,
+      "bytes": 16384,
+      "seconds": 1.9526019580080174,
+      "bytes_per_second": 8390.855050004373,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 4186654820,
+      "diagnostics": {
+        "samples": 260425,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 63,
+      "bytes": 16384,
+      "seconds": 1.7290149169857614,
+      "bytes_per_second": 9475.915932849597,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2546123293,
+      "diagnostics": {
+        "samples": 263595,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    },
+    {
+      "batch": 64,
+      "bytes": 16384,
+      "seconds": 1.7171830830047838,
+      "bytes_per_second": 9541.207435686318,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 905591766,
+      "diagnostics": {
+        "samples": 266743,
+        "heap_free": 175292,
+        "heap_min": 175292,
+        "stack_free": 8120,
+        "stack_min": 8120,
+        "peak_to_backend": 256,
+        "peak_to_peer": 256,
+        "lwip_free": null
+      }
+    }
+  ],
+  "omitted_samples": 12,
+  "runtime_memory_measurement": "sampled C heap and approximate core-0 stack; lwIP pool unavailable",
+  "started_utc": "2026-09-18T22:50:23Z",
+  "elapsed_seconds": 121.84925670799566,
+  "hello": {
+    "protocol_major": 1,
+    "firmware_version": "application-dev-v1",
+    "device_id": "a1b2c3d4e5f60718",
+    "boot_id": "b10b16d1750787d0",
+    "board_id": "nano_rp2040_connect",
+    "max_payload": 4096,
+    "auth_mode": "open-development",
+    "channels": [
+      {
+        "id": 1,
+        "backend": "application",
+        "controls": [],
+        "rx_queue": 256,
+        "tx_queue": 256,
+        "owned": false
+      }
+    ],
+    "targets": []
+  },
+  "initial_diagnostics": {
+    "samples": 81297,
+    "heap_free": 175292,
+    "heap_min": 175292,
+    "stack_free": 8120,
+    "stack_min": 8120,
+    "peak_to_backend": 256,
+    "peak_to_peer": 256,
+    "lwip_free": null
+  },
+  "last_diagnostics": {
+    "samples": 301619,
+    "heap_free": 175292,
+    "heap_min": 175292,
+    "stack_free": 8120,
+    "stack_min": 8120,
+    "peak_to_backend": 256,
+    "peak_to_peer": 256,
+    "lwip_free": null
+  },
+  "last_sample": {
+    "batch": 76,
+    "bytes": 16384,
+    "seconds": 1.9798327500466257,
+    "bytes_per_second": 8275.446499010663,
+    "fragmented_sends": 125,
+    "slow_read": true,
+    "seed": 2694049922,
+    "diagnostics": {
+      "samples": 301619,
+      "heap_free": 175292,
+      "heap_min": 175292,
+      "stack_free": 8120,
+      "stack_min": 8120,
+      "peak_to_backend": 256,
+      "peak_to_peer": 256,
+      "lwip_free": null
+    }
+  },
+  "last_backend_status": {
+    "channel_id": 1,
+    "backend_rx_bytes": 65536,
+    "backend_tx_bytes": 65536,
+    "pending_to_backend": 0,
+    "pending_to_peer": 0
+  },
+  "finished_utc": "2026-09-18T22:52:25Z"
+}

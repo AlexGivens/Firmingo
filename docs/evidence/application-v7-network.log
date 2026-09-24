@@ -1,0 +1,31 @@
+Application v7 coexistence observation, 2026-09-23
+
+The bounded diagnostic traffic command and fresh HTTPS command were launched
+concurrently. The traffic result is preserved in
+application-v7-coexistence-soak.json.
+
+HTTPS result:
+http_code=200
+remote_ip=104.20.23.154
+size_download=559
+
+Default route:
+destination: default
+gateway: 192.168.4.1
+interface: en0
+
+Board route:
+destination: 192.168.77.1
+interface: en5
+
+DHCP ACK:
+yiaddr: 192.168.77.16
+server_identifier: 192.168.77.1
+subnet_mask: 255.255.255.0
+lease_time: 600
+renewal_t1_time_value: 300
+rebinding_t2_time_value: 525
+router option 3: absent
+DNS option 6: absent
+
+No monotonic containment timestamps were recorded for this concurrent invocation.

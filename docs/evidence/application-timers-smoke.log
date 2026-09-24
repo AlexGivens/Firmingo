@@ -1,0 +1,9 @@
+Verified FMGO device: {'protocol_major': 1, 'firmware_version': 'application-dev-v1', 'device_id': 'a1b2c3d4e5f60718', 'boot_id': 'd362b10ba8d61658', 'board_id': 'nano_rp2040_connect', 'max_payload': 4096, 'auth_mode': 'open-development', 'channels': [{'id': 1, 'backend': 'application', 'controls': [], 'rx_queue': 256, 'tx_queue': 256, 'owned': False}], 'targets': []}
+Second-client BUSY: pass
+Exact fragmented full-duplex echo: {'bytes': 16384, 'seconds': 0.9895934580126777, 'bytes_per_second': 16556.293766232742, 'fragmented_sends': 125, 'slow_read': False}
+Exact echo with delayed reader: {'bytes': 4096, 'seconds': 0.751299542025663, 'bytes_per_second': 5451.886725441513, 'fragmented_sends': 34, 'slow_read': True}
+Backend counters: {'channel_id': 1, 'backend_rx_bytes': 20480, 'backend_tx_bytes': 20480, 'pending_to_backend': 0, 'pending_to_peer': 0}
+Unsupported reset: pass (no reset performed)
+Ownership transfer echo: {'bytes': 4096, 'seconds': 0.72844095795881, 'bytes_per_second': 5622.967730257158, 'fragmented_sends': 34, 'slow_read': False}
+Both peer TCP closures observed; connecting fresh session
+Fresh-session reconnect echo: {'bytes': 4096, 'seconds': 0.7269701669574715, 'bytes_per_second': 5634.3440022341665, 'fragmented_sends': 34, 'slow_read': False}

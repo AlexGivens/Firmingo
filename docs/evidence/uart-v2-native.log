@@ -1,0 +1,26 @@
+Internal ctest changing into directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+Test project /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+      Start  1: stream
+ 1/10 Test  #1: stream ...........................   Passed    0.06 sec
+      Start  2: application
+ 2/10 Test  #2: application ......................   Passed    0.02 sec
+      Start  3: uart
+ 3/10 Test  #3: uart .............................   Passed    0.01 sec
+      Start  4: protocol
+ 4/10 Test  #4: protocol .........................   Passed    0.09 sec
+      Start  5: session
+ 5/10 Test  #5: session ..........................   Passed    0.74 sec
+      Start  6: tcp_echo
+ 6/10 Test  #6: tcp_echo .........................   Passed    0.02 sec
+      Start  7: tcp_session
+ 7/10 Test  #7: tcp_session ......................   Passed    0.03 sec
+      Start  8: usb_startup_deferred
+ 8/10 Test  #8: usb_startup_deferred .............   Passed    0.02 sec
+      Start  9: usb_startup_default
+ 9/10 Test  #9: usb_startup_default ..............   Passed    0.01 sec
+      Start 10: local_dhcp
+10/10 Test #10: local_dhcp .......................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 10
+
+Total Test time (real) =   1.02 sec

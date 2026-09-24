@@ -1,0 +1,35 @@
+{
+  "test": "echo followup",
+  "utc": "2026-09-16T08:12:16Z",
+  "https": {
+    "ipv4": {
+      "exit": 0,
+      "response": "200 172.66.147.243",
+      "error": "",
+      "end_seconds": 0.3816448329889681
+    },
+    "default": {
+      "exit": 0,
+      "response": "200 2606:4700:10::6814:179a",
+      "error": "",
+      "end_seconds": 0.8124173749965848
+    }
+  },
+  "echo": {
+    "test": "echo",
+    "bytes": 262144,
+    "seconds": 14.843398,
+    "bytes_per_second": 17660.6
+  },
+  "source": {
+    "test": "source",
+    "bytes": 54400,
+    "seconds": 11.511741,
+    "bytes_per_second": 4725.6
+  },
+  "second_client": "reset",
+  "original_owner_survives": true,
+  "dhcp": "op = BOOTREPLY\nhtype = 1\nflags = 0x0\nhlen = 6\nhops = 0\nxid = 0xe17950e0\nsecs = 0\nciaddr = 0.0.0.0\nyiaddr = 192.168.77.16\nsiaddr = 0.0.0.0\ngiaddr = 0.0.0.0\nchaddr = 52:33:37:38:0:f6\nsname = \nfile = \noptions:\nOptions count is 8\ndhcp_message_type (uint8): ACK 0x5\nserver_identifier (ip): 192.168.77.1\nsubnet_mask (ip): 255.255.255.0\nlease_time (uint32): 0x258\nrenewal_t1_time_value (uint32): 0x12c\nrebinding_t2_time_value (uint32): 0x20d\nclient_identifier (uint8_mult): {0x1, 0x52, 0x33, 0x37, 0x38, 0x0, 0xf6}\nend (none): \n",
+  "internet_route": "   route to: default\ndestination: default\n       mask: default\n    gateway: 192.168.4.1\n  interface: en0\n      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n",
+  "board_route": "   route to: 192.168.77.1\ndestination: 192.168.77.1\n  interface: en5\n      flags: <UP,HOST,DONE,LLINFO,WASCLONED,IFSCOPE,IFREF>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0       120         5         1         0      1500      1122 \n"
+}

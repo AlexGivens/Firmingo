@@ -1,0 +1,6 @@
+Focused close diagnostic: confirm peer EOF/RST before fresh connect; no retries or sleep
+Boot ID: 70b40924f964be7a
+other peer RST observed: 338232.345382458
+owner peer RST observed: 338232.347131708
+Fresh hello: {'protocol_major': 1, 'firmware_version': 'application-dev-v1', 'device_id': 'a1b2c3d4e5f60718', 'boot_id': '70b40924f964be7a', 'board_id': 'nano_rp2040_connect', 'max_payload': 4096, 'auth_mode': 'open-development', 'channels': [{'id': 1, 'backend': 'application', 'controls': [], 'rx_queue': 256, 'tx_queue': 256, 'owned': False}], 'targets': []}
+Fresh echo: {'bytes': 1024, 'seconds': 0.24642833397956565, 'bytes_per_second': 4155.366322790269, 'fragmented_sends': 10, 'slow_read': False}

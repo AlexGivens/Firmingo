@@ -1,0 +1,44 @@
+{
+  "utc": "2026-09-16T08:32:02Z",
+  "https": [
+    {
+      "options": [
+        "-4"
+      ],
+      "begin_monotonic": 121709.342532208,
+      "end_monotonic": 121709.767853875,
+      "exit": 0,
+      "output": "200 172.66.147.243",
+      "error": ""
+    },
+    {
+      "options": [],
+      "begin_monotonic": 121709.767859958,
+      "end_monotonic": 121710.138375208,
+      "exit": 0,
+      "output": "200 2606:4700:10::ac42:93f3",
+      "error": ""
+    }
+  ],
+  "echo": {
+    "begin_monotonic": 121709.335709125,
+    "end_monotonic": 121712.128463333,
+    "result": {
+      "test": "echo",
+      "bytes": 65536,
+      "seconds": 2.785903,
+      "bytes_per_second": 23524.1
+    }
+  },
+  "source": {
+    "begin_monotonic": 121709.342092125,
+    "end_monotonic": 121714.3407935,
+    "result": {
+      "test": "source",
+      "bytes": 27200,
+      "seconds": 4.998681,
+      "bytes_per_second": 5441.4
+    }
+  },
+  "usb_interface_summary": "+-o Nano RP2040 Connect@00100000  <class IOUSBHostDevice, id 0x1000198bd, registered, matched, active, busy 0 (107 ms), retain 46>\n  |   \"USB Serial Number\" = \"a1b2c3d4e5f60718\"\n  |   \"kUSBCurrentConfiguration\" = 1\n  +-o AppleUSBCDCCompositeDevice  <class AppleUSBCDCCompositeDevice, id 0x1000198d6, !registered, !matched, active, busy 0, retain 4>\n  +-o Pico NCM@0  <class IOUSBHostInterface, id 0x1000198d8, registered, matched, active, busy 0 (92 ms), retain 10>\n  | |   \"bAlternateSetting\" = 0\n  | |   \"bInterfaceClass\" = 2\n  | |   \"bInterfaceSubClass\" = 13\n  | |   \"bInterfaceNumber\" = 0\n  | |   \"USB Serial Number\" = \"a1b2c3d4e5f60718\"\n  | +-o AppleUSBNCMControl  <class AppleUSBNCMControl, id 0x1000198e0, registered, matched, active, busy 0 (5 ms), retain 8>\n  |   |   \"bInterfaceSubClass\" = 13\n  |   |   \"bInterfaceClass\" = 2\n  |   +-o AppleUSBNCMData  <class AppleUSBNCMData, id 0x1000198e3, registered, matched, active, busy 0 (4 ms), retain 7>\n  |     +-o en5  <class IOEthernetInterface, id 0x1000198e5, registered, matched, active, busy 0 (4 ms), retain 11>\n  |       +-o IONetworkStack  <class IONetworkStack, id 0x10000054f, registered, matched, active, busy 0 (11 ms), retain 22>\n  |         +-o IONetworkStackUserClient  <class IONetworkStackUserClient, id 0x100000ce6, !registered, !matched, active, busy 0, retain 5>\n  +-o ChatGPT  <class AppleUSBHostDeviceUserClient, id 0x1000198d9, !registered, !matched, active, busy 0, retain 7>\n  +-o IOUSBHostInterface@1  <class IOUSBHostInterface, id 0x1000198dc, registered, matched, active, busy 0 (21 ms), retain 11>\n        \"bAlternateSetting\" = 1\n        \"bInterfaceClass\" = 10\n        \"bInterfaceSubClass\" = 0\n        \"bInterfaceNumber\" = 1\n        \"USB Serial Number\" = \"a1b2c3d4e5f60718\""
+}

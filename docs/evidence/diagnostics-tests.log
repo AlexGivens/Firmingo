@@ -1,0 +1,71 @@
++ /Users/REDACTED/Developer/Firmingo/.venv/bin/cmake -S /Users/REDACTED/Developer/Firmingo -B /Users/REDACTED/Developer/Firmingo/build/native-sanitize -DCMAKE_BUILD_TYPE=Debug -DFIRMINGO_SANITIZE=ON
+-- Configuring done (0.2s)
+-- Generating done (0.1s)
+-- Build files have been written to: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
++ /Users/REDACTED/Developer/Firmingo/.venv/bin/cmake --build /Users/REDACTED/Developer/Firmingo/build/native-sanitize --parallel 2
+[  3%] Building C object CMakeFiles/unity.dir/third_party/unity/src/unity.c.o
+[  7%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/stream.cpp.o
+[ 10%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/protocol.cpp.o
+[ 14%] Linking C static library libunity.a
+[ 14%] Built target unity
+[ 17%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/json.cpp.o
+[ 21%] Building CXX object CMakeFiles/firmingo_core.dir/src/core/session.cpp.o
+[ 25%] Built target usb_startup_fragments
+[ 28%] Building C object CMakeFiles/local_dhcp.dir/src/ports/arduino_pico/local_dhcp.c.o
+[ 32%] Linking C static library liblocal_dhcp.a
+[ 35%] Linking CXX static library libfirmingo_core.a
+[ 35%] Built target local_dhcp
+[ 35%] Built target firmingo_core
+[ 39%] Building C object CMakeFiles/dhcp_tests.dir/tests/native/test_dhcp.c.o
+[ 42%] Building CXX object CMakeFiles/stream_tests.dir/tests/native/test_stream.cpp.o
+[ 46%] Linking C executable dhcp_tests
+[ 46%] Built target dhcp_tests
+[ 50%] Building CXX object CMakeFiles/protocol_tests.dir/tests/native/test_protocol.cpp.o
+[ 53%] Linking CXX executable stream_tests
+[ 53%] Built target stream_tests
+[ 57%] Building CXX object CMakeFiles/session_tests.dir/tests/native/test_session.cpp.o
+[ 60%] Linking CXX executable protocol_tests
+[ 60%] Built target protocol_tests
+[ 64%] Building CXX object CMakeFiles/tcp_echo_tests.dir/tests/native/test_tcp_echo.cpp.o
+[ 67%] Linking CXX executable session_tests
+[ 67%] Built target session_tests
+[ 71%] Building CXX object CMakeFiles/tcp_echo_tests.dir/src/ports/arduino_pico/tcp_echo.cpp.o
+[ 75%] Building CXX object CMakeFiles/tcp_session_tests.dir/tests/native/test_tcp_session.cpp.o
+[ 78%] Linking CXX executable tcp_echo_tests
+[ 78%] Built target tcp_echo_tests
+[ 82%] Building CXX object CMakeFiles/usb_startup_deferred_tests.dir/tests/native/test_usb_startup.cpp.o
+[ 85%] Building CXX object CMakeFiles/tcp_session_tests.dir/src/ports/arduino_pico/tcp_session.cpp.o
+[ 89%] Linking CXX executable usb_startup_deferred_tests
+[ 89%] Built target usb_startup_deferred_tests
+[ 92%] Building CXX object CMakeFiles/usb_startup_default_tests.dir/tests/native/test_usb_startup.cpp.o
+[ 96%] Linking CXX executable tcp_session_tests
+[ 96%] Built target tcp_session_tests
+[100%] Linking CXX executable usb_startup_default_tests
+[100%] Built target usb_startup_default_tests
++ /Users/REDACTED/Developer/Firmingo/.venv/bin/ctest --test-dir /Users/REDACTED/Developer/Firmingo/build/native-sanitize --output-on-failure
+Internal ctest changing into directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+Test project /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+    Start 1: stream
+1/8 Test #1: stream ...........................   Passed    0.19 sec
+    Start 2: protocol
+2/8 Test #2: protocol .........................   Passed    0.20 sec
+    Start 3: session
+3/8 Test #3: session ..........................   Passed    0.92 sec
+    Start 4: tcp_echo
+4/8 Test #4: tcp_echo .........................   Passed    0.12 sec
+    Start 5: tcp_session
+5/8 Test #5: tcp_session ......................   Passed    0.14 sec
+    Start 6: usb_startup_deferred
+6/8 Test #6: usb_startup_deferred .............   Passed    0.12 sec
+    Start 7: usb_startup_default
+7/8 Test #7: usb_startup_default ..............   Passed    0.11 sec
+    Start 8: local_dhcp
+8/8 Test #8: local_dhcp .......................   Passed    0.11 sec
+
+100% tests passed, 0 tests failed out of 8
+
+Total Test time (real) =   1.92 sec
++ /Users/REDACTED/Developer/Firmingo/.venv/bin/python -m pytest tests/host -q
+........................................................................ [ 64%]
+........................................                                 [100%]
+112 passed in 1.01s

@@ -1,0 +1,39 @@
+   route to: default
+destination: default
+       mask: default
+    gateway: 192.168.4.1
+  interface: en0
+      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>
+ recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+       0         0         0         0         0         0      1500         0 
+   route to: 192.168.77.1
+destination: 192.168.77.1
+  interface: en5
+      flags: <UP,HOST,DONE,LLINFO,WASCLONED,IFSCOPE,IFREF>
+ recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+       0         0         0         0         0         0      1500       966 
+op = BOOTREPLY
+htype = 1
+flags = 0x0
+hlen = 6
+hops = 0
+xid = 0x6d3097a6
+secs = 0
+ciaddr = 0.0.0.0
+yiaddr = 192.168.77.16
+siaddr = 0.0.0.0
+giaddr = 0.0.0.0
+chaddr = 52:33:37:38:0:f6
+sname = 
+file = 
+options:
+Options count is 8
+dhcp_message_type (uint8): ACK 0x5
+server_identifier (ip): 192.168.77.1
+subnet_mask (ip): 255.255.255.0
+lease_time (uint32): 0x258
+renewal_t1_time_value (uint32): 0x12c
+rebinding_t2_time_value (uint32): 0x20d
+client_identifier (uint8_mult): {0x1, 0x52, 0x33, 0x37, 0x38, 0x0, 0xf6}
+end (none): 
+200 104.20.23.154

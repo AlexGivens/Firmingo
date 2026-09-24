@@ -1,0 +1,94 @@
+# Firmingo: generated files and machine-local state.
+# Put firmware binaries, linker maps, and downloaded SDKs in these directories.
+# Keep source, board definitions, fixtures, patches, and dependency locks tracked.
+
+# Build output (root and example/native-test builds)
+/build/
+/out/
+/dist/*
+!/dist/README.md
+/artifacts/
+/examples/**/build/
+/tests/native/build/
+cmake-build-*/
+.pio/
+
+# CMake / Ninja generated state, including accidental in-source builds
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+build.ninja
+rules.ninja
+.ninja_deps
+.ninja_log
+compile_commands.json
+CMakeUserPresets.json
+# Keep CMakePresets.json, CMakeLists.txt, and authored Makefiles tracked.
+
+# Local dependency / toolchain caches (do not ignore third_party/ or patches/)
+/.cache/
+/.arduino-data/
+/.arduino-downloads/
+/.arduino-user/
+/.toolchains/
+/.ccache/
+/arduino-cli.local.yaml
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+
+# Generated test, coverage, fuzzing, and hardware diagnostics output
+/test-results/
+/coverage/
+/htmlcov/
+/logs/
+/captures/
+/fuzz-artifacts/
+.coverage
+.coverage.*
+*.gcda
+*.gcno
+*.profraw
+*.profdata
+# Keep curated results in docs/ and regression inputs in tests/fixtures/.
+# Do not globally ignore *.bin, *.hex, *.uf2, *.pcap*, *.json, or *.xml:
+# those extensions may contain intentional test fixtures or board metadata.
+
+# Local credentials and device configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+/secrets/
+/private-evidence/
+private.key
+/tools/dev.local.json
+# Public verification keys and sanitized configuration examples remain tracked.
+
+# Editor-local state; retain shared VS Code build/debug configuration
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.cache/clangd/
+*.swp
+*.swo
+*~
+
+# Operating-system metadata
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,16 @@
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:308:chained_input_partial_writes_and_memory_pressure_preserve_binary:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:309:coalesced_frames_stop_receive_credit_when_peer_stalls:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:310:graceful_close_retries_memory_failure_without_using_transferred_pcb:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:311:second_socket_receives_busy_without_displacing_owner:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:312:callbacks_defer_backend_cleanup_and_new_owner_gets_no_replay:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:313:fatal_json_reply_waits_for_tcp_ack_then_closes_without_dangling_callbacks:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:314:unacknowledged_terminal_output_and_close_memory_failure_have_deadlines:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:315:handshake_timeout_starts_at_accept_even_before_first_application_poll:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:316:transport_fault_releases_owner_and_refused_input_stays_stack_owned:PASS
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:272:reconnect_accept_before_application_cleanup_reuses_only_dead_socket_slot:FAIL: Expected 0 Was -2
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:29:accept_resource_error_with_null_pcb_never_aborts_null_or_displaces_owner:FAIL: Expected Non-NULL
+/Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:319:listener_failures_are_reported_and_stop_releases_live_sessions:PASS
+
+-----------------------
+12 Tests 2 Failures 0 Ignored 
+FAIL

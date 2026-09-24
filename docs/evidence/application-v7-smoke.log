@@ -1,0 +1,12 @@
+Command:
+.venv/bin/python tools/dev.py smoke --board nano_rp2040_connect --address 192.168.77.1 --device-id a1b2c3d4e5f60718 --firmware application
+
+Verified FMGO device: {'protocol_major': 1, 'firmware_version': 'application-dev-v7', 'device_id': 'a1b2c3d4e5f60718', 'boot_id': '32933ceacb2849ea', 'board_id': 'nano_rp2040_connect', 'max_payload': 4096, 'auth_mode': 'open-development', 'channels': [{'id': 1, 'backend': 'application', 'controls': [], 'rx_queue': 256, 'tx_queue': 256, 'owned': False}], 'targets': []}
+Second-client BUSY: pass
+Exact fragmented full-duplex echo: {'bytes': 16384, 'seconds': 0.7396025409689173, 'bytes_per_second': 22152.438766010888, 'fragmented_sends': 125, 'slow_read': False, 'read_delay': 0.15, 'seed': None}
+Exact echo with delayed reader: {'bytes': 4096, 'seconds': 0.7845405000261962, 'bytes_per_second': 5220.890444614692, 'fragmented_sends': 34, 'slow_read': True, 'read_delay': 0.15, 'seed': None}
+Backend counters: {'channel_id': 1, 'backend_rx_bytes': 20480, 'backend_tx_bytes': 20480, 'pending_to_backend': 0, 'pending_to_peer': 0}
+Unsupported reset: pass (no reset performed)
+Ownership transfer echo: {'bytes': 4096, 'seconds': 0.6913688330096193, 'bytes_per_second': 5924.478808466928, 'fragmented_sends': 34, 'slow_read': False, 'read_delay': 0.15, 'seed': None}
+Both peer TCP closures observed; connecting fresh session
+Fresh-session reconnect echo: {'bytes': 4096, 'seconds': 0.7256698749843054, 'bytes_per_second': 5644.439904699899, 'fragmented_sends': 34, 'slow_read': False, 'read_delay': 0.15, 'seed': None}

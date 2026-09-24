@@ -1,0 +1,50 @@
+{
+  "fixture": "pico-uart-peer-v1",
+  "board": "raspberry_pi_pico",
+  "arduino_cli_version": "1.5.1",
+  "core": "rp2040:rp2040",
+  "core_version": "6.0.0",
+  "fqbn": "rp2040:rp2040:rpipico:flash=2097152_0,freq=125,opt=Small,rtti=Disabled,exceptions=Disabled,usbstack=picosdk,ipbtstack=ipv4only",
+  "source_sha256": {
+    "tests/hardware/pico_uart_peer/pico_uart_peer.ino": "ffb3fe89047e1df63ae9642676342e4d12963031a2f79992f2645782dab3ac06",
+    "tests/hardware/pico_uart_peer/README.md": "904192a392e3faf39edc971ddc60d10ebf30eaff1bb4a86375ebe32549b41afa",
+    "tools/pico_peer.py": "0dd96a555d181c2956555bf4e8b605914abd231047a23a4a047738fec2a311e1"
+  },
+  "command": [
+    "/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli",
+    "--config-file",
+    "/tmp/firmingo-arduino-cli.yaml",
+    "compile",
+    "--fqbn",
+    "rp2040:rp2040:rpipico:flash=2097152_0,freq=125,opt=Small,rtti=Disabled,exceptions=Disabled,usbstack=picosdk,ipbtstack=ipv4only",
+    "--warnings",
+    "all",
+    "--build-path",
+    "/Users/REDACTED/Developer/Firmingo/build/hardware/pico_uart_peer/work",
+    "--output-dir",
+    "/Users/REDACTED/Developer/Firmingo/build/hardware/pico_uart_peer/artifacts",
+    "/Users/REDACTED/Developer/Firmingo/tests/hardware/pico_uart_peer"
+  ],
+  "status": "compile-tested",
+  "artifacts": {
+    "pico_uart_peer.ino.bin": {
+      "sha256": "cdd9e2993d14ea3f3b877b47c962135d69199cf945ae2cafaeaff2ad77fa05e4",
+      "bytes": 76112
+    },
+    "pico_uart_peer.ino.elf": {
+      "sha256": "bf3f26973f9979ca2d0080294531d48fb376ff2717bd5332edc03e0931377075",
+      "bytes": 1357872
+    },
+    "pico_uart_peer.ino.uf2": {
+      "sha256": "d7d149499d9964fbb2afe2b70c7e5d7b07ea99f338c50055031a5004a80e8b53",
+      "bytes": 152576
+    },
+    "pico_uart_peer.ino.map": {
+      "sha256": "1f4441204f22160a29618a43a039d7f884521ebcdf5d35f9d336c780a5643898",
+      "bytes": 1145174
+    }
+  },
+  "exit_code": 0,
+  "flash_bytes": 59340,
+  "static_ram_bytes": 9320
+}

@@ -1,0 +1,33 @@
+{
+  "board": "nano_rp2040_connect",
+  "address": "192.168.77.1",
+  "test": "source-plus-internet",
+  "hardware_claim": "single post-flash macOS session",
+  "https": [
+    {
+      "host": "example.com",
+      "exit_code": 0,
+      "result": "200 2606:4700:10::ac42:93f3 559",
+      "error": "",
+      "start_monotonic": 119558.837300791,
+      "end_monotonic": 119559.235022208
+    },
+    {
+      "host": "www.arduino.cc",
+      "exit_code": 0,
+      "result": "200 2606:4700::6812:d87 420088",
+      "error": "",
+      "start_monotonic": 119559.235026166,
+      "end_monotonic": 119559.483586333
+    }
+  ],
+  "source": {
+    "test": "source",
+    "bytes": 54400,
+    "seconds": 10.033286,
+    "bytes_per_second": 5422.0,
+    "start_monotonic": 119558.837268541,
+    "end_monotonic": 119568.870662083
+  },
+  "overlap_verified": true
+}

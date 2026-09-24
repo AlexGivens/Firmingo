@@ -1,0 +1,113 @@
+{
+  "manifest": {
+    "board": "nano_rp2040_connect",
+    "status": "compile-tested",
+    "core": "rp2040:rp2040",
+    "core_version": "6.0.0",
+    "arduino_cli_version": "1.5.1",
+    "package_index": "https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json",
+    "fqbn": "rp2040:rp2040:arduino_nano_connect:usbstack=picosdk,flash=16777216_0,freq=125,ipbtstack=ipv4only,opt=Small,rtti=Disabled,exceptions=Disabled",
+    "sketch": "examples/rp2040_usb_ncm_poc/RP2040_USB_NCM_POC",
+    "sketch_sha256": "4887fd480e98025392a85751138127410ad0b314a6ea51c7f18bdd1d1cc3c209",
+    "flash_layout": "16MB no FS; 16773120 bytes sketch, 4096 bytes EEPROM reservation",
+    "flash_budget_bytes": 1048576,
+    "static_ram_budget_bytes": 196608,
+    "budget_note": "Initial engineering caps, not measured performance: 1 MiB image and 192 KiB static RAM. Dynamic stack/heap headroom still requires measurement."
+  },
+  "firmware": "application",
+  "source_sha256": {
+    "examples/nano_application/README.md": "ffd34084f2595bafb529706867b6aa1b2a4e68f366d359466fbde233ff7217bc",
+    "examples/nano_application/nano_application.ino": "c233273f8f185d30de88f68b667fd39664fd6ef17714d72d7cd6e70a28e356f3",
+    "src/FirmingoLocalNetwork.h": "f34375320c9008aa05062041d0b2f99c8eda92db1e976293c2dafe342690db75",
+    "src/core/protocol.h": "567095d2bccd32c9567269a08de51829b6b4d6363bfdd294615498970016fa04",
+    "src/core/stream.h": "de79831814949934dc85568c236af258fe9ec77146f6ce033ec0b31d87bf9599",
+    "src/core/loopback.h": "2cb7f141a6aa27aaec76ea5bf968d601770dcb11b7b49d13ac0d7aeff898c9d5",
+    "src/core/session.h": "9ba3187d3ed0acff538e82a716b28659d8392b726f8b07c577667dcc08383fe3",
+    "src/core/session.cpp": "6eae972e0367cf945f230c946185685f47065a17db09bcf4dc43e5b60596ae96",
+    "src/core/json.h": "4e02c851c8baf68051ea7b34ebc940492e187e0696f255a0c62eb3fbca75f257",
+    "src/core/stream.cpp": "a61040d531883b84dc9ed3722aedab438e42341e48b824c6534a0151347a353c",
+    "src/core/protocol.cpp": "d6cc26fd08340302a45d71277e86c43310e9f4ef8e656977f77bb5f530adb1f0",
+    "src/core/json.cpp": "55f9c37253a1a7f60f19dfcfbd4705117045e74a0f6fb6d5fed35883dd0cfb56",
+    "src/ports/arduino_pico/local_dhcp.c": "1caf64aa2e654d371f5033304298aede70ec98636c17819302ad27ec13fb0739",
+    "src/ports/arduino_pico/tcp_session.h": "125047e70f8992681fc519214ee16407315308f035980e49d89e955558e692ec",
+    "src/ports/arduino_pico/tcp_session.cpp": "fc3e5cb6d089200263c6bb6a47f24def04348272d8607a9571c898ed6f2868f1",
+    "src/ports/arduino_pico/tcp_echo.cpp": "8f5213a7d33d1fed7a59db5ed3964bc9206abce72d9507fd3b19ad6c2ed6b4fb",
+    "src/ports/arduino_pico/local_dhcp.h": "3b6e28fd54a5df61e8552eeea426a4f534e4b1bfa80c2e1444b5a9f61455e63a",
+    "src/ports/arduino_pico/tcp_echo.h": "259cf576aa9aa32efaa66590e48849a5bbf80a779b767828b62774ee635c4107",
+    "tools/usb_core.py": "291aa905937ab28b2adb4c642059a7b2f6c07a87ac52a084fb09b040dabcae02",
+    "tools/dev.py": "ed1fa34a4bc5fe1825545df22bc515dfa72a89c89a18c696cf2f6c7fb6820b68",
+    "patches/arduino-pico-6.0.0-usb-startup/deferred-ncm.patch": "73a16d6789929404ac0aecd07a1066a428a0011adacd94ab5ae9747aaab31219",
+    "patches/arduino-pico-6.0.0-usb-startup/README.md": "e7b289ec39eb89e836da0e4ae686e9acfb0f1a5bc792a4e682ecf5bacd26ce3d",
+    "patches/arduino-pico-6.0.0-usb-startup/manifest.json": "627c696ed66291923da393f7310ea5847e8d47669779d1c10b5432f6f9b772c9"
+  },
+  "command": [
+    "/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli",
+    "--config-file",
+    "/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/arduino-cli.yaml",
+    "compile",
+    "--fqbn",
+    "rp2040:rp2040:arduino_nano_connect:usbstack=picosdk,flash=16777216_0,freq=125,ipbtstack=ipv4only,opt=Small,rtti=Disabled,exceptions=Disabled",
+    "--warnings",
+    "all",
+    "--build-path",
+    "/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/work",
+    "--output-dir",
+    "/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/artifacts",
+    "/Users/REDACTED/Developer/Firmingo/examples/nano_application",
+    "--library",
+    "/Users/REDACTED/Developer/Firmingo",
+    "--build-property",
+    "compiler.cpp.extra_flags=-DFIRMINGO_NET_C=77 -DFIRMINGO_USB_DEFERRED_START -DDISABLE_USB_SERIAL"
+  ],
+  "status": "compile-tested",
+  "artifacts": {
+    "nano_application.ino.bin": {
+      "sha256": "58887bfc457711e0dbd7cc9933e03b6ce4ce6d5dacc51aa7cfc4a0eceb19065c",
+      "bytes": 134624
+    },
+    "nano_application.ino.map": {
+      "sha256": "88b7e272ea37f307e7ec194e0d4fb6728906b5960786a02ea93182fe350881b6",
+      "bytes": 2080312
+    },
+    "nano_application.ino.uf2": {
+      "sha256": "6e17414409cf085ef092a87c1e227953fac0d84cb99e7cf24b1d467961787441",
+      "bytes": 269312
+    },
+    "nano_application.ino.elf": {
+      "sha256": "7a59a74a51e52c8550572e0368aa7f468fa58001969fe104bf2a0ec280f53fbc",
+      "bytes": 2619580
+    }
+  },
+  "usb_profile": "ncm-only",
+  "usb_startup_overlay": {
+    "core_path": "/Users/REDACTED/Developer/Firmingo/.arduino-data/packages/rp2040/hardware/rp2040/6.0.0",
+    "overlay_path": "/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0",
+    "manifest": {
+      "core_version": "6.0.0",
+      "patch": "deferred-ncm.patch",
+      "files": {
+        "cores/rp2040/main.cpp": {
+          "upstream_sha256": "ab71a1405ca7d58104b95c53b480ae448dbc7dfddaeda9afc137316726e605e9",
+          "patched_sha256": "f08f74e6a368a35bd410a9624643ff220400bbd1448e46a270e2480fa2f22bd5"
+        },
+        "cores/rp2040/USB.h": {
+          "upstream_sha256": "e2f26af1924f6fcf17c432b50a67eb40e9eb0870a01f5abfad9ad9f42b617314",
+          "patched_sha256": "08730ec12f6211c1a73ceaca712d4e60b4c28e52b76f4d79384bea02a080ce78"
+        },
+        "cores/rp2040/USB.cpp": {
+          "upstream_sha256": "3f51f43fb3e6b12bc7a5ab6a1d6c1b4e53d1241c2162bb7e729c43e2b60c4084",
+          "patched_sha256": "b4914df0128ef9ae0d6c65609ed5a5f4585ea9b1e2b4c20bf5a270a014c55fde"
+        },
+        "libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp": {
+          "upstream_sha256": "cf6ade4858f076dfa775a8f74cbe26ab6615804ae07996af3fc2d96869e5cc47",
+          "patched_sha256": "80a0a51c759da22a0e56d57656962fe570cbb0bac42b69143fa9e4df133f25f9"
+        }
+      },
+      "patch_sha256": "73a16d6789929404ac0aecd07a1066a428a0011adacd94ab5ae9747aaab31219"
+    }
+  },
+  "board_address": "192.168.77.1",
+  "exit_code": 0,
+  "flash_bytes": 116940,
+  "static_ram_bytes": 86560
+}

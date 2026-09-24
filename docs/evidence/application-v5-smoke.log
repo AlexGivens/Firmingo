@@ -1,0 +1,9 @@
+Verified FMGO device: {'protocol_major': 1, 'firmware_version': 'application-dev-v5', 'device_id': 'a1b2c3d4e5f60718', 'boot_id': '83c59bf30e43f49e', 'board_id': 'nano_rp2040_connect', 'max_payload': 4096, 'auth_mode': 'open-development', 'channels': [{'id': 1, 'backend': 'application', 'controls': [], 'rx_queue': 256, 'tx_queue': 256, 'owned': False}], 'targets': []}
+Second-client BUSY: pass
+Exact fragmented full-duplex echo: {'bytes': 16384, 'seconds': 0.991982041974552, 'bytes_per_second': 16516.428026648, 'fragmented_sends': 125, 'slow_read': False, 'read_delay': 0.15, 'seed': None}
+Exact echo with delayed reader: {'bytes': 4096, 'seconds': 0.7514580000424758, 'bytes_per_second': 5450.7371001020365, 'fragmented_sends': 34, 'slow_read': True, 'read_delay': 0.15, 'seed': None}
+Backend counters: {'channel_id': 1, 'backend_rx_bytes': 20480, 'backend_tx_bytes': 20480, 'pending_to_backend': 0, 'pending_to_peer': 0}
+Unsupported reset: pass (no reset performed)
+Ownership transfer echo: {'bytes': 4096, 'seconds': 0.7245518330018967, 'bytes_per_second': 5653.149731234311, 'fragmented_sends': 34, 'slow_read': False, 'read_delay': 0.15, 'seed': None}
+Both peer TCP closures observed; connecting fresh session
+Fresh-session reconnect echo: {'bytes': 4096, 'seconds': 0.7269936669617891, 'bytes_per_second': 5634.161872575551, 'fragmented_sends': 34, 'slow_read': False, 'read_delay': 0.15, 'seed': None}

@@ -1,0 +1,392 @@
+{
+  "status": "passed",
+  "board": "nano_rp2040_connect",
+  "address": "192.168.77.1",
+  "device_id": "a1b2c3d4e5f60718",
+  "declared_firmware_sha256": "5672a839ae6ddd558aca846bd688441decd7c15ccef47230851eebef31fb02a5",
+  "firmware_hash_verified_on_device": false,
+  "requested_duration_seconds": 60,
+  "batch_bytes": 16384,
+  "batch_timeout_seconds": 20,
+  "reconnect_every": 4,
+  "seed": 1179862863,
+  "completed_batches": 37,
+  "completed_sessions": 10,
+  "exact_bytes": 606208,
+  "samples": [
+    {
+      "batch": 1,
+      "bytes": 16384,
+      "seconds": 1.0013970410218462,
+      "bytes_per_second": 16361.142812326894,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1179862863
+    },
+    {
+      "batch": 2,
+      "bytes": 16384,
+      "seconds": 1.9596801670268178,
+      "bytes_per_second": 8360.547948422334,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3834298632
+    },
+    {
+      "batch": 3,
+      "bytes": 16384,
+      "seconds": 1.7425160830025561,
+      "bytes_per_second": 9402.49571284787,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2193767105
+    },
+    {
+      "batch": 4,
+      "bytes": 16384,
+      "seconds": 1.7435473329969682,
+      "bytes_per_second": 9396.934450777248,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 553235578
+    },
+    {
+      "batch": 5,
+      "bytes": 16384,
+      "seconds": 1.005653458996676,
+      "bytes_per_second": 16291.894442789517,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3207671347
+    },
+    {
+      "batch": 6,
+      "bytes": 16384,
+      "seconds": 1.9600595000083558,
+      "bytes_per_second": 8358.929920204031,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1567139820
+    },
+    {
+      "batch": 7,
+      "bytes": 16384,
+      "seconds": 1.7447404999984428,
+      "bytes_per_second": 9390.50821598663,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 4221575589
+    },
+    {
+      "batch": 8,
+      "bytes": 16384,
+      "seconds": 1.7414214999880642,
+      "bytes_per_second": 9408.40571918533,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2581044062
+    },
+    {
+      "batch": 9,
+      "bytes": 16384,
+      "seconds": 1.005017624993343,
+      "bytes_per_second": 16302.201665476787,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 940512535
+    },
+    {
+      "batch": 10,
+      "bytes": 16384,
+      "seconds": 1.9589307499700226,
+      "bytes_per_second": 8363.746395961532,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3594948304
+    },
+    {
+      "batch": 11,
+      "bytes": 16384,
+      "seconds": 1.743286499986425,
+      "bytes_per_second": 9398.340433501655,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1954416777
+    },
+    {
+      "batch": 12,
+      "bytes": 16384,
+      "seconds": 1.7430698330281302,
+      "bytes_per_second": 9399.508665431415,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 313885250
+    },
+    {
+      "batch": 13,
+      "bytes": 16384,
+      "seconds": 1.0036073329974897,
+      "bytes_per_second": 16325.109892397508,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2968321019
+    },
+    {
+      "batch": 14,
+      "bytes": 16384,
+      "seconds": 1.9602812500088476,
+      "bytes_per_second": 8357.984345320883,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1327789492
+    },
+    {
+      "batch": 15,
+      "bytes": 16384,
+      "seconds": 1.9884092080174014,
+      "bytes_per_second": 8239.752629357476,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3982225261
+    },
+    {
+      "batch": 16,
+      "bytes": 16384,
+      "seconds": 1.7459988750051707,
+      "bytes_per_second": 9383.740295910258,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2341693734
+    },
+    {
+      "batch": 17,
+      "bytes": 16384,
+      "seconds": 1.0048695000004955,
+      "bytes_per_second": 16304.604727272468,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 701162207
+    },
+    {
+      "batch": 18,
+      "bytes": 16384,
+      "seconds": 1.9578468750114553,
+      "bytes_per_second": 8368.376612652171,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3355597976
+    },
+    {
+      "batch": 19,
+      "bytes": 16384,
+      "seconds": 1.740900499979034,
+      "bytes_per_second": 9411.221376636582,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1715066449
+    },
+    {
+      "batch": 20,
+      "bytes": 16384,
+      "seconds": 1.744514915975742,
+      "bytes_per_second": 9391.722506904505,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 74534922
+    },
+    {
+      "batch": 21,
+      "bytes": 16384,
+      "seconds": 1.0032257919665426,
+      "bytes_per_second": 16331.31856377393,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2728970691
+    },
+    {
+      "batch": 22,
+      "bytes": 16384,
+      "seconds": 1.9596025419887155,
+      "bytes_per_second": 8360.87913183282,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1088439164
+    },
+    {
+      "batch": 23,
+      "bytes": 16384,
+      "seconds": 1.7418541659717448,
+      "bytes_per_second": 9406.068728411428,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3742874933
+    },
+    {
+      "batch": 24,
+      "bytes": 16384,
+      "seconds": 1.7448112089768983,
+      "bytes_per_second": 9390.127662927529,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2102343406
+    },
+    {
+      "batch": 25,
+      "bytes": 16384,
+      "seconds": 1.0030797089566477,
+      "bytes_per_second": 16333.696967155083,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 461811879
+    },
+    {
+      "batch": 26,
+      "bytes": 16384,
+      "seconds": 1.958072874986101,
+      "bytes_per_second": 8367.41073802797,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3116247648
+    },
+    {
+      "batch": 27,
+      "bytes": 16384,
+      "seconds": 1.7385892089805566,
+      "bytes_per_second": 9423.73271119459,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1475716121
+    },
+    {
+      "batch": 28,
+      "bytes": 16384,
+      "seconds": 1.7402413749950938,
+      "bytes_per_second": 9414.785923042538,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 4130151890
+    },
+    {
+      "batch": 29,
+      "bytes": 16384,
+      "seconds": 1.0055859169806354,
+      "bytes_per_second": 16292.98871765674,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2489620363
+    },
+    {
+      "batch": 30,
+      "bytes": 16384,
+      "seconds": 1.9567227910156362,
+      "bytes_per_second": 8373.184017290407,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 849088836
+    },
+    {
+      "batch": 31,
+      "bytes": 16384,
+      "seconds": 1.9898362079984508,
+      "bytes_per_second": 8233.843536539343,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 3503524605
+    },
+    {
+      "batch": 32,
+      "bytes": 16384,
+      "seconds": 1.7418330000364222,
+      "bytes_per_second": 9406.18302653435,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 1862993078
+    },
+    {
+      "batch": 33,
+      "bytes": 16384,
+      "seconds": 1.0073413329664618,
+      "bytes_per_second": 16264.596183849319,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 222461551
+    },
+    {
+      "batch": 34,
+      "bytes": 16384,
+      "seconds": 1.9617735409992747,
+      "bytes_per_second": 8351.626555047955,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 2876897320
+    },
+    {
+      "batch": 35,
+      "bytes": 16384,
+      "seconds": 1.9877773750340566,
+      "bytes_per_second": 8242.371709115208,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 1236365793
+    },
+    {
+      "batch": 36,
+      "bytes": 16384,
+      "seconds": 1.7476980420178734,
+      "bytes_per_second": 9374.61712841608,
+      "fragmented_sends": 125,
+      "slow_read": true,
+      "seed": 3890801562
+    },
+    {
+      "batch": 37,
+      "bytes": 16384,
+      "seconds": 1.0019542499794625,
+      "bytes_per_second": 16352.044018313043,
+      "fragmented_sends": 125,
+      "slow_read": false,
+      "seed": 2250270035
+    }
+  ],
+  "omitted_samples": 0,
+  "runtime_memory_measurement": "unavailable; traffic/counters are not heap measurements",
+  "started_utc": "2026-09-18T22:06:39Z",
+  "elapsed_seconds": 60.31425308302278,
+  "hello": {
+    "protocol_major": 1,
+    "firmware_version": "application-dev-v1",
+    "device_id": "a1b2c3d4e5f60718",
+    "boot_id": "d362b10ba8d61658",
+    "board_id": "nano_rp2040_connect",
+    "max_payload": 4096,
+    "auth_mode": "open-development",
+    "channels": [
+      {
+        "id": 1,
+        "backend": "application",
+        "controls": [],
+        "rx_queue": 256,
+        "tx_queue": 256,
+        "owned": false
+      }
+    ],
+    "targets": []
+  },
+  "last_sample": {
+    "batch": 37,
+    "bytes": 16384,
+    "seconds": 1.0019542499794625,
+    "bytes_per_second": 16352.044018313043,
+    "fragmented_sends": 125,
+    "slow_read": false,
+    "seed": 2250270035
+  },
+  "last_backend_status": {
+    "channel_id": 1,
+    "backend_rx_bytes": 16384,
+    "backend_tx_bytes": 16384,
+    "pending_to_backend": 0,
+    "pending_to_peer": 0
+  },
+  "finished_utc": "2026-09-18T22:07:39Z"
+}

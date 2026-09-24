@@ -1,0 +1,32 @@
+{
+  "observation": "read-only post-failure query after uart-format-2mbaud-burst-failure.json",
+  "peer_stats": "OK baud=2000000 actual_baud=2000000 mode=sink rx=1024 tx=1024 data_bits=8 parity=none stop_bits=1 overruns=0 mismatches=0 first_mismatch=4294967295 expect_remaining=0 send_remaining=0",
+  "nano_channel": {
+    "id": 1,
+    "backend": "uart",
+    "owned": false,
+    "config": {
+      "baud": 2000000,
+      "actual_baud": 2000000,
+      "data_bits": 8,
+      "parity": "none",
+      "stop_bits": 1,
+      "flow_control": "none"
+    }
+  },
+  "nano_diagnostics": {
+    "samples": 412105,
+    "heap_free": 174192,
+    "heap_min": 174192,
+    "stack_free": 8064,
+    "stack_min": 8064,
+    "peak_to_backend": 256,
+    "peak_to_peer": 256,
+    "uart_rx_pending": 0,
+    "uart_rx_discarded": 20,
+    "uart_rx_overrun_events": 3,
+    "uart_rx_lost_bytes_minimum": 3,
+    "uart_tx_throttles": 0,
+    "tcp_errors": 0
+  }
+}

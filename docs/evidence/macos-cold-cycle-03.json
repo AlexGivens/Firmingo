@@ -1,0 +1,146 @@
+{
+  "utc": "2026-09-18T09:53:28.221141+00:00",
+  "board": "nano_rp2040_connect",
+  "address": "192.168.77.1",
+  "device_id": "a1b2c3d4e5f60718",
+  "interface": "en5",
+  "firmware_sha256_user_selected": "de41aa1af5f794d1c7b22e18be4223312ddfb1c4aea1dcf583d348855740c778",
+  "connection_details_user_reported": "board revision and cable/hub not recorded",
+  "host": {
+    "model": "MacBookAir10,1",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0\nBuildVersion:\t\t26A428"
+  },
+  "timing_basis": "host-observed USB serial appearance, NOT physical insertion or packet-level lease time",
+  "authorization": "No approval prompt on cycle 3, user-reported; first authorization not tested",
+  "status": "complete",
+  "cycles": [
+    {
+      "cycle": 3,
+      "status": "functional_pass",
+      "usb_detach_reattach_observed": true,
+      "detached_observation": {
+        "sample_start": 298413.670921875,
+        "sample_end": 298413.719704625,
+        "last_negative_sample_start": 298413.421213583
+      },
+      "usb": {
+        "device_id": "a1b2c3d4e5f60718",
+        "registry_id": 4295146110
+      },
+      "arrived_observation": {
+        "sample_start": 298417.898014791,
+        "sample_end": 298417.93998725,
+        "last_negative_sample_start": 298417.647716125
+      },
+      "network": {
+        "host_address": "192.168.77.16",
+        "dhcp_xid": "0x5585a3be",
+        "interface_output": "en5: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=404<VLAN_MTU,CHANNEL_IO>\n\tether 02:00:00:00:00:00\n\tinet6 fe80::1%en5 prefixlen 64 secured scopeid 0x19 \n\tinet 192.168.77.16 netmask 0xffffff00 broadcast 192.168.77.255\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: autoselect (10baseT/UTP <full-duplex>)\n\tstatus: active\n",
+        "dhcp_packet": "op = BOOTREPLY\nhtype = 1\nflags = 0x0\nhlen = 6\nhops = 0\nxid = 0x5585a3be\nsecs = 0\nciaddr = 0.0.0.0\nyiaddr = 192.168.77.16\nsiaddr = 0.0.0.0\ngiaddr = 0.0.0.0\nchaddr = 52:33:37:38:0:f6\nsname = \nfile = \noptions:\nOptions count is 8\ndhcp_message_type (uint8): ACK 0x5\nserver_identifier (ip): 192.168.77.1\nsubnet_mask (ip): 255.255.255.0\nlease_time (uint32): 0x258\nrenewal_t1_time_value (uint32): 0x12c\nrebinding_t2_time_value (uint32): 0x20d\nclient_identifier (uint8_mult): {0x1, 0x52, 0x33, 0x37, 0x38, 0x0, 0xf6}\nend (none): \n"
+      },
+      "host_address_observation": {
+        "sample_start": 298420.845554,
+        "sample_end": 298420.865587041,
+        "last_negative_sample_start": 298420.629949208
+      },
+      "observed_usb_to_address_seconds": 2.9256,
+      "board_route": "   route to: 192.168.77.1\ndestination: 192.168.77.0\n       mask: 255.255.255.0\n  interface: en5\n      flags: <UP,DONE,CLONING,STATIC>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n",
+      "internet_route": "   route to: default\ndestination: default\n       mask: default\n    gateway: 192.168.4.1\n  interface: en0\n      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n",
+      "diagnostics": {
+        "firmware": "ncm-startup-v1",
+        "board": "nano_rp2040_connect",
+        "device_id": "a1b2c3d4e5f60718",
+        "usb_profile": "ncm-only",
+        "usb_initialized_at_setup": false,
+        "setup_ms": 1,
+        "dhcp_ready_ms": 1,
+        "ncm_ready_ms": 2,
+        "services_ready_ms": 2,
+        "attach_requested_ms": 2
+      },
+      "observed_usb_to_identity_seconds": 2.956284,
+      "dhcp_xid_changed": true,
+      "traffic": {
+        "echo": {
+          "begin_monotonic": 298420.903531708,
+          "end_monotonic": 298424.806570041,
+          "result": {
+            "test": "echo",
+            "bytes": 65536,
+            "seconds": 3.872935,
+            "bytes_per_second": 16921.5
+          }
+        },
+        "source": {
+          "begin_monotonic": 298420.910639208,
+          "end_monotonic": 298426.393165583,
+          "result": {
+            "test": "source",
+            "bytes": 27200,
+            "seconds": 5.48249,
+            "bytes_per_second": 4961.2
+          }
+        },
+        "https": [
+          {
+            "options": [
+              "-4"
+            ],
+            "begin_monotonic": 298420.911251291,
+            "end_monotonic": 298421.510767708,
+            "exit": 0,
+            "output": "200 104.20.23.154",
+            "error": ""
+          },
+          {
+            "options": [],
+            "begin_monotonic": 298421.510778,
+            "end_monotonic": 298421.881056375,
+            "exit": 0,
+            "output": "200 2606:4700:10::ac42:93f3",
+            "error": ""
+          }
+        ],
+        "reconnect": {
+          "test": "echo",
+          "bytes": 4096,
+          "seconds": 0.358085,
+          "bytes_per_second": 11438.6
+        },
+        "internet_access_pass": true,
+        "internet_overlap_pass": true
+      },
+      "user_observation": {
+        "macos_approval_prompt": "User reported no approval prompt",
+        "statement": "No approval prompt appeared",
+        "context": "Response to requested single physical unplug/replug for cycle 3"
+      }
+    }
+  ],
+  "preflight": {
+    "usb": {
+      "device_id": "a1b2c3d4e5f60718",
+      "registry_id": 4295145766
+    },
+    "network": {
+      "host_address": "192.168.77.16",
+      "dhcp_xid": "0xdce90170",
+      "interface_output": "en5: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500\n\toptions=404<VLAN_MTU,CHANNEL_IO>\n\tether 02:00:00:00:00:00\n\tinet6 fe80::1%en5 prefixlen 64 secured scopeid 0x19 \n\tinet 192.168.77.16 netmask 0xffffff00 broadcast 192.168.77.255\n\tnd6 options=201<PERFORMNUD,DAD>\n\tmedia: autoselect (10baseT/UTP <full-duplex>)\n\tstatus: active\n",
+      "dhcp_packet": "op = BOOTREPLY\nhtype = 1\nflags = 0x0\nhlen = 6\nhops = 0\nxid = 0xdce90170\nsecs = 0\nciaddr = 192.168.77.16\nyiaddr = 192.168.77.16\nsiaddr = 0.0.0.0\ngiaddr = 0.0.0.0\nchaddr = 52:33:37:38:0:f6\nsname = \nfile = \noptions:\nOptions count is 8\ndhcp_message_type (uint8): ACK 0x5\nserver_identifier (ip): 192.168.77.1\nsubnet_mask (ip): 255.255.255.0\nlease_time (uint32): 0x258\nrenewal_t1_time_value (uint32): 0x12c\nrebinding_t2_time_value (uint32): 0x20d\nclient_identifier (uint8_mult): {0x1, 0x52, 0x33, 0x37, 0x38, 0x0, 0xf6}\nend (none): \n"
+    },
+    "diagnostics": {
+      "firmware": "ncm-startup-v1",
+      "board": "nano_rp2040_connect",
+      "device_id": "a1b2c3d4e5f60718",
+      "usb_profile": "ncm-only",
+      "usb_initialized_at_setup": false,
+      "setup_ms": 1,
+      "dhcp_ready_ms": 1,
+      "ncm_ready_ms": 2,
+      "services_ready_ms": 2,
+      "attach_requested_ms": 2
+    },
+    "board_route": "   route to: 192.168.77.1\ndestination: 192.168.77.1\n  interface: en5\n      flags: <UP,HOST,DONE,LLINFO,WASCLONED,IFSCOPE,IFREF>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500      1142 \n",
+    "internet_route": "   route to: default\ndestination: default\n       mask: default\n    gateway: 192.168.4.1\n  interface: en0\n      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>\n recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire\n       0         0         0         0         0         0      1500         0 \n"
+  }
+}

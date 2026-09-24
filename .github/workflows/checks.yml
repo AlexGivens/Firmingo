@@ -1,0 +1,64 @@
+name: Firmware foundations
+on: [push, pull_request]
+
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m venv .venv
+      - run: .venv/bin/python -m pip install -r requirements-dev.txt
+      - run: .venv/bin/python tools/dev.py test --sanitize
+      - name: Bounded DHCP mutation fuzz
+        run: |
+          .venv/bin/cmake -S . -B build/dhcp-fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON
+          .venv/bin/cmake --build build/dhcp-fuzz --parallel 2
+          .venv/bin/ctest --test-dir build/dhcp-fuzz -R dhcp_fuzz --output-on-failure
+      - name: Bounded stream protocol mutation fuzz
+        run: |
+          .venv/bin/cmake -S . -B build/protocol-fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_PROTOCOL_FUZZ=ON
+          .venv/bin/cmake --build build/protocol-fuzz --parallel 2
+          .venv/bin/ctest --test-dir build/protocol-fuzz -R '(protocol|session)_fuzz' --output-on-failure
+
+  firmware-builds:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      matrix:
+        include:
+          - board: nano_rp2040_connect
+            firmware: baseline
+          - board: nano_rp2040_connect
+            firmware: local-only
+          - board: nano_rp2040_connect
+            firmware: application
+          - board: nano_rp2040_connect
+            firmware: uart
+          - board: raspberry_pi_pico
+            firmware: local-only
+          - board: raspberry_pi_pico
+            firmware: application
+          - board: raspberry_pi_pico
+            firmware: uart
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: arduino/setup-arduino-cli@v2
+        with:
+          version: '1.5.1'
+      - name: Install pinned core
+        run: |
+          arduino-cli core update-index --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+          arduino-cli core install rp2040:rp2040@6.0.0 --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+      - run: python tools/dev.py build --board ${{ matrix.board }} --firmware ${{ matrix.firmware }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ${{ matrix.board }}-${{ matrix.firmware }}-build
+          path: build/firmware/${{ matrix.board }}/${{ matrix.firmware }}/

@@ -1,0 +1,53 @@
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:7,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.h:6,
+                 from /Users/REDACTED/Developer/Firmingo/examples/nano_local_only/nano_local_only.ino:25:
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecure.h:24,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:9:
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:55:12: note:   by 'virtual size_t BearSSL::WiFiClientSecureCtx::write(const uint8_t*, size_t)'
+   55 |     size_t write(const uint8_t *buf, size_t size) override;
+      |            ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:398:12: note:   by 'virtual size_t BearSSL::WiFiClientSecure::write(const uint8_t*, size_t)'
+  398 |     size_t write(const uint8_t *buf, size_t size) override {
+      |            ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:7,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.h:6,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp:24:
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecure.h:24,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:9:
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:55:12: note:   by 'virtual size_t BearSSL::WiFiClientSecureCtx::write(const uint8_t*, size_t)'
+   55 |     size_t write(const uint8_t *buf, size_t size) override;
+      |            ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:398:12: note:   by 'virtual size_t BearSSL::WiFiClientSecure::write(const uint8_t*, size_t)'
+  398 |     size_t write(const uint8_t *buf, size_t size) override {
+      |            ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:7,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.h:6,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.cpp:1:
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecure.h:24,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:9:
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:55:12: note:   by 'virtual size_t BearSSL::WiFiClientSecureCtx::write(const uint8_t*, size_t)'
+   55 |     size_t write(const uint8_t *buf, size_t size) override;
+      |            ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/raspberry_pi_pico/local-only/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:398:12: note:   by 'virtual size_t BearSSL::WiFiClientSecure::write(const uint8_t*, size_t)'
+  398 |     size_t write(const uint8_t *buf, size_t size) override {
+      |            ^~~~~
+Sketch uses 119580 bytes (5%) of program storage space. Maximum is 2093056 bytes.
+Global variables use 77108 bytes (29%) of dynamic memory, leaving 185036 bytes for local variables. Maximum is 262144 bytes.

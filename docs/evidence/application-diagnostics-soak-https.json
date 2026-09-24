@@ -1,0 +1,13 @@
+{
+  "board": "nano_rp2040_connect",
+  "device_id": "a1b2c3d4e5f60718",
+  "firmware_sha256": "f553b19b18b2b265e042c38ef33cead60dd0c01244caa48c001c00b0c21850d4",
+  "started_utc": "2026-09-18T22:50:48Z",
+  "context": "uncached IPv4 HTTPS fetch while required-diagnostics soak command is running; exact overlap with a payload interval not traced",
+  "exit_code": 0,
+  "output": "200 172.66.147.243",
+  "error": "",
+  "seconds": 0.38849620800465345,
+  "finished_utc": "2026-09-18T22:50:48Z",
+  "status": "passed"
+}

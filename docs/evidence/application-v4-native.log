@@ -1,0 +1,196 @@
+UpdateCTestConfiguration  from :/Users/REDACTED/Developer/Firmingo/build/native-sanitize/DartConfiguration.tcl
+Parse Config file:/Users/REDACTED/Developer/Firmingo/build/native-sanitize/DartConfiguration.tcl
+Test project /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: stream
+
+1: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/stream_tests
+1: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+1: Test timeout computed to be: 10
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:173:binary_full_duplex_survives_every_partial_write_size:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:174:stalled_reader_is_bounded_and_other_direction_progresses:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:175:second_owner_cannot_steal_or_discard_pending_bytes:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:176:disconnect_discards_both_queues_before_reconnect:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:177:idle_timeout_handles_clock_rollover_and_exact_boundary:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:178:real_progress_extends_timeout_but_stalls_do_not:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:179:faulty_adapter_counts_fail_closed:PASS
+1: /Users/REDACTED/Developer/Firmingo/tests/native/test_stream.cpp:180:empty_io_is_bounded_and_timeout_can_be_disabled:PASS
+1: 
+1: -----------------------
+1: 8 Tests 0 Failures 0 Ignored 
+1: OK
+1/9 Test #1: stream ...........................   Passed    0.03 sec
+test 2
+    Start 2: application
+
+2: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/application_tests
+2: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+2: Test timeout computed to be: 10
+2: /Users/REDACTED/Developer/Firmingo/tests/native/test_application.cpp:95:inactive_endpoint_never_queues_application_or_network_bytes:PASS
+2: /Users/REDACTED/Developer/Firmingo/tests/native/test_application.cpp:96:binary_queues_wrap_and_apply_partial_backpressure_without_loss:PASS
+2: /Users/REDACTED/Developer/Firmingo/tests/native/test_application.cpp:97:lifecycle_discards_queues_without_replay_and_preserves_peaks:PASS
+2: /Users/REDACTED/Developer/Firmingo/tests/native/test_application.cpp:98:channel_disconnect_notifies_endpoint_and_counts_only_discarded_bytes:PASS
+2: 
+2: -----------------------
+2: 4 Tests 0 Failures 0 Ignored 
+2: OK
+2/9 Test #2: application ......................   Passed    0.02 sec
+test 3
+    Start 3: protocol
+
+3: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/protocol_tests
+3: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+3: Test timeout computed to be: 10
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:144:shared_wire_fixtures_match_encoder_and_decoder:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:145:every_split_preserves_empty_small_and_maximum_frames:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:146:coalesced_frames_leave_tail_for_next_frame:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:147:all_header_faults_stop_before_collecting_payload:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:148:request_id_rules_cover_every_type:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:149:negotiation_enforces_limits_only_between_frames:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:150:encoder_checks_bounds_before_touching_output:PASS
+3: /Users/REDACTED/Developer/Firmingo/tests/native/test_protocol.cpp:151:incomplete_and_ready_frames_stay_bounded_until_reset:PASS
+3: 
+3: -----------------------
+3: 8 Tests 0 Failures 0 Ignored 
+3: OK
+3/9 Test #3: protocol .........................   Passed    0.09 sec
+test 4
+    Start 4: session
+
+4: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/session_tests
+4: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+4: Test timeout computed to be: 10
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:404:diagnostics_are_bounded_correlated_and_keep_sampled_minima:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:405:diagnostics_require_negotiation_samples_and_exact_schema:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:406:application_queue_diagnostics_are_bounded_and_additive:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:407:stream_queue_peaks_include_drained_reads_and_survive_new_owner:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:408:strict_json_checks_syntax_unicode_numbers_and_duplicates:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:409:json_resource_limits_are_explicit_and_reset_after_failure:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:410:hello_reports_stable_identity_capabilities_and_negotiated_limit:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:411:all_control_frame_splits_keep_exactly_one_correlated_response:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:412:coalesced_commands_and_all_partial_writes_preserve_binary_data:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:413:busy_connection_cannot_steal_or_discard_owner_queues:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:414:request_schemas_reject_wrong_fields_types_and_parameters_without_actions:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:415:handshake_schema_invalid_requests_can_be_corrected_without_negotiating:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:416:malformed_json_releases_owner_and_flushes_one_error_without_retry:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:417:invalid_serial_and_client_response_frames_close_before_side_effects:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:418:timeout_boundaries_cover_rollover_trickle_idle_and_error_flush:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:419:stalled_output_is_bounded_while_input_progresses_and_then_drains:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:420:stalled_backend_bounds_input_and_allows_opposite_direction:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:421:disconnect_close_and_destruction_discard_queues_before_new_owner:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:422:commands_and_backend_data_both_progress_under_continuous_traffic:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:423:unsupported_upload_open_config_and_wrong_target_have_clear_errors:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:424:adapter_failures_invalid_identity_and_offline_backend_fail_safely:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:425:exact_hello_and_unsupported_reset_fixtures_match_production_output:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:426:maximum_binary_frame_and_negotiated_overflow_have_correct_boundaries:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:427:close_disposes_pending_data_and_status_is_not_a_flush_acknowledgement:PASS
+4: /Users/REDACTED/Developer/Firmingo/tests/native/test_session.cpp:428:poll_has_bounded_calls_and_bad_header_does_not_splice_partial_output:PASS
+4: 
+4: -----------------------
+4: 25 Tests 0 Failures 0 Ignored 
+4: OK
+4/9 Test #4: session ..........................   Passed    0.75 sec
+test 5
+    Start 5: tcp_echo
+
+5: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/tcp_echo_tests
+5: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+5: Test timeout computed to be: 10
+5: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_echo.cpp:111:full_echo_survives_send_memory_exhaustion_and_partial_writes:PASS
+5: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_echo.cpp:112:refused_packet_remains_owned_by_stack_and_busy_peer_cannot_steal:PASS
+5: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_echo.cpp:113:eof_and_error_clear_pending_data_before_reconnect:PASS
+5: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_echo.cpp:114:idle_connection_expires_without_waiting_for_peer:PASS
+5: 
+5: -----------------------
+5: 4 Tests 0 Failures 0 Ignored 
+5: OK
+5/9 Test #5: tcp_echo .........................   Passed    0.02 sec
+test 6
+    Start 6: tcp_session
+
+6: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/tcp_session_tests
+6: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+6: Test timeout computed to be: 10
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:361:raw_port_exposes_shared_samples_without_channel_acquisition:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:362:chained_input_partial_writes_and_memory_pressure_preserve_binary:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:363:coalesced_frames_stop_receive_credit_when_peer_stalls:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:364:graceful_close_retries_memory_failure_without_using_transferred_pcb:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:365:second_socket_receives_busy_without_displacing_owner:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:366:callbacks_defer_backend_cleanup_and_new_owner_gets_no_replay:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:367:fatal_json_reply_waits_for_tcp_ack_then_closes_without_dangling_callbacks:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:368:unacknowledged_terminal_output_and_close_memory_failure_have_deadlines:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:369:handshake_timeout_starts_at_accept_even_before_first_application_poll:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:370:transport_fault_releases_owner_and_refused_input_stays_stack_owned:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:371:reconnect_accept_before_application_cleanup_reuses_only_dead_socket_slot:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:372:accept_resource_error_with_null_pcb_never_aborts_null_or_displaces_owner:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:373:frequent_application_poll_dispatches_timer_owned_refused_data:PASS
+6: /Users/REDACTED/Developer/Firmingo/tests/native/test_tcp_session.cpp:374:listener_failures_are_reported_and_stop_releases_live_sessions:PASS
+6: 
+6: -----------------------
+6: 14 Tests 0 Failures 0 Ignored 
+6: OK
+6/9 Test #6: tcp_session ......................   Passed    0.03 sec
+test 7
+    Start 7: usb_startup_deferred
+
+7: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/usb_startup_deferred_tests
+7: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+7: Test timeout computed to be: 10
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:268:usb_preparation_and_controller_start_are_idempotent:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:269:receive_worker_reschedules_after_its_ten_packet_budget:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:271:final_ncm_descriptor_attaches_after_all_services:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:272:every_startup_failure_keeps_controller_detached:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:273:application_reference_attaches_only_after_protocol_listener:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:274:application_startup_failures_keep_usb_detached:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:275:boot_nonce_changes_without_changing_device_identity:PASS
+7: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:276:late_ncm_registration_is_rejected_without_reconnect:PASS
+7: 
+7: -----------------------
+7: 8 Tests 0 Failures 0 Ignored 
+7: OK
+7/9 Test #7: usb_startup_deferred .............   Passed    0.02 sec
+test 8
+    Start 8: usb_startup_default
+
+8: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/usb_startup_default_tests
+8: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+8: Test timeout computed to be: 10
+8: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:268:usb_preparation_and_controller_start_are_idempotent:PASS
+8: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:269:receive_worker_reschedules_after_its_ten_packet_budget:PASS
+8: /Users/REDACTED/Developer/Firmingo/tests/native/test_usb_startup.cpp:278:default_core_still_starts_usb_and_cdc_before_setup:PASS
+8: 
+8: -----------------------
+8: 3 Tests 0 Failures 0 Ignored 
+8: OK
+8/9 Test #8: usb_startup_default ..............   Passed    0.01 sec
+test 9
+    Start 9: local_dhcp
+
+9: Test command: /Users/REDACTED/Developer/Firmingo/build/native-sanitize/dhcp_tests
+9: Working Directory: /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+9: Test timeout computed to be: 10
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:231:replies_are_local_only_exact_bytes_even_when_routes_are_requested:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:232:reordered_padded_options_and_every_pbuf_split_work:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:233:malformed_truncated_packets_do_not_allocate_or_reply:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:234:discover_request_retry_renew_rebind_and_expiry:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:235:reservations_pool_exhaustion_and_offer_expiry:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:236:another_server_is_ignored_and_wrong_subnet_is_naked:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:237:release_decline_and_clock_wrap:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:238:client_identifier_is_used_and_echoed:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:239:allocation_bind_and_send_failures_release_resources:PASS
+9: /Users/REDACTED/Developer/Firmingo/tests/native/test_dhcp.c:240:inform_does_not_allocate_and_unsupported_config_is_rejected:PASS
+9: 
+9: -----------------------
+9: 10 Tests 0 Failures 0 Ignored 
+9: OK
+9/9 Test #9: local_dhcp .......................   Passed    0.02 sec
+
+100% tests passed out of 9
+
+Total Test time (real) =   0.99 sec

@@ -1,0 +1,2 @@
+protocol frame mutation: 20000 cases pass, seed=464d4750
+JSON/session mutation: 20000 cases pass, seed=53455331

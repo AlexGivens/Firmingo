@@ -1,0 +1,64 @@
++ '/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli' --config-file /Users/REDACTED/Developer/Firmingo/arduino-cli.local.yaml version --json
++ '/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli' --config-file /Users/REDACTED/Developer/Firmingo/arduino-cli.local.yaml core list --json
++ '/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli' --config-file /Users/REDACTED/Developer/Firmingo/arduino-cli.local.yaml config dump --json
++ patch --batch --fuzz=0 --no-backup-if-mismatch -p1 -i /Users/REDACTED/Developer/Firmingo/patches/arduino-pico-6.0.0-usb-startup/deferred-ncm.patch
+patching file 'cores/rp2040/main.cpp'
+patching file 'cores/rp2040/USB.h'
+patching file 'cores/rp2040/USB.cpp'
+patching file 'libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp'
++ '/Applications/Arduino IDE.app/Contents/Resources/app/lib/backend/resources/arduino-cli' --config-file /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/arduino-cli.yaml compile --fqbn rp2040:rp2040:arduino_nano_connect:usbstack=picosdk,flash=16777216_0,freq=125,ipbtstack=ipv4only,opt=Small,rtti=Disabled,exceptions=Disabled --warnings all --build-path /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/work --output-dir /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/artifacts /Users/REDACTED/Developer/Firmingo/examples/nano_application --library /Users/REDACTED/Developer/Firmingo --build-property 'compiler.cpp.extra_flags=-DFIRMINGO_NET_C=77 -DFIRMINGO_USB_DEFERRED_START -DDISABLE_USB_SERIAL'
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:7,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.h:6,
+                 from /Users/REDACTED/Developer/Firmingo/examples/nano_application/nano_application.ino:3:
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecure.h:24,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:9:
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:55:12: note:   by 'virtual size_t BearSSL::WiFiClientSecureCtx::write(const uint8_t*, size_t)'
+   55 |     size_t write(const uint8_t *buf, size_t size) override;
+      |            ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:398:12: note:   by 'virtual size_t BearSSL::WiFiClientSecure::write(const uint8_t*, size_t)'
+  398 |     size_t write(const uint8_t *buf, size_t size) override {
+      |            ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:7,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.h:6,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/utility/NCMEthernet.cpp:24:
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecure.h:24,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:9:
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:55:12: note:   by 'virtual size_t BearSSL::WiFiClientSecureCtx::write(const uint8_t*, size_t)'
+   55 |     size_t write(const uint8_t *buf, size_t size) override;
+      |            ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:398:12: note:   by 'virtual size_t BearSSL::WiFiClientSecure::write(const uint8_t*, size_t)'
+  398 |     size_t write(const uint8_t *buf, size_t size) override {
+      |            ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:7,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.h:6,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/lwIP_USB_NCM/src/NCMEthernetlwIP.cpp:1:
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+In file included from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecure.h:24,
+                 from /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFi.h:9:
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:55:12: note:   by 'virtual size_t BearSSL::WiFiClientSecureCtx::write(const uint8_t*, size_t)'
+   55 |     size_t write(const uint8_t *buf, size_t size) override;
+      |            ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClient.h:71:20: warning: 'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]
+   71 |     virtual size_t write(uint8_t) override;
+      |                    ^~~~~
+/Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/usb-toolchain/data/packages/rp2040/hardware/rp2040/6.0.0/libraries/WiFi/src/WiFiClientSecureBearSSL.h:398:12: note:   by 'virtual size_t BearSSL::WiFiClientSecure::write(const uint8_t*, size_t)'
+  398 |     size_t write(const uint8_t *buf, size_t size) override {
+      |            ^~~~~
+Sketch uses 119036 bytes (0%) of program storage space. Maximum is 16773120 bytes.
+Global variables use 87160 bytes (33%) of dynamic memory, leaving 174984 bytes for local variables. Maximum is 262144 bytes.
+
+Build report: /Users/REDACTED/Developer/Firmingo/build/firmware/nano_rp2040_connect/application/report.json; hardware NOT tested

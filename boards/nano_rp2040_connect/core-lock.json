@@ -1,0 +1,46 @@
+{
+  "name": "Raspberry Pi Pico/RP2040/RP2350",
+  "architecture": "rp2040",
+  "version": "6.0.0",
+  "url": "https://github.com/earlephilhower/arduino-pico/releases/download/6.0.0/rp2040-6.0.0.zip",
+  "archiveFileName": "rp2040-6.0.0.zip",
+  "checksum": "SHA-256:d2163a321748be872a29cb99ead739840990d3ddf0935de756eb52f9fc2b5d46",
+  "size": "126165774",
+  "toolsDependencies": [
+    {
+      "packager": "rp2040",
+      "version": "5.0.0-9576866",
+      "name": "pqt-gcc"
+    },
+    {
+      "packager": "rp2040",
+      "version": "5.0.0-9576866",
+      "name": "pqt-gcc-riscv"
+    },
+    {
+      "packager": "rp2040",
+      "version": "5.0.0-9576866",
+      "name": "pqt-mklittlefs"
+    },
+    {
+      "packager": "rp2040",
+      "version": "5.0.0-9576866",
+      "name": "pqt-pioasm"
+    },
+    {
+      "packager": "rp2040",
+      "version": "1.0.1-base-3a57aed-1",
+      "name": "pqt-python3"
+    },
+    {
+      "packager": "rp2040",
+      "version": "5.0.0-9576866",
+      "name": "pqt-openocd"
+    },
+    {
+      "packager": "rp2040",
+      "version": "5.0.0-9576866",
+      "name": "pqt-picotool"
+    }
+  ]
+}

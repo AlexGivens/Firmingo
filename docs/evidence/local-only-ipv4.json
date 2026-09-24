@@ -1,0 +1,13 @@
+{
+  "ipv4_https_exit_code": 0,
+  "ipv4_https_result": "200 104.20.23.154 559",
+  "error": "",
+  "source": {
+    "test": "source",
+    "bytes": 27200,
+    "seconds": 4.995466,
+    "bytes_per_second": 5444.9
+  },
+  "request_finished_before_source": true,
+  "elapsed": 4.995768249995308
+}

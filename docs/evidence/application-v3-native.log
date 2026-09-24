@@ -1,0 +1,36 @@
+[  6%] Built target unity
+[ 23%] Built target firmingo_core
+[ 26%] Built target usb_startup_fragments
+[ 33%] Built target local_dhcp
+[ 40%] Built target stream_tests
+[ 46%] Built target application_tests
+[ 53%] Built target protocol_tests
+[ 60%] Built target session_tests
+[ 70%] Built target tcp_echo_tests
+[ 80%] Built target tcp_session_tests
+[ 86%] Built target usb_startup_deferred_tests
+[ 93%] Built target usb_startup_default_tests
+[100%] Built target dhcp_tests
+Test project /Users/REDACTED/Developer/Firmingo/build/native-sanitize
+    Start 1: stream
+1/9 Test #1: stream ...........................   Passed    0.07 sec
+    Start 2: application
+2/9 Test #2: application ......................   Passed    0.02 sec
+    Start 3: protocol
+3/9 Test #3: protocol .........................   Passed    0.10 sec
+    Start 4: session
+4/9 Test #4: session ..........................   Passed    0.81 sec
+    Start 5: tcp_echo
+5/9 Test #5: tcp_echo .........................   Passed    0.02 sec
+    Start 6: tcp_session
+6/9 Test #6: tcp_session ......................   Passed    0.03 sec
+    Start 7: usb_startup_deferred
+7/9 Test #7: usb_startup_deferred .............   Passed    0.02 sec
+    Start 8: usb_startup_default
+8/9 Test #8: usb_startup_default ..............   Passed    0.02 sec
+    Start 9: local_dhcp
+9/9 Test #9: local_dhcp .......................   Passed    0.02 sec
+
+100% tests passed out of 9
+
+Total Test time (real) =   1.11 sec

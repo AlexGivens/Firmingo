@@ -1,0 +1,584 @@
+--- third_party/arduino-pico-dhcp/upstream/dhcpserver.c
++++ src/ports/arduino_pico/local_dhcp.c
+@@ -24,287 +24,236 @@
+     THE SOFTWARE.
+ */
+ 
+-// For DHCP specs see:
+-//  https://www.ietf.org/rfc/rfc2131.txt
+-//  https://tools.ietf.org/html/rfc2132 -- DHCP Options and BOOTP Vendor Extensions
+-
+-#include <stdio.h>
++// Firmingo modifications: local-only options, bounded parser and lease handling.
++#include "local_dhcp.h"
++#include <lwip/udp.h>
++#include <pico/time.h>
+ #include <string.h>
+ #include <errno.h>
+ 
+-#include "dhcpserver.h"
+-#include <lwip/udp.h>
+-#include <pico/time.h>
+-
+-#define DHCPDISCOVER    (1)
+-#define DHCPOFFER       (2)
+-#define DHCPREQUEST     (3)
+-#define DHCPDECLINE     (4)
+-#define DHCPACK         (5)
+-#define DHCPNACK        (6)
+-#define DHCPRELEASE     (7)
+-#define DHCPINFORM      (8)
+-
+-#define DHCP_OPT_PAD                (0)
+-#define DHCP_OPT_SUBNET_MASK        (1)
+-#define DHCP_OPT_ROUTER             (3)
+-#define DHCP_OPT_DNS                (6)
+-#define DHCP_OPT_HOST_NAME          (12)
+-#define DHCP_OPT_REQUESTED_IP       (50)
+-#define DHCP_OPT_IP_LEASE_TIME      (51)
+-#define DHCP_OPT_MSG_TYPE           (53)
+-#define DHCP_OPT_SERVER_ID          (54)
+-#define DHCP_OPT_PARAM_REQUEST_LIST (55)
+-#define DHCP_OPT_MAX_MSG_SIZE       (57)
+-#define DHCP_OPT_VENDOR_CLASS_ID    (60)
+-#define DHCP_OPT_CLIENT_ID          (61)
+-#define DHCP_OPT_END                (255)
+-
+-#define PORT_DHCP_SERVER (67)
+-#define PORT_DHCP_CLIENT (68)
+-
+-//#define DEFAULT_DNS MAKE_IP4(8, 8, 8, 8)
+-#define DEFAULT_LEASE_TIME_S (24 * 60 * 60) // in seconds
+-
+-#define MAC_LEN (6)
+-#define MAKE_IP4(a, b, c, d) ((a) << 24 | (b) << 16 | (c) << 8 | (d))
++#define OFFER 2
++#define ACK 5
++#define NAK 6
++#define LEASE_MS 600000u
++#define OFFER_MS 30000u
++#define DECLINE_MS 60000u
++
++// Wire offsets, not a packed/native-endian struct. Fixed bound includes options.
++#define OPTIONS 240
++#define MAX_PACKET 548
++static const uint8_t cookie[4] = {99, 130, 83, 99};
+ 
+ typedef struct {
+-    uint8_t op; // message opcode
+-    uint8_t htype; // hardware address type
+-    uint8_t hlen; // hardware address length
+-    uint8_t hops;
+-    uint32_t xid; // transaction id, chosen by client
+-    uint16_t secs; // client seconds elapsed
+-    uint16_t flags;
+-    uint8_t ciaddr[4]; // client IP address
+-    uint8_t yiaddr[4]; // your IP address
+-    uint8_t siaddr[4]; // next server IP address
+-    uint8_t giaddr[4]; // relay agent IP address
+-    uint8_t chaddr[16]; // client hardware address
+-    uint8_t sname[64]; // server host name
+-    uint8_t file[128]; // boot file name
+-    uint8_t options[312]; // optional parameters, variable, starts with magic
+-} dhcp_msg_t;
+-
+-// Imported to avoid needing CYW43 internals
+-static inline uint32_t cyw43_hal_ticks_ms(void) {
+-    return to_ms_since_boot(get_absolute_time());
+-}
+-
+-static int dhcp_socket_new_dgram(struct udp_pcb **udp, void *cb_data, udp_recv_fn cb_udp_recv) {
+-    // family is AF_INET
+-    // type is SOCK_DGRAM
+-
+-    *udp = udp_new();
+-    if (*udp == NULL) {
+-        return -ENOMEM;
+-    }
+-
+-    // Register callback
+-    udp_recv(*udp, cb_udp_recv, (void *)cb_data);
+-
+-    return 0; // success
+-}
+-
+-static void dhcp_socket_free(struct udp_pcb **udp) {
+-    if (*udp != NULL) {
+-        udp_remove(*udp);
+-        *udp = NULL;
+-    }
+-}
+-
+-static int dhcp_socket_bind(struct udp_pcb **udp, uint32_t ip, uint16_t port) {
+-    ip_addr_t addr;
+-    IP_ADDR4(&addr, ip >> 24 & 0xff, ip >> 16 & 0xff, ip >> 8 & 0xff, ip & 0xff);
+-    // TODO convert lwIP errors to errno
+-    return udp_bind(*udp, &addr, port);
+-}
+-
+-static int dhcp_socket_sendto(struct udp_pcb **udp, const void *buf, size_t len, uint32_t ip, uint16_t port) {
+-    if (len > 0xffff) {
+-        len = 0xffff;
+-    }
+-
+-    struct pbuf *p = pbuf_alloc(PBUF_TRANSPORT, len, PBUF_RAM);
+-    if (p == NULL) {
+-        return -ENOMEM;
+-    }
+-
+-    memcpy(p->payload, buf, len);
+-
+-    ip_addr_t dest;
+-    IP_ADDR4(&dest, ip >> 24 & 0xff, ip >> 16 & 0xff, ip >> 8 & 0xff, ip & 0xff);
+-    err_t err = udp_sendto(*udp, p, &dest, port);
+-
++    uint8_t type;
++    const uint8_t *requested, *server, *client;
++    uint8_t client_len;
++} options_t;
++
++// Validate the entire option stream before interpreting it or touching leases.
++// PAD and END are one byte. Overload is deliberately unsupported, not misparsed.
++static int parse_options(const uint8_t *p, size_t len, options_t *o) {
++    memset(o, 0, sizeof(*o));
++    for (size_t i = OPTIONS; i < len;) {
++        uint8_t code = p[i++];
++        if (code == 0) continue;
++        if (code == 255) return o->type != 0;
++        if (i == len) return 0;
++        uint8_t n = p[i++];
++        if (n > len - i) return 0;
++        switch (code) {
++        case 53:
++            if (n != 1 || o->type != 0 || p[i] == 0) return 0;
++            o->type = p[i];
++            break;
++        case 50:
++            if (n != 4 || o->requested) return 0;
++            o->requested = p + i;
++            break;
++        case 54:
++            if (n != 4 || o->server) return 0;
++            o->server = p + i;
++            break;
++        case 61:
++            if (n < 2 || n > FIRMINGO_DHCP_CLIENT_ID_MAX || o->client) return 0;
++            o->client = p + i;
++            o->client_len = n;
++            break;
++        case 52: return 0;
++        default: break;
++        }
++        i += n;
++    }
++    return 0; // END is required; never read stale bytes after this datagram.
++}
++
++static int zero(const uint8_t *p, size_t n) {
++    for (size_t i = 0; i < n; ++i) if (p[i]) return 0;
++    return 1;
++}
++static int same_client(const firmingo_dhcp_lease_t *l, const uint8_t *key, uint8_t n, uint8_t has_id) {
++    return l->state && l->state != 3 && l->key_len == n &&
++           l->has_id == has_id && memcmp(l->key, key, n) == 0;
++}
++static int slot(const firmingo_dhcp_server_t *d, const uint8_t *ip) {
++    if (memcmp(ip, ip_2_ip4(&d->ip), 3) != 0 || ip[3] < FIRMINGO_DHCP_BASE_IP ||
++        ip[3] >= FIRMINGO_DHCP_BASE_IP + FIRMINGO_DHCP_MAX_IP) return -1;
++    return ip[3] - FIRMINGO_DHCP_BASE_IP;
++}
++static void option(uint8_t **p, uint8_t code, const void *data, uint8_t n) {
++    *(*p)++ = code; *(*p)++ = n;
++    memcpy(*p, data, n); *p += n;
++}
++static void option32(uint8_t **p, uint8_t code, uint32_t value) {
++    uint8_t data[4] = {(uint8_t)(value >> 24), (uint8_t)(value >> 16),
++                       (uint8_t)(value >> 8), (uint8_t)value};
++    option(p, code, data, 4);
++}
++
++// Called by lwIP while its context lock is held. Work and buffers are bounded.
++static void receive(void *arg, struct udp_pcb *pcb, struct pbuf *p,
++                    const ip_addr_t *src, u16_t port) {
++    firmingo_dhcp_server_t *d = arg;
++    (void)pcb; (void)src;
++    if (!p) return;
++    ++d->received;
++    // All invocations are serialized by the lwIP lock; no callback reentrancy.
++    static uint8_t packet[MAX_PACKET];
++    size_t len = p->tot_len;
++    if (port != 68 || len < OPTIONS + 4 || len > sizeof(packet) ||
++        pbuf_copy_partial(p, packet, (u16_t)len, 0) != len) goto ignored;
++    if (packet[0] != 1 || packet[1] != 1 || packet[2] != 6 || packet[3] != 0 ||
++        !zero(packet + 24, 4) || zero(packet + 28, 6) || (packet[28] & 1) ||
++        memcmp(packet + 236, cookie, 4) != 0) goto ignored;
++    options_t o;
++    if (!parse_options(packet, len, &o)) goto ignored;
++    if (o.server && memcmp(o.server, ip_2_ip4(&d->ip), 4)) goto ignored;
++    const uint8_t *key = o.client ? o.client : packet + 28;
++    uint8_t key_len = o.client ? o.client_len : 6;
++    uint8_t has_id = o.client != NULL;
++    uint64_t now = to_us_since_boot(get_absolute_time()) / 1000;
++    int owned = -1, free_slot = -1;
++    for (int i = 0; i < FIRMINGO_DHCP_MAX_IP; ++i) {
++        firmingo_dhcp_lease_t *l = &d->lease[i];
++        if (l->state && (now - l->since_ms) >= l->duration_ms) memset(l, 0, sizeof(*l));
++        if (same_client(l, key, key_len, has_id)) owned = i;
++        if (!l->state && free_slot < 0) free_slot = i;
++    }
++    int chosen = -1;
++    uint8_t response = 0;
++    if (o.type == 1) { // DISCOVER: reserve an offer so simultaneous clients differ.
++        if (!zero(packet + 12, 4) || o.server) goto ignored;
++        chosen = owned >= 0 ? owned : free_slot;
++        if (chosen < 0) goto ignored;
++        response = OFFER;
++    } else if (o.type == 3) { // SELECTING/INIT-REBOOT or RENEWING/REBINDING.
++        if (o.requested && !zero(packet + 12, 4)) goto ignored;
++        if (o.server && !o.requested) goto ignored;
++        const uint8_t *wanted = o.requested ? o.requested : packet + 12;
++        if (zero(wanted, 4)) goto ignored;
++        chosen = slot(d, wanted);
++        if (chosen < 0 || (owned >= 0 && chosen != owned)) response = NAK;
++        else if (chosen != owned) {
++            // No binding record: stay silent on INIT-REBOOT/renew after restart.
++            if (!o.server) goto ignored;
++            response = NAK;
++        } else response = ACK;
++    } else if (o.type == 7) { // RELEASE, only for this client's bound address.
++        if (!o.server || o.requested || owned < 0 || slot(d, packet + 12) != owned) goto ignored;
++        memset(&d->lease[owned], 0, sizeof(d->lease[owned]));
++        goto done;
++    } else if (o.type == 4) { // DECLINE: quarantine a matching offer/binding.
++        if (!o.server || !o.requested || owned < 0 || slot(d, o.requested) != owned) goto ignored;
++        d->lease[owned].state = 3;
++        d->lease[owned].since_ms = now;
++        d->lease[owned].duration_ms = DECLINE_MS;
++        goto done;
++    } else if (o.type == 8) { // INFORM: settings only, no lease allocation.
++        if (o.requested || zero(packet + 12, 4) || memcmp(packet + 12, ip_2_ip4(&d->ip), 3)) goto ignored;
++        response = ACK;
++    } else goto ignored;
++
++    // Build from scratch. No incoming/vendor options, routes or DNS are copied.
++    static uint8_t reply[MAX_PACKET];
++    memset(reply, 0, sizeof(reply));
++    reply[0] = 2; reply[1] = 1; reply[2] = 6;
++    memcpy(reply + 4, packet + 4, 4); // xid opaque, unchanged
++    memcpy(reply + 10, packet + 10, 2); // flags
++    memcpy(reply + 28, packet + 28, 16); // hardware address
++    memcpy(reply + 236, cookie, 4);
++    if (response != NAK) {
++        memcpy(reply + 12, packet + 12, 4);
++        if (chosen >= 0) {
++            memcpy(reply + 16, ip_2_ip4(&d->ip), 3);
++            reply[19] = FIRMINGO_DHCP_BASE_IP + chosen;
++        }
++    }
++    uint8_t *out = reply + OPTIONS;
++    option(&out, 53, &response, 1);
++    option(&out, 54, ip_2_ip4(&d->ip), 4);
++    if (response != NAK) {
++        option(&out, 1, ip_2_ip4(&d->nm), 4);
++        if (chosen >= 0) {
++            option32(&out, 51, LEASE_MS / 1000);
++            option32(&out, 58, LEASE_MS / 2000);
++            option32(&out, 59, LEASE_MS / 1000 * 7 / 8);
++        }
++    }
++    if (o.client) option(&out, 61, o.client, o.client_len);
++    *out++ = 255;
++    // RFC BOOTP minimum message size, padding zeroed above.
++    u16_t size = (u16_t)(out - reply);
++    if (size < 300) size = 300;
++    ip_addr_t destination;
++    // Initial replies broadcast (no L2 unicast support); renew/INFORM unicast.
++    if (response != NAK && !zero(packet + 12, 4))
++        IP_ADDR4(&destination, packet[12], packet[13], packet[14], packet[15]);
++    else IP_ADDR4(&destination, 255, 255, 255, 255);
++    struct pbuf *tx = pbuf_alloc(PBUF_TRANSPORT, size, PBUF_RAM);
++    if (!tx) { ++d->send_errors; goto done; }
++    memcpy(tx->payload, reply, size);
++    err_t result = udp_sendto(d->udp, tx, &destination, 68);
++    pbuf_free(tx);
++    if (result != ERR_OK) { ++d->send_errors; goto done; }
++    ++d->replies;
++    if (chosen >= 0 && response != NAK) {
++        firmingo_dhcp_lease_t *l = &d->lease[chosen];
++        // Discover retries must not shorten an already committed lease.
++        if (!(response == OFFER && l->state == 2)) {
++            memset(l, 0, sizeof(*l));
++            memcpy(l->key, key, key_len);
++            l->key_len = key_len; l->has_id = has_id;
++            l->state = response == OFFER ? 1 : 2;
++            l->since_ms = now;
++            l->duration_ms = response == OFFER ? OFFER_MS : LEASE_MS;
++        }
++    }
++    goto done;
++ignored:
++    ++d->ignored;
++done:
+     pbuf_free(p);
+-
+-    if (err != ERR_OK) {
+-        return err;
+-    }
+-
+-    return len;
+-}
+-
+-static uint8_t *opt_find(uint8_t *opt, uint8_t cmd) {
+-    for (int i = 0; i < 308 && opt[i] != DHCP_OPT_END;) {
+-        if (opt[i] == cmd) {
+-            return &opt[i];
+-        }
+-        i += 2 + opt[i + 1];
+-    }
+-    return NULL;
+-}
+-
+-static void opt_write_n(uint8_t **opt, uint8_t cmd, size_t n, void *data) {
+-    uint8_t *o = *opt;
+-    *o++ = cmd;
+-    *o++ = n;
+-    memcpy(o, data, n);
+-    *opt = o + n;
+-}
+-
+-static void opt_write_u8(uint8_t **opt, uint8_t cmd, uint8_t val) {
+-    uint8_t *o = *opt;
+-    *o++ = cmd;
+-    *o++ = 1;
+-    *o++ = val;
+-    *opt = o;
+-}
+-
+-static void opt_write_u32(uint8_t **opt, uint8_t cmd, uint32_t val) {
+-    uint8_t *o = *opt;
+-    *o++ = cmd;
+-    *o++ = 4;
+-    *o++ = val >> 24;
+-    *o++ = val >> 16;
+-    *o++ = val >> 8;
+-    *o++ = val;
+-    *opt = o;
+-}
+-
+-static void dhcp_server_process(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *src_addr, u16_t src_port) {
+-    dhcp_server_t *d = arg;
+-    (void)upcb;
+-    (void)src_addr;
+-    (void)src_port;
+-
+-    // This is around 548 bytes, so make static so it will live in the heap, not the stack (too large)
+-    static dhcp_msg_t dhcp_msg;
+-
+-#define DHCP_MIN_SIZE (240 + 3)
+-    if (p->tot_len < DHCP_MIN_SIZE) {
+-        goto ignore_request;
+-    }
+-
+-    size_t len = pbuf_copy_partial(p, &dhcp_msg, sizeof(dhcp_msg), 0);
+-    if (len < DHCP_MIN_SIZE) {
+-        goto ignore_request;
+-    }
+-
+-    dhcp_msg.op = DHCPOFFER;
+-    memcpy(&dhcp_msg.yiaddr, ip_2_ip4(&d->ip), 4);
+-
+-    uint8_t *opt = (uint8_t *)&dhcp_msg.options;
+-    opt += 4; // assume magic cookie: 99, 130, 83, 99
+-
+-    switch (opt[2]) {
+-    case DHCPDISCOVER: {
+-        int yi = DHCPS_MAX_IP;
+-        for (int i = 0; i < DHCPS_MAX_IP; ++i) {
+-            if (memcmp(d->lease[i].mac, dhcp_msg.chaddr, MAC_LEN) == 0) {
+-                // MAC match, use this IP address
+-                yi = i;
+-                break;
+-            }
+-            if (yi == DHCPS_MAX_IP) {
+-                // Look for a free IP address
+-                if (memcmp(d->lease[i].mac, "\x00\x00\x00\x00\x00\x00", MAC_LEN) == 0) {
+-                    // IP available
+-                    yi = i;
+-                }
+-                uint32_t expiry = d->lease[i].expiry << 16 | 0xffff;
+-                if ((int32_t)(expiry - cyw43_hal_ticks_ms()) < 0) {
+-                    // IP expired, reuse it
+-                    memset(d->lease[i].mac, 0, MAC_LEN);
+-                    yi = i;
+-                }
+-            }
+-        }
+-        if (yi == DHCPS_MAX_IP) {
+-            // No more IP addresses left
+-            goto ignore_request;
+-        }
+-        dhcp_msg.yiaddr[3] = DHCPS_BASE_IP + yi;
+-        opt_write_u8(&opt, DHCP_OPT_MSG_TYPE, DHCPOFFER);
+-        break;
+-    }
+-
+-    case DHCPREQUEST: {
+-        uint8_t *o = opt_find(opt, DHCP_OPT_REQUESTED_IP);
+-        if (o == NULL) {
+-            // Should be NACK
+-            goto ignore_request;
+-        }
+-        if (memcmp(o + 2, ip_2_ip4(&d->ip), 3) != 0) {
+-            // Should be NACK
+-            goto ignore_request;
+-        }
+-        uint8_t yi = o[5] - DHCPS_BASE_IP;
+-        if (yi >= DHCPS_MAX_IP) {
+-            // Should be NACK
+-            goto ignore_request;
+-        }
+-        if (memcmp(d->lease[yi].mac, dhcp_msg.chaddr, MAC_LEN) == 0) {
+-            // MAC match, ok to use this IP address
+-        } else if (memcmp(d->lease[yi].mac, "\x00\x00\x00\x00\x00\x00", MAC_LEN) == 0) {
+-            // IP unused, ok to use this IP address
+-            memcpy(d->lease[yi].mac, dhcp_msg.chaddr, MAC_LEN);
+-        } else {
+-            // IP already in use
+-            // Should be NACK
+-            goto ignore_request;
+-        }
+-        d->lease[yi].expiry = (cyw43_hal_ticks_ms() + DEFAULT_LEASE_TIME_S * 1000) >> 16;
+-        dhcp_msg.yiaddr[3] = DHCPS_BASE_IP + yi;
+-        opt_write_u8(&opt, DHCP_OPT_MSG_TYPE, DHCPACK);
+-        /*            printf("DHCPS: client connected: MAC=%02x:%02x:%02x:%02x:%02x:%02x IP=%u.%u.%u.%u\n",
+-                        dhcp_msg.chaddr[0], dhcp_msg.chaddr[1], dhcp_msg.chaddr[2], dhcp_msg.chaddr[3], dhcp_msg.chaddr[4], dhcp_msg.chaddr[5],
+-                        dhcp_msg.yiaddr[0], dhcp_msg.yiaddr[1], dhcp_msg.yiaddr[2], dhcp_msg.yiaddr[3]);*/
+-        break;
+-    }
+-
+-    default:
+-        goto ignore_request;
+-    }
+-
+-    opt_write_n(&opt, DHCP_OPT_SERVER_ID, 4, ip_2_ip4(&d->ip));
+-    opt_write_n(&opt, DHCP_OPT_SUBNET_MASK, 4, ip_2_ip4(&d->nm));
+-    opt_write_n(&opt, DHCP_OPT_ROUTER, 4, ip_2_ip4(&d->ip)); // aka gateway; can have multiple addresses
+-    opt_write_n(&opt, DHCP_OPT_DNS, 4, ip_2_ip4(&d->ip)); // can have multiple addresses
+-    opt_write_u32(&opt, DHCP_OPT_IP_LEASE_TIME, DEFAULT_LEASE_TIME_S);
+-    *opt++ = DHCP_OPT_END;
+-
+-    dhcp_socket_sendto(&d->udp, &dhcp_msg, opt - (uint8_t *)&dhcp_msg, 0xffffffff, PORT_DHCP_CLIENT);
+-
+-ignore_request:
+-    pbuf_free(p);
+-}
+-
+-void dhcp_server_init(dhcp_server_t *d, ip_addr_t *ip, ip_addr_t *nm, struct netif *netif) {
+-    ip_addr_copy(d->ip, *ip);
+-    ip_addr_copy(d->nm, *nm);
+-    d->netif = netif;
+-    memset(d->lease, 0, sizeof(d->lease));
+-    if (dhcp_socket_new_dgram(&d->udp, d, dhcp_server_process) != 0) {
+-        return;
+-    }
+-    dhcp_socket_bind(&d->udp, 0, PORT_DHCP_SERVER);
+-    if (netif) {
+-        udp_bind_netif(d->udp, netif);
+-    }
+-}
+-
+-void dhcp_server_deinit(dhcp_server_t *d) {
+-    dhcp_socket_free(&d->udp);
+-}
++}
++
++int firmingo_dhcp_init(firmingo_dhcp_server_t *d, const ip_addr_t *ip,
++                       const ip_addr_t *mask, struct netif *netif) {
++    // Caller supplies a zero-initialized or deinitialized object, under lwIP lock.
++    if (d->udp) return -EALREADY;
++    const uint8_t *bytes = (const uint8_t *)ip_2_ip4(ip);
++    static const uint8_t supported_mask[4] = {255, 255, 255, 0};
++    if (memcmp(ip_2_ip4(mask), supported_mask, 4) || bytes[3] == 0 || bytes[3] == 255 ||
++        (bytes[3] >= FIRMINGO_DHCP_BASE_IP && bytes[3] < FIRMINGO_DHCP_BASE_IP + FIRMINGO_DHCP_MAX_IP)) return -EINVAL;
++    memset(d, 0, sizeof(*d));
++    ip_addr_copy(d->ip, *ip); ip_addr_copy(d->nm, *mask);
++    d->udp = udp_new();
++    if (!d->udp) return -ENOMEM;
++    ip_addr_t any; IP_ADDR4(&any, 0, 0, 0, 0);
++    err_t result = udp_bind(d->udp, &any, 67);
++    if (result != ERR_OK) { udp_remove(d->udp); d->udp = NULL; return result; }
++    if (netif) udp_bind_netif(d->udp, netif);
++    udp_recv(d->udp, receive, d);
++    return 0;
++}
++void firmingo_dhcp_deinit(firmingo_dhcp_server_t *d) {
++    if (d->udp) udp_remove(d->udp);
++    memset(d, 0, sizeof(*d));
++}
+--- third_party/arduino-pico-dhcp/upstream/dhcpserver.h
++++ src/ports/arduino_pico/local_dhcp.h
+@@ -23,37 +23,36 @@
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+     THE SOFTWARE.
+ */
+-#ifndef MICROPY_INCLUDED_LIB_NETUTILS_DHCPSERVER_H
+-#define MICROPY_INCLUDED_LIB_NETUTILS_DHCPSERVER_H
++
++#ifndef FIRMINGO_LOCAL_DHCP_H
++#define FIRMINGO_LOCAL_DHCP_H
++#include <stdint.h>
++#include <lwip/ip_addr.h>
++#include <lwip/netif.h>
+ #ifdef __cplusplus
+ extern "C" {
+-#endif // __cplusplus
++#endif
++#define FIRMINGO_DHCP_BASE_IP 16
++#define FIRMINGO_DHCP_MAX_IP 8
++#define FIRMINGO_DHCP_CLIENT_ID_MAX 32
+ 
++typedef struct {
++    uint8_t key[FIRMINGO_DHCP_CLIENT_ID_MAX];
++    uint8_t key_len, has_id, state; // 0 free, 1 offered, 2 bound, 3 declined
++    uint64_t since_ms;
++    uint32_t duration_ms;
++} firmingo_dhcp_lease_t;
++typedef struct {
++    ip_addr_t ip, nm;
++    firmingo_dhcp_lease_t lease[FIRMINGO_DHCP_MAX_IP];
++    struct udp_pcb *udp;
++    uint32_t received, replies, ignored, send_errors;
++} firmingo_dhcp_server_t;
+ 
+-#include "lwip/ip_addr.h"
+-#include "lwip/netif.h"
+-
+-#define DHCPS_BASE_IP (16)
+-#define DHCPS_MAX_IP (8)
+-
+-typedef struct _dhcp_server_lease_t {
+-    uint8_t mac[6];
+-    uint16_t expiry;
+-} dhcp_server_lease_t;
+-
+-typedef struct _dhcp_server_t {
+-    ip_addr_t ip;
+-    ip_addr_t nm;
+-    dhcp_server_lease_t lease[DHCPS_MAX_IP];
+-    struct udp_pcb *udp;
+-    struct netif *netif; // If set, bind DHCP to this specific interface
+-} dhcp_server_t;
+-
+-void dhcp_server_init(dhcp_server_t *d, ip_addr_t *ip, ip_addr_t *nm, struct netif *netif);
+-void dhcp_server_deinit(dhcp_server_t *d);
++// Application-context calls must hold the port's lwIP lock. Supports /24 only.
++int firmingo_dhcp_init(firmingo_dhcp_server_t *, const ip_addr_t *, const ip_addr_t *, struct netif *);
++void firmingo_dhcp_deinit(firmingo_dhcp_server_t *);
+ #ifdef __cplusplus
+ }
+-#endif // __cplusplus
+-
+-
+-#endif // MICROPY_INCLUDED_LIB_NETUTILS_DHCPSERVER_H
++#endif
++#endif
