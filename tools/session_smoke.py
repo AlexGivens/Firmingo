@@ -30,7 +30,7 @@ def decode_header(header):
 
 class Probe:
     def __init__(self, address, device_id, board, port=7420, timeout=10,
-                 firmware_version=FIRMWARE_VERSION, backend='application'):
+                 firmware_version=FIRMWARE_VERSION, backend='application', targets=None):
         address = validate_target(address)
         if not re.fullmatch('[0-9a-fA-F]{16}', device_id):
             raise RuntimeError('expected device ID must be exactly 16 hexadecimal digits')
@@ -47,7 +47,7 @@ class Probe:
                     or type(value.get('max_payload')) is not int
                     or value['max_payload'] != MAX_PAYLOAD
                     or value.get('auth_mode') != 'open-development'
-                    or value.get('targets') != []
+                    or value.get('targets') != ([] if targets is None else targets)
                     or not isinstance(value.get('channels'), list)
                     or len(value['channels']) != 1
                     or not isinstance(value['channels'][0], dict)
@@ -104,12 +104,23 @@ class Probe:
         return bytes(data)
 
     def command(self, op, expected_error=None, **fields):
+        payload = json.dumps(dict(op=op, **fields), separators=(',', ':')).encode()
+        return self.request_frame(1, payload, expected_error, op)
+
+    def upload_chunk(self, upload_id, offset, data):
+        if (type(upload_id) is not int or not 1 <= upload_id <= 0xffffffff
+                or type(offset) is not int or not 0 <= offset <= 0xffffffff
+                or not data):
+            raise ValueError('invalid upload ID, offset, or empty chunk')
+        return self.request_frame(4, struct.pack('!II', upload_id, offset) + data,
+                                  operation='upload chunk')
+
+    def request_frame(self, kind, payload, expected_error=None, operation='request'):
         request = self.next_request
         self.next_request += 1
-        payload = json.dumps(dict(op=op, **fields), separators=(',', ':')).encode()
         deadline = time.monotonic() + self.timeout
         self.sock.settimeout(self.timeout)
-        self.sock.sendall(frame(1, request, payload))
+        self.sock.sendall(frame(kind, request, payload))
         kind, actual_request, count = decode_header(self._exact(HEADER.size, deadline))
         if kind != 2 or actual_request != request:
             raise RuntimeError(f'expected response ID {request}, received type {kind}, ID {actual_request}')
@@ -125,7 +136,7 @@ class Probe:
                 raise RuntimeError(f'expected {expected_error}, received {response!r}')
             return response['error']
         if response.get('ok') is not True or not isinstance(response.get('result'), dict):
-            raise RuntimeError(f'command {op} failed: {response!r}')
+            raise RuntimeError(f'command {operation} failed: {response!r}')
         return response['result']
 
     def echo(self, byte_count=16384, slow_read=False, seed=None, read_delay=0.15):

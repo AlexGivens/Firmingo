@@ -5,6 +5,12 @@ application/UART sessions, and bounded raw-lwIP TCP integration are implemented
 and native-tested. Current firmware identifies as Firmingo 0.1.0 beta; exact
 0.1.0 images require new hardware checks. Historical Nano/Pico development-image
 results are indexed in [evidence](evidence/README.md). FMGO on iOS remains untested.
+The opt-in Nano `m9exp1` resident adds the experimental managed-upload extension
+below. Its exact Nano build has [successive upload, console, disconnect/status,
+and pre-commit power-loss evidence](evidence/managed-sketch-m9exp1-hardware.md);
+flash-write power loss and iOS remain untested. Release references continue to
+advertise no upload targets. The [SDK handoff](integration/managed-sketch-sdk.md)
+provides an exportable contract/vector bundle and reference build recipe.
 The contract follows the historical
 [product notes](research/roadmap-notes.md) for FirmingoKit.
 The [application reference](../examples/firmingo_application/README.md) and
@@ -33,8 +39,9 @@ Unknown types, wrong IDs, nonzero flags, incorrect magic, unsupported major or
 excessive length are rejected after the header, before payload collection. No
 magic scanning or resynchronization occurs. Session returns a terminal protocol
 error and the port must close. Client-sent response/event frames also close.
-Upload frames receive `unsupported` after hello (`invalid_state` before hello);
-uploads and event emission are not implemented or advertised.
+Profiles without an upload backend return `unsupported` for upload frames after
+hello (`invalid_state` before hello). The experimental extension below handles
+type 4 only when its target is advertised. Event emission is not implemented.
 
 `core/protocol.*` owns one fixed 4112-byte frame buffer and allocates nothing.
 `feed()` consumes at most `needed()`: remaining header, then remaining payload.
@@ -132,13 +139,15 @@ Identity is target selection, not cryptographic peer authentication.
 Hello reports `auth_mode:"open-development"`, one channel with ID 1, empty
 controls, Stream rx/tx queue capacities of 256 bytes, and a snapshot boolean
 `owned`. This describes channel availability, not ownership granted by hello.
-`targets` is empty. Application v7 reports `backend:"application"` and offers no
+`targets` is empty in the release references. Application v7 reports `backend:"application"` and offers no
 configuration. UART v2 reports `backend:"uart"`, the current configuration,
 `configurable:["baud","data_bits","parity","stop_bits"]`, and its baud limits.
 Neither profile offers a runtime, files, reset, interruption, hardware/software
 flow control, or programming. Application v7 and UART v2 have bounded macOS
 hardware evidence; UART v1 retains its preserved soak failure. Production
 authentication and authorization need separate design before destructive capabilities.
+The experimental target's physical authorization policy is described below;
+`auth_mode` still describes the unauthenticated development session.
 
 ## Byte stream, counters and acknowledgements
 
@@ -155,7 +164,7 @@ nonblocking: partial writes retain tails, bounded queues apply backpressure,
 and one stalled direction does not stop the other until its own queues fill.
 Command replies and backend output alternate when both remain ready, avoiding
 indefinite starvation. Each poll makes at most one transport read/write and
-one backend read/write. Session stores one input frame and an 816-byte framed output
+one backend read/write. Session stores one input frame and a 1040-byte framed output
 buffer; Channel stores the Stream's two 256-byte queues. The Nano application
 backend stores two additional 256-byte circular queues. Other backend/stack
 queues are separate explicit bounds.
@@ -355,6 +364,23 @@ counters are saturating unsigned 64-bit counters. Consumers must accept the whol
 group or reject a partial group. `ncm_rx_batch_peak` is bounded by the production
 worker limit of 10 and persists for the boot.
 
+The experimental managed-sketch application backend also supplies the optional
+fields `sketch_input_discarded`, `sketch_output_discarded`,
+`sketch_output_rejected`, `sketch_output_peak`,
+`sketch_loop_boundaries`, `sketch_epoch`, `sketch_acknowledged_epoch`,
+`sketch_input_enabled`, and `sketch_output_enabled`. The first two count bytes
+already accepted by a bridge queue but disposed during an owner or sketch
+generation change. `sketch_output_rejected` counts bytes refused by a short
+or pre-open `Serial.write`; a caller that retries may avoid data loss. The peak
+is the bridge's core-1-to-core-0 queue occupancy, bounded by 256. The loop
+boundary count shows core-1 progress. The epoch fields and booleans show when
+a new owner is waiting for the next sketch loop boundary. The counters are
+boot-lifetime saturating u32 values, separate from the application endpoint's
+own queue counters. The optional group is emitted when the host negotiates a
+payload limit of at least 1024 bytes; smaller offers omit the whole group.
+The fields are individually sampled and do not form a transactional snapshot.
+Other application backends omit the whole group.
+
 In the Nano reference, heap fields use Arduino-Pico's C allocator accounting;
 stack fields approximate available core-0 stack. The loop samples immediately
 before and after server
@@ -382,3 +408,170 @@ negotiates a smaller payload, including the permitted minimum 512, receives
 `response_too_large` for that request. Diagnostics are control responses; no
 diagnostic bytes enter the stream.
 This endpoint is observational and does not establish memory stability alone.
+
+## Experimental Nano managed-upload extension (M9)
+
+This extension exists only in `m9exp1` with an explicit `UploadService` backend.
+It is not present in the 0.1.0 reference UF2s. The exact resident ELF and modules
+must be built together with Arduino-Pico 6.0.0. No arbitrary Arduino library,
+mutable-global, whole-board UF2, filesystem, or rollback support is implied.
+
+Its hello advertises this one target; hello's `board_id` identifies the board:
+
+```json
+{"id":1,"format":"nano-managed-v1","max_size":4096,"max_chunk":1024,"authorization":"physical-d2-gnd"}
+```
+
+The accepted capsule is the [Nano FMS1 format](research/managed-sketch-contract.md):
+64-byte little-endian header, zero padding to offset 256, and code at
+`0x10200100`. The header must match the Nano board tag, ABI, exact resident API
+address, code size, Thumb entry points, and code SHA-256. `flash.begin` supplies
+another SHA-256 over the **whole capsule**, including header and padding. The
+RAM stage holds 257–4096 bytes; only the first 4096-byte slot sector at
+`0x10200000..0x10201000` can be erased/programmed. The reserved resident,
+staging, metadata, and EEPROM ranges are not network-supplied destinations.
+The build tools enforce the same 4096-byte capsule limit.
+
+The FMS1 header has these fixed offsets; multibyte header fields are
+**little-endian**, unlike FMGO frame and chunk fields. The whole capsule has
+exactly `256 + code_bytes` bytes; there is no transport header in a `.fms` file.
+
+| Offset | Bytes | Field |
+| --- | --- | --- |
+| 0 | 4 | Magic `FMS1` |
+| 4 | 2 | ABI version, 1 |
+| 6 | 2 | Header bytes, 64 |
+| 8 | 4 | Nano tag, `0x4f4e414e` |
+| 12 | 4 | Exact resident API table XIP address, aligned to four bytes |
+| 16 | 4 | Fixed code XIP address, `0x10200100` |
+| 20 | 4 | Nonzero code byte count; whole capsule must fit the target limit |
+| 24 | 4 | Thumb setup entry address (low bit set), within the code range |
+| 28 | 4 | Thumb loop entry address (low bit set), within the code range |
+| 32 | 32 | SHA-256 of code bytes only, as raw digest bytes |
+| 64 | 192 | Required zero padding |
+| 256 | `code_bytes` | Linked code/constant bytes |
+
+The capsule's header/API binding is checked by the resident. The local build
+report separately identifies the exact resident ELF, whole capsule, code and
+source hashes; these are not additional hello fields or remote attestation.
+
+### Requests and acknowledgements
+
+All fields shown are required; unknown fields are invalid. Control requests
+use type 1 with a nonzero request ID, and receive correlated type-2 responses.
+Numeric fields are nonzero u32 except chunk offset, which may be zero.
+
+| Operation | Fields beyond `op` | Success means |
+| --- | --- | --- |
+| `flash.begin` | `target_id:1`, `board_id:"nano_rp2040_connect"`, `format:"nano-managed-v1"`, `size`, `sha256` (64 lowercase hex characters) | One RAM stage acquired; returns a new `upload_id` and `accepted` state |
+| Type-4 chunk | Binary payload below; no JSON `op` | Exact chunk copied to RAM and `received` advanced; not flash completion |
+| `flash.status` | `target_id:1`, `upload_id` | Retained transaction snapshot; allowed from a new connection |
+| `flash.finish` | `target_id:1`, `upload_id` | Complete capsule and both digests/header validated in RAM; `verified` |
+| `flash.commit` | `target_id:1`, `upload_id` | Install queued; `committing`. No flash write occurs in request dispatch |
+| `flash.abort` | `target_id:1`, `upload_id` | An accepted/verified stage disposed; `aborted`. Cannot cancel commit |
+
+Type-4 payload consists of a four-byte big-endian `upload_id`, four-byte
+big-endian **capsule-relative** offset, then 1–1024 opaque image bytes. It is
+also bounded by negotiated payload minus eight. It is not a flash address.
+Offsets must equal the current `received` count. Empty, duplicate, out-of-order,
+wrong-owner/ID, or overrun chunks are rejected without advancing the stage.
+There is no chunk replay cache. A client waits for each acknowledgement; if a
+chunk response is lost, it queries status to determine whether bytes were
+accepted rather than blindly resending. Loss of that connection before commit
+aborts the stage.
+
+For upload ID 1, offset 0, and four test bytes `00 ff 0d 0a`, request ID 9:
+
+```text
+46 4d 47 4f 01 04 00 00 00 00 00 09 00 00 00 0c
+00 00 00 01 00 00 00 00 00 ff 0d 0a
+```
+
+Every successful upload response uses this snapshot schema (synthetic digest):
+
+```json
+{"ok":true,"result":{"upload_id":1,"state":"verified","size":692,"received":692,"sha256":"0000000000000000000000000000000000000000000000000000000000000000","slot_touched":false,"error":"none"}}
+```
+
+### State, ownership, and authorization
+
+| State | Meaning / next transition |
+| --- | --- |
+| `accepted` | RAM stage exists; chunks, finish, abort, or disconnect |
+| `verified` | RAM validation passed; commit, abort, or disconnect |
+| `committing` | Queued/awaiting core-1 park/install; eventually installed or failed |
+| `installed` | Flash readback and image validation passed; new generation scheduled |
+| `boot_confirmed` | New generation's setup and first loop returned to the resident |
+| `aborted` | Pre-commit stage disposed; no slot write |
+| `failed` | Validation/park/install failed; inspect `error` and `slot_touched` |
+
+`boot_confirmed` here confirms a **managed sketch start**, not a whole-device
+reboot, useful behavior, exact console echo, or future stability. A nonreturning
+new setup/loop can leave `installed` without confirmation. The Nano port
+reports confirmation from a core-1 generation acknowledgement. `slot_touched`
+is conservative: true after an erase attempt, including a failure that could
+leave a partial sector. The old sketch is stopped before that attempt and is
+never resumed after an uncertain slot write.
+
+Only one upload transaction may be active. Its originating session owns chunks,
+finish, commit, and abort; another session may only read its status. Console
+ownership and active staging/commit are mutually exclusive (`busy`); plain
+hello/diagnostics/status connections may remain open. Once install completes,
+console acquisition is permitted again. The newest transaction's snapshot is
+retained in RAM until another begin replaces it or the board reboots. IDs are
+nonzero u32, monotonically allocated per boot, never reused within that boot;
+ID exhaustion refuses another begin. Hosts associate an upload ID with both
+device ID and boot ID. There is no transaction history or persistent journal.
+
+Session authentication remains `open-development`. Upload authorization requires
+Nano **D2 / GPIO25 connected to GND** at begin, commit acceptance, and immediately
+before the erase path. Removing the arm while waiting to park fails without
+writing. Keeping the jumper installed permits any reachable development peer
+who acquires ownership to submit arbitrary compatible code. SHA-256 provides
+integrity, not authorization, signature verification, or provenance. This is an
+owner-controlled proof policy, not production network security. The NINA module
+remains unused and DHCP remains local-only.
+
+Additional extension errors are `unauthorized`, `wrong_owner`, `wrong_offset`,
+`incomplete`, `digest_mismatch`, `invalid_image`, and `insufficient_storage`.
+Wrong target/board/format returns `wrong_target`. Incomplete finish permits more
+chunks. Digest/image failure clears the stage and retains a `failed` snapshot.
+Status `error` can additionally be `disconnected`, `park_timeout`, or
+`install_failed`; the ordinary response still succeeds when reading a failed
+transaction. Repeated commit, post-commit abort, or actions in a terminal state
+return `invalid_state`; they never repeat flash work.
+
+### Disconnect, reboot, and power interruption
+
+Disconnect/idle timeout/malformed JSON before commit disposes RAM staging and
+retains `aborted` with `error:"disconnected"`. Abort does not replace the old
+sketch. A commit is queued exactly once; its execution continues after the
+session closes, subject to physical arm and core-1 park checks. The port calls
+installation from its main loop **outside** the Ethernet/lwIP lock and USB
+callbacks. Core 1 must park in SRAM within 1000 ms; timeout preserves the slot.
+Core 0 masks interrupts during erase/program. Each operation is bounded to one
+sector and its pages, then read back before scheduling the new generation.
+
+A lost commit reply is an uncertain outcome: a fresh hello must match the same
+device/boot, then `flash.status` queries that upload ID and digest. The host must
+not replay commit. If the boot changed or the retained record was superseded,
+RAM status cannot establish the old transaction's result. Reboot discards staging
+and status; startup independently validates the installed slot. Power loss can
+leave the old, new, or partial image depending on when it occurs. There is no
+rollback, atomic power-cut guarantee, or boot-confirmation journal. Preserve
+Nano REC/GND ROM recovery. M9 has [pre-commit disconnect and discarded-result
+status and verified-RAM-stage power-loss evidence](evidence/managed-sketch-m9exp1-hardware.md).
+Power loss during erase/program remains untested. Power-cut cases are opt-in,
+separate from smoke and CI.
+
+Shared complete frames and a non-executable capsule fixture are in
+[`tests/fixtures/protocol-v1/managed-upload`](../tests/fixtures/protocol-v1/managed-upload/README.md).
+Native tests feed those vectors through the production Session, stage, and
+switch. Host unit tests check sender/reconciliation behavior with fake peers;
+they do not establish hardware success. See the
+[M9 build record](evidence/managed-sketch-m9exp1.md) for actual commands/results.
+The shared vectors also include M9 hello, accepted/chunk acknowledgements,
+committing, installed, boot-confirmed, explicit abort, disconnect abort,
+install-failed status, and an unauthorized response. Native tests compare their
+complete bytes against the production Session/stage/switch. This adds test
+coverage without changing wire version, operation schemas, or runtime behavior.

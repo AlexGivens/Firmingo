@@ -2,6 +2,9 @@
 #include "protocol.h"
 #include "stream.h"
 #include "diagnostics.h"
+#include "upload.h"
+
+namespace firmingo { namespace json { class Document; } }
 
 namespace firmingo {
 struct Identity {
@@ -45,9 +48,10 @@ enum class SessionResult { running, closed, disconnected, timeout, protocol_erro
 class Session : private ByteIO {
  public:
   static constexpr uint32_t handshake_ms = 5000, frame_ms = 5000, idle_ms = 30000, error_flush_ms = 1000;
-  static constexpr std::size_t response_capacity = 800;
+  static constexpr std::size_t response_capacity = 1024;
   // Port supplies unique nonzero tokens per concurrent socket and monotonic ms.
-  Session(Channel& channel, const Identity& identity, uint32_t owner, uint32_t now, const MemorySamples* memory = nullptr);
+  Session(Channel& channel, const Identity& identity, uint32_t owner, uint32_t now,
+          const MemorySamples* memory = nullptr, UploadService* upload = nullptr);
   ~Session();
   Session(const Session&) = delete;
   Session& operator=(const Session&) = delete;
@@ -64,17 +68,25 @@ class Session : private ByteIO {
   void error(uint32_t request, const char* code);
   void success(uint32_t request);
   void dispatch(uint32_t now);
+  bool dispatch_upload(const json::Document& document);
+  void upload_response(uint32_t request, UploadError result, const UploadStatus& status);
   SessionResult pump(uint32_t now);
   SessionResult finish(SessionResult result);
   Channel& channel_;
   const MemorySamples* const memory_;
+  UploadService* const upload_;
   const Identity identity_;
   const uint32_t owner_, started_at_;
   uint32_t progress_at_, frame_at_ = 0, closing_at_ = 0;
   protocol::Decoder decoder_;
   uint8_t output_[protocol::header_size + response_capacity]{};
+  // Bounded formatting scratch lives with the session, not on the small
+  // RP2040 core-0 stack used by the nested TCP/lwIP poll path.
+  char response_body_[response_capacity + 1]{};
+  char sketch_console_fields_[360]{};
   std::size_t output_offset_ = 0, output_size_ = 0, data_offset_ = 0;
   bool negotiated_ = false, owned_ = false, closing_ = false, data_turn_ = false;
+  bool upload_released_ = false;
   SessionResult result_ = SessionResult::running;
 };
 }  // namespace firmingo

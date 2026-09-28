@@ -11,8 +11,9 @@ class TcpSessionServer {
   static constexpr unsigned connection_limit = 2;
   static constexpr uint32_t close_ms = 1000;
   using Clock = uint32_t (*)();
-  explicit TcpSessionServer(Channel& channel, const MemorySamples* memory = nullptr)
-      : channel_(channel), memory_(memory) {}
+  explicit TcpSessionServer(Channel& channel, const MemorySamples* memory = nullptr,
+                            UploadService* upload = nullptr)
+      : channel_(channel), memory_(memory), upload_(upload) {}
   ~TcpSessionServer() { stop(); }
   TcpSessionServer(const TcpSessionServer&) = delete;
   TcpSessionServer& operator=(const TcpSessionServer&) = delete;
@@ -51,6 +52,7 @@ class TcpSessionServer {
   static void close(Connection&, uint32_t now);
   Channel& channel_;
   const MemorySamples* const memory_;
+  UploadService* const upload_;
   Identity identity_{};
   Clock clock_ = nullptr;
   tcp_pcb* listener_ = nullptr;

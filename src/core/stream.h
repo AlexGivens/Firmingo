@@ -15,6 +15,17 @@ struct BackendDiagnostics {
   std::uint32_t rx_overrun_events = 0;
   std::uint64_t rx_lost_bytes_minimum = 0;
   std::uint32_t tx_throttle_events = 0;
+  // Optional fields for an application endpoint backed by a managed sketch.
+  bool has_sketch_console = false;
+  std::uint32_t sketch_input_discarded = 0;
+  std::uint32_t sketch_output_discarded = 0;
+  std::uint32_t sketch_output_rejected = 0;
+  std::uint32_t sketch_output_peak = 0;
+  std::uint32_t sketch_loop_boundaries = 0;
+  std::uint32_t sketch_epoch = 0;
+  std::uint32_t sketch_acknowledged_epoch = 0;
+  bool sketch_input_enabled = false;
+  bool sketch_output_enabled = false;
 };
 
 enum class BackendKind { application, uart };

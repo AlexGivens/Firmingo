@@ -24,3 +24,12 @@ is the normal byte-stream reference; `uart` binds channel 1 to GPIO 0/1;
 `local-only` exists for DHCP/attachment qualification. The preserved predecessor
 sketch advertises router/DNS options and is not a release profile. No profile
 implements network firmware updates or production authentication.
+
+Separately, the Nano's experimental `m8exp4` managed-sketch image has
+[exact console, cold-replug, Wi-Fi, and short sleep/wake evidence](evidence/managed-sketch-m8exp4.md).
+The [M9 FMGO upload candidate](evidence/managed-sketch-m9exp1.md) has
+[Nano console, authorization, successive installs, and disconnect/status checks](evidence/managed-sketch-m9exp1-hardware.md).
+Both LED half-periods were observed, and one power cut before commit preserved
+the installed sketch and allowed another upload. Power loss during flash writing
+remains untested. It is not a release profile
+or a Pico managed-sketch port.

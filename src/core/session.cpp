@@ -71,14 +71,21 @@ static bool name(const char* s) {
   }
   return false;
 }
-Session::Session(Channel& channel, const Identity& identity, uint32_t owner, uint32_t now, const MemorySamples* memory)
-  : channel_(channel), memory_(memory), identity_(identity), owner_(owner), started_at_(now), progress_at_(now) {
+Session::Session(Channel& channel, const Identity& identity, uint32_t owner, uint32_t now,
+                 const MemorySamples* memory, UploadService* upload)
+  : channel_(channel), memory_(memory), upload_(upload), identity_(identity), owner_(owner), started_at_(now), progress_at_(now) {
   if (!owner || !hex_id(identity_.device_id) || !hex_id(identity_.boot_id) ||
       !name(identity_.board_id) || !name(identity_.firmware_version)) result_ = SessionResult::io_error;
+  if (upload && (!upload->target().id || !upload->target().format || !upload->target().authorization || !name(upload->target().format) ||
+      !name(upload->target().authorization) || !upload->target().max_size ||
+      !upload->target().max_chunk || upload->target().max_chunk > max_payload - 8))
+    result_ = SessionResult::io_error;
 }
 Session::~Session() { close(); }
 void Session::close() {
   if (owned_) channel_.release(owner_);
+  if (upload_ && !upload_released_) upload_->disconnect(owner_);
+  upload_released_ = true;
   owned_ = false; decoder_.reset(); output_size_ = output_offset_ = data_offset_ = 0;
   if (result_ == SessionResult::running) result_ = SessionResult::closed;
 }
@@ -234,23 +241,47 @@ void Session::dispatch(uint32_t now) {
     return; // Stream consumes this frame through read().
   }
   if (type == Type::response || type == Type::event) { finish(SessionResult::protocol_error); return; }
-  if (type == Type::upload) { error(id,negotiated_ ? "unsupported" : "invalid_state"); decoder_.reset(); return; }
+  if (type == Type::upload) {
+    UploadStatus status;
+    UploadError result = !negotiated_ ? UploadError::invalid_state :
+                         !upload_ ? UploadError::unsupported : UploadError::invalid_argument;
+    if (negotiated_ && upload_ && decoder_.size() > 8 &&
+        decoder_.size() - 8 <= upload_->target().max_chunk) {
+      result = upload_->chunk(owner_,get32(decoder_.payload()),get32(decoder_.payload()+4),
+                              decoder_.payload()+8,decoder_.size()-8,status);
+    }
+    upload_response(id,result,status); decoder_.reset(); return;
+  }
   json::Document document;
   if (!document.parse(decoder_.payload(),decoder_.size())) {
     error(id,"invalid_argument"); decoder_.reset();
     if (owned_) channel_.release(owner_);
+    if (upload_ && !upload_released_) upload_->disconnect(owner_);
+    upload_released_ = true;
     owned_ = false; closing_ = true; closing_at_ = now; return;
   }
+  if (dispatch_upload(document)) { decoder_.reset(); data_turn_ = true; return; }
   Request r;
   if (!request(document,r)) { error(id,"invalid_argument"); decoder_.reset(); return; }
   if (!negotiated_ && r.command != Command::hello) { error(id,"invalid_state"); decoder_.reset(); return; }
-  char body[response_capacity+1]; int n = 0;
+  auto& body = response_body_; int n = 0;
   if (r.command == Command::hello) {
     if (negotiated_) error(id,"invalid_state");
     else {
       decoder_.reset();
       if (!decoder_.negotiate(r.offer)) { finish(SessionResult::io_error); return; }
       negotiated_ = true;
+      auto& targets = sketch_console_fields_;
+      std::strcpy(targets,"[]");
+      if (upload_) {
+        const auto& target = upload_->target();
+        const int count = std::snprintf(targets,sizeof(targets),
+            "[{\"id\":%lu,\"format\":\"%s\",\"max_size\":%lu,\"max_chunk\":%lu,\"authorization\":\"%s\"}]",
+            static_cast<unsigned long>(target.id),target.format,
+            static_cast<unsigned long>(target.max_size),static_cast<unsigned long>(target.max_chunk),
+            target.authorization);
+        if (count < 0 || std::size_t(count) >= sizeof(targets)) { finish(SessionResult::io_error); return; }
+      }
       if (channel_.backend_kind() == BackendKind::uart) {
         SerialConfiguration configuration;
         if (!channel_.configuration(configuration)) { finish(SessionResult::io_error); return; }
@@ -261,19 +292,19 @@ void Session::dispatch(uint32_t now) {
           "\"owned\":%s,\"config\":{\"baud\":%lu,\"actual_baud\":%lu,\"data_bits\":%u,"
           "\"parity\":\"%s\",\"stop_bits\":%u,\"flow_control\":\"none\"},"
           "\"configurable\":[\"baud\",\"data_bits\",\"parity\",\"stop_bits\"],"
-          "\"baud_min\":300,\"baud_max\":2000000}],\"targets\":[]}}",
+          "\"baud_min\":300,\"baud_max\":2000000}],\"targets\":%s}}",
           identity_.firmware_version,identity_.device_id,identity_.boot_id,
           identity_.board_id,unsigned(decoder_.limit()),channel_.owner() ? "true" : "false",
           static_cast<unsigned long>(configuration.baud),
           static_cast<unsigned long>(configuration.actual_baud),unsigned(configuration.data_bits),
-          parity_name(configuration.parity),unsigned(configuration.stop_bits));
+          parity_name(configuration.parity),unsigned(configuration.stop_bits),targets);
       } else {
         n = std::snprintf(body,sizeof(body),
           "{\"ok\":true,\"result\":{\"protocol_major\":1,\"firmware_version\":\"%s\",\"device_id\":\"%s\","
           "\"boot_id\":\"%s\",\"board_id\":\"%s\",\"max_payload\":%u,\"auth_mode\":\"open-development\","
           "\"channels\":[{\"id\":1,\"backend\":\"application\",\"controls\":[],\"rx_queue\":256,\"tx_queue\":256,"
-          "\"owned\":%s}],\"targets\":[]}}",identity_.firmware_version,identity_.device_id,identity_.boot_id,
-          identity_.board_id,unsigned(decoder_.limit()),channel_.owner() ? "true" : "false");
+          "\"owned\":%s}],\"targets\":%s}}",identity_.firmware_version,identity_.device_id,identity_.boot_id,
+          identity_.board_id,unsigned(decoder_.limit()),channel_.owner() ? "true" : "false",targets);
       }
     }
   } else if (r.command == Command::diagnostics) {
@@ -283,6 +314,33 @@ void Session::dispatch(uint32_t now) {
       TransportDiagnostics transport;
       const bool has_backend = channel_.backend_diagnostics(backend);
       const bool has_transport = memory_->transport(transport);
+      auto& sketch_console_fields = sketch_console_fields_;
+      sketch_console_fields[0] = 0;
+      // The optional group is omitted for small negotiated frames. Existing
+      // clients offering the 512-byte minimum keep their prior response size.
+      if (has_backend && backend.has_sketch_console &&
+          decoder_.limit() >= response_capacity) {
+        const int fields = std::snprintf(sketch_console_fields,
+            sizeof(sketch_console_fields),
+            ",\"sketch_input_discarded\":%lu,\"sketch_output_discarded\":%lu,"
+            "\"sketch_output_rejected\":%lu,\"sketch_output_peak\":%lu,"
+            "\"sketch_loop_boundaries\":%lu,\"sketch_epoch\":%lu,"
+            "\"sketch_acknowledged_epoch\":%lu,"
+            "\"sketch_input_enabled\":%s,\"sketch_output_enabled\":%s",
+            static_cast<unsigned long>(backend.sketch_input_discarded),
+            static_cast<unsigned long>(backend.sketch_output_discarded),
+            static_cast<unsigned long>(backend.sketch_output_rejected),
+            static_cast<unsigned long>(backend.sketch_output_peak),
+            static_cast<unsigned long>(backend.sketch_loop_boundaries),
+            static_cast<unsigned long>(backend.sketch_epoch),
+            static_cast<unsigned long>(backend.sketch_acknowledged_epoch),
+            backend.sketch_input_enabled ? "true" : "false",
+            backend.sketch_output_enabled ? "true" : "false");
+        if (fields < 0 || std::size_t(fields) >= sizeof(sketch_console_fields)) {
+          finish(SessionResult::io_error);
+          return;
+        }
+      }
       if (has_backend && has_transport && channel_.backend_kind() == BackendKind::uart)
         n = std::snprintf(body,sizeof(body),
           "{\"ok\":true,\"result\":{\"samples\":%lu,\"heap_free\":%lu,\"heap_min\":%lu,"
@@ -320,7 +378,7 @@ void Session::dispatch(uint32_t now) {
           "\"stack_free\":%lu,\"stack_min\":%lu,\"lwip_free\":null,"
           "\"peak_to_backend\":%u,\"peak_to_peer\":%u,\"application_rx_pending\":%u,"
           "\"application_tx_pending\":%u,\"application_rx_peak\":%u,\"application_tx_peak\":%u,"
-          "\"application_rx_discarded\":%llu,\"application_tx_discarded\":%llu,"
+          "\"application_rx_discarded\":%llu,\"application_tx_discarded\":%llu%s,"
           "\"ncm_worker_runs\":%lu,\"ncm_rx_frames\":%lu,\"ncm_rx_deferred\":%lu,"
           "\"ncm_rx_batch_peak\":%lu,\"ncm_mutex_contentions\":%lu,"
           "\"ncm_budget_exhaustions\":%lu,\"ncm_wake_requests\":%lu,"
@@ -332,6 +390,7 @@ void Session::dispatch(uint32_t now) {
           static_cast<unsigned long>(memory_->stack_min()),unsigned(channel_.peak_rx()),unsigned(channel_.peak_tx()),
           unsigned(backend.rx_pending),unsigned(backend.tx_pending),unsigned(backend.rx_peak),unsigned(backend.tx_peak),
           static_cast<unsigned long long>(backend.rx_discarded),static_cast<unsigned long long>(backend.tx_discarded),
+          sketch_console_fields,
           static_cast<unsigned long>(transport.ncm_worker_runs),static_cast<unsigned long>(transport.ncm_rx_frames),
           static_cast<unsigned long>(transport.ncm_rx_deferred),
           static_cast<unsigned long>(transport.ncm_rx_batch_peak),
@@ -364,12 +423,13 @@ void Session::dispatch(uint32_t now) {
           "\"stack_free\":%lu,\"stack_min\":%lu,\"lwip_free\":null,"
           "\"peak_to_backend\":%u,\"peak_to_peer\":%u,\"application_rx_pending\":%u,"
           "\"application_tx_pending\":%u,\"application_rx_peak\":%u,\"application_tx_peak\":%u,"
-          "\"application_rx_discarded\":%llu,\"application_tx_discarded\":%llu}}",
+          "\"application_rx_discarded\":%llu,\"application_tx_discarded\":%llu%s}}",
           static_cast<unsigned long>(memory_->count()),static_cast<unsigned long>(memory_->heap_free()),
           static_cast<unsigned long>(memory_->heap_min()),static_cast<unsigned long>(memory_->stack_free()),
           static_cast<unsigned long>(memory_->stack_min()),unsigned(channel_.peak_rx()),unsigned(channel_.peak_tx()),
           unsigned(backend.rx_pending),unsigned(backend.tx_pending),unsigned(backend.rx_peak),unsigned(backend.tx_peak),
-          static_cast<unsigned long long>(backend.rx_discarded),static_cast<unsigned long long>(backend.tx_discarded));
+          static_cast<unsigned long long>(backend.rx_discarded),static_cast<unsigned long long>(backend.tx_discarded),
+          sketch_console_fields);
       else if (has_transport)
         n = std::snprintf(body,sizeof(body),
           "{\"ok\":true,\"result\":{\"samples\":%lu,\"heap_free\":%lu,\"heap_min\":%lu,"
@@ -408,6 +468,7 @@ void Session::dispatch(uint32_t now) {
   else if (r.channel != 1) error(id,"wrong_target");
   else if (r.command == Command::open) {
     if (owned_) error(id,"invalid_state");
+    else if (upload_ && upload_->blocks_console()) error(id,"busy");
     else if (channel_.backend_kind() == BackendKind::uart &&
              r.config_nonempty && !r.config_complete) error(id,"invalid_argument");
     else {

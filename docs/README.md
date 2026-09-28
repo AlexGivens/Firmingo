@@ -8,6 +8,10 @@ FMGO development contract; [USB startup](usb-startup.md), [local-only networking
 [cold attachment](cold-attachment.md), and [iOS qualification](ios-qualification.md)
 cover the corresponding implementation and checks.
 
+The experimental [managed-sketch SDK handoff](integration/managed-sketch-sdk.md)
+provides the M9 contract, portable vectors, pinned reference build recipe,
+and cross-project acceptance checklist.
+
 [Evidence index](evidence/README.md) separates actual prior observations and
 raw logs from current release claims. [Research index](research/README.md)
 contains historical proposals and pre-release design notes; treat them as

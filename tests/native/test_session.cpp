@@ -471,6 +471,49 @@ void application_queue_diagnostics_are_bounded_and_additive() {
     TEST_ASSERT_NOT_EQUAL(std::string::npos,body(output.back()).find(field));
   TEST_ASSERT_LESS_OR_EQUAL_UINT(768,output.back().payload.size());
 }
+void managed_console_diagnostics_are_optional_and_bounded() {
+  struct ManagedEndpoint : ApplicationEndpoint {
+    bool diagnostics(BackendDiagnostics& value) const override {
+      ApplicationEndpoint::diagnostics(value);
+      value.has_sketch_console = true;
+      value.sketch_input_discarded = UINT32_MAX;
+      value.sketch_output_discarded = UINT32_MAX;
+      value.sketch_output_rejected = UINT32_MAX;
+      value.sketch_output_peak = 256;
+      value.sketch_loop_boundaries = UINT32_MAX;
+      value.sketch_epoch = 3;
+      value.sketch_acknowledged_epoch = 2;
+      value.sketch_input_enabled = false;
+      value.sketch_output_enabled = true;
+      return true;
+    }
+  } backend;
+  IO io; Channel channel(backend); MemorySamples memory;
+  memory.observe(1000,2000);
+  memory.observe_transport({1,2,3,4,5,6,7,8,9,10,11,12,13});
+  Session session(channel,identity,1,0,&memory);
+  hello(session,io);
+  io.command(2,"{\"op\":\"device.diagnostics\"}"); poll(session,io);
+  const auto output=frames(io.output); response(output.back(),2);
+  for (auto field:{"\"sketch_input_discarded\":4294967295",
+                   "\"sketch_output_discarded\":4294967295",
+                   "\"sketch_output_rejected\":4294967295",
+                   "\"sketch_output_peak\":256",
+                   "\"sketch_loop_boundaries\":4294967295",
+                   "\"sketch_epoch\":3",
+                   "\"sketch_acknowledged_epoch\":2",
+                   "\"sketch_input_enabled\":false",
+                   "\"sketch_output_enabled\":true"})
+    TEST_ASSERT_NOT_EQUAL(std::string::npos,body(output.back()).find(field));
+  TEST_ASSERT_LESS_OR_EQUAL_UINT(Session::response_capacity,output.back().payload.size());
+  MemorySamples small_memory; small_memory.observe(1000,2000);
+  IO small_io; Session small(channel,identity,2,0,&small_memory);
+  hello(small,small_io,"{\"op\":\"hello\",\"max_payload\":512}");
+  small_io.command(3,"{\"op\":\"device.diagnostics\"}"); poll(small,small_io);
+  const auto small_output=frames(small_io.output); response(small_output.back(),3);
+  TEST_ASSERT_EQUAL(std::string::npos,
+                    body(small_output.back()).find("sketch_input_discarded"));
+}
 void stream_queue_peaks_include_drained_reads_and_survive_new_owner() {
   IO io,backend; Channel channel(backend); Session session(channel,identity,1,0); open(session,io);
   backend.write_limit=0; io.serial(std::vector<uint8_t>(256,0x77)); poll(session,io);
@@ -489,6 +532,7 @@ int main() {
   RUN_TEST(diagnostics_are_bounded_correlated_and_keep_sampled_minima);
   RUN_TEST(diagnostics_require_negotiation_samples_and_exact_schema);
   RUN_TEST(application_queue_diagnostics_are_bounded_and_additive);
+  RUN_TEST(managed_console_diagnostics_are_optional_and_bounded);
   RUN_TEST(stream_queue_peaks_include_drained_reads_and_survive_new_owner);
   RUN_TEST(strict_json_checks_syntax_unicode_numbers_and_duplicates);
   RUN_TEST(json_resource_limits_are_explicit_and_reset_after_failure);

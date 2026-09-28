@@ -182,7 +182,7 @@ void TcpSessionServer::poll(uint32_t now) {
     if (!connection.occupied) continue;
     if (connection.closing) { close(connection, now); continue; }
     if (!connection.session) connection.session = new (connection.storage)
-      Session(channel_, identity_, i + 1, connection.accepted_at, memory_);
+      Session(channel_, identity_, i + 1, connection.accepted_at, memory_, upload_);
     const auto result = connection.session->poll(connection, now);
     if (!connection.pcb) { connection.clear(); continue; }
     if (result != SessionResult::running) {
