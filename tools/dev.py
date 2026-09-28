@@ -93,9 +93,14 @@ def effective_arduino_config(cli):
     # assuming platform-specific Arduino data/user locations (including CI).
     config = json.loads(run(cli + ["config", "dump", "--json"], capture=True))["config"]
     directories = config.setdefault("directories", {})
-    for key in ("data", "user", "downloads"):
+    for key in ("data", "user"):
         if key not in directories:
             directories[key] = json.loads(run(cli + ["config", "get", "directories." + key, "--json"], capture=True))
+    # CLI 1.5.1 reports an unset downloads override as "", but serializing that
+    # value makes its ConfigurationGet dereference a nil path at startup. Leave
+    # the optional key unset so the CLI derives its cache from the data directory.
+    if directories.get("downloads") == "":
+        del directories["downloads"]
     if not directories["data"]:
         raise RuntimeError("Arduino CLI did not report its data directory")
     return config

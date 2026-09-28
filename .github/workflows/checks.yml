@@ -4,6 +4,11 @@ on: [push, pull_request]
 permissions:
   contents: read
 
+defaults:
+  run:
+    # Explicit bash enables pipefail so tee cannot hide test/build failures.
+    shell: bash
+
 jobs:
   native:
     runs-on: ubuntu-24.04
@@ -41,14 +46,16 @@ jobs:
       - name: Bounded DHCP, protocol, session and managed-upload mutation fuzz
         run: |
           mkdir -p build/fuzz
-          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON
-          .venv/bin/cmake --build build/fuzz --parallel 2
-          .venv/bin/ctest --test-dir build/fuzz -R '_fuzz$' --output-on-failure
+          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON 2>&1 | tee build/fuzz/configure.log
+          .venv/bin/cmake --build build/fuzz --parallel 2 2>&1 | tee build/fuzz/build.log
+          .venv/bin/ctest --test-dir build/fuzz -R '_fuzz$' --output-on-failure 2>&1 | tee build/fuzz/test.log
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: mutation-fuzz-logs
-          path: build/fuzz/Testing/Temporary/*.log
+          path: |
+            build/fuzz/*.log
+            build/fuzz/Testing/Temporary/*.log
           if-no-files-found: ignore
 
   firmware-builds:
@@ -110,7 +117,9 @@ jobs:
           python-version: '3.12'
       - uses: ./.github/actions/setup-firmware
       - name: Prepare pinned USB overlay with application build
-        run: python tools/dev.py build --board nano_rp2040_connect --firmware application
+        run: |
+          mkdir -p build/firmware/nano_rp2040_connect/application
+          python tools/dev.py build --board nano_rp2040_connect --firmware application 2>&1 | tee build/firmware/nano_rp2040_connect/application/driver.log
       - name: Compile experimental resident, capsules and initial images
         run: |
           overlay=build/firmware/nano_rp2040_connect/application/usb-toolchain

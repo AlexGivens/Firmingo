@@ -108,7 +108,10 @@ static std::vector<uint8_t> capsule() {
 }
 static std::string hash(const std::vector<uint8_t>& bytes) {
   uint8_t digest[32];sha256(bytes.data(),bytes.size(),digest);char text[65];
-  for(unsigned i=0;i<32;++i)std::snprintf(text+2*i,3,"%02x",digest[i]);return text;
+  for (unsigned i = 0; i < 32; ++i) {
+    std::snprintf(text + 2 * i, 3, "%02x", digest[i]);
+  }
+  return text;
 }
 static std::string begin_text(const std::vector<uint8_t>& bytes) {
   return "{\"op\":\"flash.begin\",\"target_id\":1,\"board_id\":\"nano_rp2040_connect\",\"format\":\"nano-managed-v1\",\"size\":"+
@@ -189,8 +192,12 @@ void duplicate_out_of_order_overflow_and_oversize_chunks_preserve_stage() {
 void digest_and_image_failures_never_commit() {
   for(unsigned fault=0;fault<7;++fault) {
     Fixture f;Peer p;Session s(f.channel,identity,7,0,nullptr,&f.upload);hello(s,p);auto bytes=capsule();
-    if(fault==1)bytes[8]^=1;if(fault==2)bytes[12]^=1;if(fault==3)bytes[16]^=1;
-    if(fault==4)bytes[70]=1;if(fault==5)bytes[24]=0;if(fault==6)bytes.pop_back();
+    if (fault == 1) { bytes[8] ^= 1; }
+    if (fault == 2) { bytes[12] ^= 1; }
+    if (fault == 3) { bytes[16] ^= 1; }
+    if (fault == 4) { bytes[70] = 1; }
+    if (fault == 5) { bytes[24] = 0; }
+    if (fault == 6) { bytes.pop_back(); }
     ok(cmd(s,p,begin_text(bytes)));if(fault==0)bytes.back()^=1;
     ok(exchange(s,p,chunk(bytes)));error(cmd(s,p,op("finish")),fault==0?"digest_mismatch":"invalid_image");
     TEST_ASSERT_FALSE(f.stage.active());error(cmd(s,p,op("commit")),"invalid_state");

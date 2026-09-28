@@ -60,15 +60,28 @@ def test_unpinned_inputs_are_rejected_before_overlay_mutation(sdk,fault):
 
 
 @pytest.mark.parametrize('explicit', [False, True])
-def test_cli_directory_defaults_are_queried_only_when_not_explicit(monkeypatch,explicit):
+@pytest.mark.parametrize('downloads', ['', '/test/download-cache'])
+def test_cli_directory_defaults_are_queried_only_when_not_explicit(monkeypatch,explicit,downloads):
     from tools import dev
     calls=[]
-    directories={'data':'/test/Arduino15','user':'/test/sketchbook','downloads':''}
+    directories={'data':'/test/Arduino15','user':'/test/sketchbook','downloads':downloads}
     def run(command,**kwargs):
         calls.append(command)
         if command[2]=='dump':
             return json.dumps({'config':{'directories':dict(directories)} if explicit else {}})
         return json.dumps(directories[command[3].split('.')[-1]])
     monkeypatch.setattr(dev,'run',run)
-    assert dev.effective_arduino_config(['arduino-cli'])['directories']==directories
-    assert len(calls)==(1 if explicit else 4)
+    expected={key:directories[key] for key in ('data','user')}
+    if explicit and downloads:
+        expected['downloads']=downloads
+    assert dev.effective_arduino_config(['arduino-cli'])['directories']==expected
+    assert len(calls)==(1 if explicit else 3)
+    assert not any('directories.downloads' in command for command in calls)
+
+
+def test_overlay_preserves_unset_download_cache(sdk):
+    root,core,config,output=sdk
+    del config['directories']['downloads']
+    command,_=usb_core.prepare(root,['arduino-cli'],config,output)
+    generated=json.loads(Path(command[-1]).read_text())
+    assert 'downloads' not in generated['directories']

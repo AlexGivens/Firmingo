@@ -202,8 +202,11 @@ installing Arduino-Pico 6.0.0. This replaces the Node 20 Arduino setup action;
 it does not upgrade the firmware toolchain. When changing pins, review the action
 release/runtime and compare CLI/core versions with the board manifests.
 
-Native and fuzz CTest logs are retained even on test failure. Firmware artifacts
-contain driver/compiler logs, reports and exported images, excluding intermediate
+All workflow commands explicitly select `shell: bash`, enabling `pipefail` so
+logging through `tee` preserves a failed test/build command's exit status.
+Fuzz configure/build/test logs and native/fuzz CTest logs are retained even on
+failure. Firmware artifacts contain driver/compiler logs, reports and exported
+images, excluding intermediate
 builds and the large toolchain overlay. The preserved baseline output is directly
 under `build/firmware/nano_rp2040_connect/`; other profiles add their profile name.
 Driver logs also retain errors occurring before a compiler report is available.
@@ -212,8 +215,8 @@ The [2026-09-27 run](https://github.com/AlexGivens/Firmingo/actions/runs/3638785
 failed in the native test command and Pico local-only build command; the other
 matrix jobs were cancelled. Its annotations alone do not identify the underlying
 test/compiler errors. The CI configuration review addresses runtime warnings,
-coverage and artifact/cancellation behavior; a new GitHub run and detailed logs
-are still needed to establish Linux success or diagnose those original failures.
+coverage and artifact/cancellation behavior. Subsequent downloaded logs identify
+the causes below; a new GitHub run is still needed to establish Linux success.
 Hardware tests remain opt-in and compilation never establishes hardware support.
 
 Local CI review validation on 2026-09-28 used macOS, Python 3.12 and the existing
@@ -240,6 +243,47 @@ default installed core was 6.1.0 and correctly failed the version gate):
 These checks exercised the unchanged production code and new build recipe on
 macOS. No hardware test was attempted and the updated GitHub workflow has not
 run. Local passing results do not close the original Ubuntu failures.
+
+Follow-up screenshot review exposed a logging bug in the initial CI update:
+unspecified Actions shells run `bash -e` without `pipefail`, allowing `tee` to
+mask failure in native/reference/resident/module commands. Thus the green checks
+in that run do not establish successful tests or compilation. Explicit Bash
+selection corrects this, and fuzz build logs now survive errors before CTest.
+A local subprocess check reproduced status 0 for a failed command piped through
+`tee` under `bash -e`, and status 7 with early termination under the documented
+explicit Bash invocation; a successful pipeline still returned 0. Actionlint and
+`git diff --check` passed after this correction.
+
+Downloaded logs from the run of commit `51e9764` establish that native compilation
+failed under GCC 13.3.0 with `-Werror=misleading-indentation` in
+`tests/native/test_fmgo_upload.cpp`: the hash helper and chained image-fault
+conditions put multiple statements on a single indented line. These statements
+now have explicit blocks without changing assertions or disabling warnings.
+The mutation job also compiles this source; its full failing log was not supplied,
+so its exact failure remains unconfirmed until a rerun.
+
+The Nano application and Pico local-only compiler logs contain an Arduino CLI
+1.5.1 `ConfigurationGet` nil-path panic, and both reports say `status: failed`
+with empty artifacts. The managed job stopped while preparing its application
+overlay, before the resident build. `config get directories.downloads --json`
+reports an unset override as `""`; serializing that as an explicit setting
+causes the panic. The build helper now leaves the optional default unset and
+preserves nonempty explicit download paths. This follows the pinned CLI's
+[DownloadsDir implementation](https://github.com/arduino/arduino-cli/blob/v1.5.1/internal/cli/configuration/directories.go),
+which derives the default cache from the data directory when the key is absent.
+
+Follow-up validation on macOS reproduced the same CLI panic with an explicit
+empty downloads setting and successful startup with that setting omitted. The
+actual `effective_arduino_config` output also started CLI 1.5.1 successfully.
+Focused configuration/overlay regressions passed 9/9; `tools/dev.py test
+--sanitize` passed 20/20 native and 183/183 host tests; rebuilding `build/ci-fuzz`
+and running `ctest --test-dir build/ci-fuzz -R '_fuzz$' --output-on-failure`
+passed 4/4. Pico local-only and Nano application builds passed with a pinned
+6.0.0 configuration omitting the downloads setting; their reported sizes were
+unchanged. `build_resident.py` also passed against that corrected overlay,
+reporting 134,328 flash / 96,672 static RAM bytes and the same resident UF2 hash
+as the earlier local build. Pipeline exit propagation, actionlint and whitespace checks also
+passed. GCC/Ubuntu execution and hardware checks remain pending.
 
 ## Application-stream reference
 
