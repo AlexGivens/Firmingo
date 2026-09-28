@@ -1,0 +1,22 @@
+name: Pinned firmware toolchain
+description: Install Arduino CLI 1.5.1 and Arduino-Pico 6.0.0 on Ubuntu x64
+runs:
+  using: composite
+  steps:
+    - name: Install verified Arduino CLI
+      shell: bash
+      run: |
+        archive="$RUNNER_TEMP/arduino-cli_1.5.1_Linux_64bit.tar.gz"
+        cli_bin="$RUNNER_TEMP/firmingo-cli"
+        curl --fail --silent --show-error --location \
+          https://github.com/arduino/arduino-cli/releases/download/v1.5.1/arduino-cli_1.5.1_Linux_64bit.tar.gz \
+          --output "$archive"
+        echo "28a8e119c498a25607821c36cb2dc49e8463941b261a0d99091baa7bc692dd2b  $archive" | sha256sum --check
+        mkdir -p "$cli_bin"
+        tar -xzf "$archive" -C "$cli_bin" arduino-cli
+        echo "$cli_bin" >> "$GITHUB_PATH"
+    - name: Install pinned core
+      shell: bash
+      run: |
+        arduino-cli core update-index --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+        arduino-cli core install rp2040:rp2040@6.0.0 --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json

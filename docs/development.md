@@ -181,10 +181,65 @@ Session retains the frame for that lifetime. No production heap allocation occur
 
 ## CI
 
-`.github/workflows/checks.yml` configures native sanitizer/harness tests and a
-pinned Nano baseline compilation on Ubuntu. Build logs/reports are retained as
-artifacts. Hardware tests are opt-in only. This workflow is newly added and has
-not run on GitHub; its presence is not CI or firmware-build evidence.
+`.github/workflows/checks.yml` runs on pushes and pull requests using Ubuntu
+24.04 and Python 3.12. It runs the normal `tools/dev.py test --sanitize` command
+(including managed-sketch native/host regressions), a separate bounded DHCP,
+protocol/session and managed-upload mutation job, and seven pinned firmware
+builds: Nano baseline plus local-only/application/UART for both declared boards.
+The firmware matrix has `fail-fast: false`, so one failure preserves results
+from the remaining profiles.
+
+The separate experimental Nano job prepares the USB overlay with an application
+build, then builds the M9 resident, Blink A/B and pause/stall probe capsules,
+Blink A/B initial composite UF2s, and SDK contract archive using the scripts in
+`experiments/managed_sketch/README.md`. These artifacts remain outside the beta
+release package. No job flashes, resets, or contacts a board.
+
+Checkout, Python setup and artifact upload are pinned to reviewed Node 24 action
+commits. `.github/actions/setup-firmware/action.yml` downloads Arduino CLI 1.5.1
+from its official release and checks its pinned Linux x64 SHA-256 before
+installing Arduino-Pico 6.0.0. This replaces the Node 20 Arduino setup action;
+it does not upgrade the firmware toolchain. When changing pins, review the action
+release/runtime and compare CLI/core versions with the board manifests.
+
+Native and fuzz CTest logs are retained even on test failure. Firmware artifacts
+contain driver/compiler logs, reports and exported images, excluding intermediate
+builds and the large toolchain overlay. The preserved baseline output is directly
+under `build/firmware/nano_rp2040_connect/`; other profiles add their profile name.
+Driver logs also retain errors occurring before a compiler report is available.
+
+The [2026-09-27 run](https://github.com/AlexGivens/Firmingo/actions/runs/36387854726)
+failed in the native test command and Pico local-only build command; the other
+matrix jobs were cancelled. Its annotations alone do not identify the underlying
+test/compiler errors. The CI configuration review addresses runtime warnings,
+coverage and artifact/cancellation behavior; a new GitHub run and detailed logs
+are still needed to establish Linux success or diagnose those original failures.
+Hardware tests remain opt-in and compilation never establishes hardware support.
+
+Local CI review validation on 2026-09-28 used macOS, Python 3.12 and the existing
+isolated `arduino-cli.local.yaml` configuration for the pinned core (the Mac's
+default installed core was 6.1.0 and correctly failed the version gate):
+
+- `tools/dev.py test --sanitize`: 20/20 CTest tests and 180/180 host tests passed.
+  Host loopback tests required execution outside the filesystem/network sandbox.
+- CMake configured `build/ci-fuzz` with sanitizers and all three fuzz options;
+  `ctest --test-dir build/ci-fuzz -R '_fuzz$' --output-on-failure`: 4/4 passed.
+- `tools/dev.py build --board raspberry_pi_pico --firmware local-only`: passed,
+  119,596 flash / 77,108 static RAM bytes.
+- `tools/dev.py build --board nano_rp2040_connect --firmware application`: passed,
+  128,808 flash / 91,432 static RAM bytes.
+- The managed job's `build_resident.py`, four `build_module.py` invocations, two
+  `build_composite.py` invocations and `export_sdk_contract.py` ran successfully
+  under `build/managed_sketch/ci/`. Resident: 134,328 flash / 96,672 static RAM
+  bytes. All reported budgets passed; upstream WiFi overloaded-virtual warnings
+  remain in compiler logs.
+- Official actionlint 1.7.12 with `-shellcheck=` validated the workflow; both
+  composite installer shell blocks passed `bash -n`; `git diff --check` passed.
+  ShellCheck and an Ubuntu execution of the installer/workflow were not run.
+
+These checks exercised the unchanged production code and new build recipe on
+macOS. No hardware test was attempted and the updated GitHub workflow has not
+run. Local passing results do not close the original Ubuntu failures.
 
 ## Application-stream reference
 

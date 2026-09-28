@@ -1,33 +1,61 @@
 name: Firmware foundations
 on: [push, pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   native:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0, Node 24
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0, Node 24
         with:
           python-version: '3.12'
       - run: python -m venv .venv
       - run: .venv/bin/python -m pip install -r requirements-dev.txt
-      - run: .venv/bin/python tools/dev.py test --sanitize
-      - name: Bounded DHCP mutation fuzz
+      - name: Native sanitizer and host harness tests
         run: |
-          .venv/bin/cmake -S . -B build/dhcp-fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON
-          .venv/bin/cmake --build build/dhcp-fuzz --parallel 2
-          .venv/bin/ctest --test-dir build/dhcp-fuzz -R dhcp_fuzz --output-on-failure
-      - name: Bounded stream protocol mutation fuzz
+          mkdir -p build
+          .venv/bin/python tools/dev.py test --sanitize 2>&1 | tee build/native-check.log
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0, Node 24
+        if: always()
+        with:
+          name: native-test-logs
+          path: |
+            build/native-check.log
+            build/native-sanitize/Testing/Temporary/*.log
+          if-no-files-found: ignore
+
+  mutation-fuzz:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+        with:
+          python-version: '3.12'
+      - run: python -m venv .venv
+      - run: .venv/bin/python -m pip install -r requirements-dev.txt
+      - name: Bounded DHCP, protocol, session and managed-upload mutation fuzz
         run: |
-          .venv/bin/cmake -S . -B build/protocol-fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_PROTOCOL_FUZZ=ON
-          .venv/bin/cmake --build build/protocol-fuzz --parallel 2
-          .venv/bin/ctest --test-dir build/protocol-fuzz -R '(protocol|session)_fuzz' --output-on-failure
+          mkdir -p build/fuzz
+          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON
+          .venv/bin/cmake --build build/fuzz --parallel 2
+          .venv/bin/ctest --test-dir build/fuzz -R '_fuzz$' --output-on-failure
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: mutation-fuzz-logs
+          path: build/fuzz/Testing/Temporary/*.log
+          if-no-files-found: ignore
 
   firmware-builds:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
         include:
           - board: nano_rp2040_connect
@@ -45,20 +73,69 @@ jobs:
           - board: raspberry_pi_pico
             firmware: uart
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
         with:
           python-version: '3.12'
-      - uses: arduino/setup-arduino-cli@v2
-        with:
-          version: '1.5.1'
-      - name: Install pinned core
+      - uses: ./.github/actions/setup-firmware
+      - name: Compile selected firmware
+        env:
+          BUILD_BOARD: ${{ matrix.board }}
+          BUILD_FIRMWARE: ${{ matrix.firmware }}
         run: |
-          arduino-cli core update-index --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-          arduino-cli core install rp2040:rp2040@6.0.0 --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-      - run: python tools/dev.py build --board ${{ matrix.board }} --firmware ${{ matrix.firmware }}
-      - uses: actions/upload-artifact@v4
-        if: always()
+          output="build/firmware/$BUILD_BOARD"
+          if [ "$BUILD_FIRMWARE" != baseline ]; then
+            output="$output/$BUILD_FIRMWARE"
+          fi
+          mkdir -p "$output"
+          echo "FIRMWARE_OUTPUT=$output" >> "$GITHUB_ENV"
+          python tools/dev.py build --board "$BUILD_BOARD" --firmware "$BUILD_FIRMWARE" 2>&1 | tee "$output/driver.log"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always() && env.FIRMWARE_OUTPUT != ''
         with:
           name: ${{ matrix.board }}-${{ matrix.firmware }}-build
-          path: build/firmware/${{ matrix.board }}/${{ matrix.firmware }}/
+          path: |
+            ${{ env.FIRMWARE_OUTPUT }}/*.log
+            ${{ env.FIRMWARE_OUTPUT }}/report.json
+            ${{ env.FIRMWARE_OUTPUT }}/artifacts/*
+          if-no-files-found: error
+
+  managed-sketch-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+        with:
+          python-version: '3.12'
+      - uses: ./.github/actions/setup-firmware
+      - name: Prepare pinned USB overlay with application build
+        run: python tools/dev.py build --board nano_rp2040_connect --firmware application
+      - name: Compile experimental resident, capsules and initial images
+        run: |
+          overlay=build/firmware/nano_rp2040_connect/application/usb-toolchain
+          output=build/managed_sketch/ci
+          mkdir -p "$output"
+          python experiments/managed_sketch/build_resident.py --cli "$(command -v arduino-cli)" --config-file "$overlay/arduino-cli.yaml" --output-dir "$output/resident" 2>&1 | tee "$output/resident-driver.log"
+          for sketch in blink_a blink_b pause_probe stall_probe; do
+            python experiments/managed_sketch/build_module.py --sketch "$sketch" --resident-elf "$output/resident/artifacts/firmingo_managed_resident.ino.elf" --toolchain-bin "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin" --output-dir "$output" 2>&1 | tee "$output/$sketch-driver.log"
+          done
+          for sketch in blink_a blink_b; do
+            python experiments/managed_sketch/build_composite.py --sketch "$sketch" --resident-dir "$output/resident" --module-dir "$output" --output-dir "$output/composite"
+          done
+          python experiments/managed_sketch/export_sdk_contract.py --output "$output/sdk-contract.zip"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: nano-managed-sketch-experimental-build
+          path: |
+            build/managed_sketch/ci/*.log
+            build/managed_sketch/ci/**/*.json
+            build/managed_sketch/ci/**/*.log
+            build/managed_sketch/ci/**/*.elf
+            build/managed_sketch/ci/**/*.uf2
+            build/managed_sketch/ci/**/*.fms
+            build/managed_sketch/ci/*.zip
+            build/firmware/nano_rp2040_connect/application/*.log
+            build/firmware/nano_rp2040_connect/application/report.json
+          if-no-files-found: ignore
