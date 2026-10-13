@@ -31,8 +31,9 @@ owns Swift hosting, device evidence and deployment. Portable compiler execution
 now lives in Firmingo-Compiler; FirmingoKit consumes
 a pinned source-only package through its tested macOS WebKit adapter. Local compiler
 tests do not establish Clang-to-resident hardware behavior. Next firmware
-integration work is the verified exact-build export in M10.1 and independent
-qualification of actual Clang capsules against the resident. Existing firmware qualification priorities below are retained.
+integration work now has the experimental exact-build export in M10.1 and independent
+validation of two actual Clang capsules against the exact resident API. Complete
+upstream provenance and wrapper/hardware qualification remain open. Existing firmware qualification priorities below are retained.
 
 Version 0.1.0 beta has board-specific build and package metadata. The shared
 application and UART sketches compile for Nano RP2040 Connect and Raspberry Pi
@@ -532,18 +533,18 @@ commands, host/board reports and a reproducible walkthrough; none yet.
 
 ### M10.1 — Firmware inputs for the compiler split
 
-Status: prerequisite documentation/inventory complete; export implementation and
-compiler compatibility qualification remain open.
+Status: experimental exact-build export and independent capsule validation implemented;
+production provenance/publication and compiler hardware compatibility remain open.
 
 - [x] Align root guidance, README, index, handoff and roadmap with compiler/wrapper
   ownership while preserving existing native proof builds and measured evidence.
 - [x] Specify actual resident export facts, compatibility rules and independent
   qualification gates in `docs/integration/compiler-contract.md`; record the source
   snapshot in FirmingoKit's migration inventory. This completes planning only.
-- [ ] Implement a non-flashing exact-build export alongside the existing parser/
+- [x] Implement a non-flashing exact-build export alongside the existing parser/
   documentation ZIP. Derive hashes/API metadata from actual consistent resident
   ELF/UF2/reports and selected source, with explicit native/composite distinctions.
-- [ ] Test missing/stale/mismatched/corrupt reports/artifacts, unsafe paths, ambiguous
+- [x] Test missing/stale/mismatched/corrupt reports/artifacts, unsafe paths, ambiguous
   selection, provenance and deterministic output where supported; align the local
   entry point, CI and documentation in that implementation increment.
 - [ ] Publish versioned compatible ABI/facade/layout inputs and explain module
@@ -556,8 +557,12 @@ compiler compatibility qualification remain open.
 Acceptance: the compiler consumes verified firmware facts without fake addresses
 or device access; wrappers separately validate installation/deployment. New exports
 and actual compiler/hardware acceptance need their own recorded checks.
-Evidence: documentation and reference inventory only; no exporter, firmware build,
-compiler runtime, CI, device operation or qualification ran in this refocus.
+Evidence: [experimental export](docs/evidence/resident-compiler-export.md): existing
+exact M9 source/ELF/UF2/report export, 152,840 compared flash bytes, 20 sanitizer
+native/191 host tests passed. Compiler imports metadata and two actual WASM
+capsules pass production firmware validation; a repeated build is byte-identical.
+No device operation or new local resident build occurred. CI now produces the
+same export for its newly compiled experimental resident; execution remains to inspect.
 
 ## iPhone/iPad qualification checklist
 

@@ -25,6 +25,7 @@ byte-for-byte originals.
 | Managed sketch experiment | [initial Nano resident](managed-sketch-initial.md), [m7exp2 first boot](managed-sketch-m7exp2.md), [m7exp3 slot repair and replacement](managed-sketch-m7exp3.md), [m8exp1 failed echo](managed-sketch-m8exp1.md), [m8exp2 diagnostic run](managed-sketch-m8exp2.md), [m8exp3 failed echo and stack finding](managed-sketch-m8exp3.md), [m8exp4 first passing console](managed-sketch-m8exp4.md), [m9exp1 upload build](managed-sketch-m9exp1.md), [m9exp1 hardware](managed-sketch-m9exp1-hardware.md) | Exact experimental ROM images, M7/M8 hardware trials, and M9 build/initial hardware checks |
 | Test harness | [attachment harness](attachment-harness.md) | Host-side harness behavior, not device validation |
 | Managed-sketch SDK handoff | [M10 firmware contract export](managed-sketch-sdk-handoff.md) | Shared production-checked vectors, checksummed archive and pinned capsule recipe; no SDK/IDE workflow claim |
+| Exact resident compiler input | [Experimental resident export](resident-compiler-export.md) | Exact source/report/ELF/UF2 binding and independent validation of two WASM capsules; no hardware execution |
 
 The published `.json`, `.log`, and helper-script files retain their
 historical names and are indexed by the narrative reports. A packet capture and

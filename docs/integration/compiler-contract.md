@@ -1,8 +1,8 @@
 # Firmware contract for Firmingo-Compiler and wrappers
 
 Ownership accepted on 2026-10-12. This document specifies the firmware side of
-the compiler split; it does not implement an exporter, change the ABI/protocol,
-or qualify compiler output. The existing
+the compiler split, including the experimental exact-build exporter added on
+2026-10-13. It does not change the ABI/protocol or qualify device execution. The existing
 [managed-sketch handoff](managed-sketch-sdk.md) remains the experimental M9 guide.
 
 ## Ownership and inputs
@@ -25,14 +25,14 @@ recipes may adapt those inputs only with explicit compatibility checks. Do not
 maintain competing authoritative layouts or relax firmware validation merely to
 accept a compiler artifact.
 
-## Current export versus planned exact-build export
+## Parser export and experimental exact-build export
 
 `experiments/managed_sketch/export_sdk_contract.py` currently exports documentation,
 ABI/image headers, and protocol fixtures. Its manifest explicitly declares no
 firmware images and non-executable fixtures. Preserve that contract and command;
 the ZIP is not an exact resident-build export or executable test package.
 
-The future non-flashing exact-build export should provide:
+The broader production export must eventually provide:
 
 - Exact resident ELF and installation UF2, distinguishing resident-only and
   composite images and the effects of later managed-slot writes.
@@ -55,6 +55,46 @@ real compatible Nano descriptor without connecting a board. The SDK independentl
 validates installation/deployment evidence. An artifact hash establishes byte
 identity, not publisher authentication or installed-flash attestation.
 
+The initial experimental implementation is now available:
+
+```sh
+python3 experiments/managed_sketch/export_resident.py --help
+python3 experiments/managed_sketch/export_resident.py \
+  --resident-dir path/to/exact/resident-build \
+  --firmware-commit exact-40-character-git-commit \
+  --output path/to/new/resident-export
+```
+
+It checks all reported project sources against that commit, requiring all tracked
+C/C++ library inputs and the board/ABI/version/build-script identities. The only
+ignored historical entry is `src/.DS_Store`; its bytes are not read or exported.
+The existing installed core/toolchain identities remain declarations, not a full
+upstream inventory or clean reproduction. Missing inputs or inconsistent source,
+board, upload limits, memory budgets, artifact hashes and ELF/UF2 bytes fail
+before output creation. Symlinked, special and oversized inputs are rejected.
+
+The bounded ELF32 ARM reader derives the unique global readonly 40-byte FAPI-v1
+symbol and its eight Thumb pointers, checks executable section containment and
+flash LOAD mapping, then compares every initialized ELF flash byte with the
+resident-only UF2 using the production UF2 checks. Resident LOAD permissions may
+be RWX; the API object's section must remain readonly. This does not change the
+compiler's stricter stateless module rules. Composite images are rejected.
+
+Schema 1 exports exactly `resident.elf` (up to 8 MiB), `resident.uf2` (4 MiB),
+`build-report.json` and `resident-facts.json` (256 KiB each), plus a checksummed
+inventory `manifest.json`. Facts include actual firmware/board/profile/backend,
+ABI/API table, target/capsule limits, artifact/report hashes, commit/source hashes,
+producer/UF2-validator tool hashes and explicit qualification/provenance limits.
+No compiler recipe or physical-device identity is assigned. Existing output
+directories are refused; a filesystem write failure can leave incomplete files
+but never reports successful export. No hardware or installation operation occurs.
+
+Firmingo-Compiler's `tools/dev.mjs import-resident` requires an independently
+reviewed manifest hash, checks bytes/schema and UF2/FAPI, attaches its pinned
+recipe and emits metadata into a new directory. It copies no firmware images and
+does not populate the default catalogue. See the
+[local export/validation evidence](../evidence/resident-compiler-export.md).
+
 ## Compatibility and qualification
 
 Version device ABI/image changes deliberately. Document whether existing modules
@@ -73,8 +113,8 @@ managed support remain explicit.
 ## Migration sequence
 
 1. Pin existing firmware contracts and build evidence in the migration inventory.
-2. Define the required exact-build export; implement it as a later firmware task
-   with focused tests and the corresponding CI/documentation updates.
+2. Maintain the experimental exact-build exporter and focused host tests; CI
+   exports every newly compiled experimental resident against its checked-out commit.
 3. Supply verified facts to the compiler's Nano recipe and descriptor pipeline.
 4. Retain independent firmware validation while wrappers integrate the compiler.
 5. Qualify the exact cross-project combination before expanding support claims.

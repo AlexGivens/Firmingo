@@ -181,6 +181,13 @@ and separate packaged-consumer checks; see the SDK's `docs/compiler-adapter.md`.
 These local macOS results do not establish Clang-to-resident hardware behavior
 or physical iPad execution/deployment.
 
+The non-flashing exact resident exporter and Compiler metadata importer now bind
+experimental metadata to real ELF/UF2/report/project-source identities; see the
+[export contract](compiler-contract.md) and
+[local checks](../evidence/resident-compiler-export.md). Two supported WASM capsules
+pass the production firmware image validator. Device execution and installation
+evidence remain separate gates.
+
 ## Cross-project acceptance checklist
 
 | Check | Current evidence / required next result |

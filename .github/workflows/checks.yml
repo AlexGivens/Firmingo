@@ -126,6 +126,7 @@ jobs:
           output=build/managed_sketch/ci
           mkdir -p "$output"
           python experiments/managed_sketch/build_resident.py --cli "$(command -v arduino-cli)" --config-file "$overlay/arduino-cli.yaml" --output-dir "$output/resident" 2>&1 | tee "$output/resident-driver.log"
+          python experiments/managed_sketch/export_resident.py --resident-dir "$output/resident" --firmware-commit "$GITHUB_SHA" --output "$output/resident-export" 2>&1 | tee "$output/resident-export-driver.log"
           for sketch in blink_a blink_b pause_probe stall_probe; do
             python experiments/managed_sketch/build_module.py --sketch "$sketch" --resident-elf "$output/resident/artifacts/firmingo_managed_resident.ino.elf" --toolchain-bin "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin" --output-dir "$output" 2>&1 | tee "$output/$sketch-driver.log"
           done

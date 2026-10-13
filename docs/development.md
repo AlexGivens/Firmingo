@@ -181,6 +181,13 @@ Session retains the frame for that lifetime. No production heap allocation occur
 
 ## CI
 
+The managed-sketch job now runs `experiments/managed_sketch/export_resident.py`
+after the resident build, binding project source hashes to `GITHUB_SHA` and
+retaining schema-1 ELF/UF2/report/facts exports and logs. The same non-flashing
+command is documented in [the compiler contract](integration/compiler-contract.md).
+Focused exporter regression tests run in the ordinary host suite; synthetic
+fixtures do not qualify hardware or upstream toolchain reproduction.
+
 `.github/workflows/checks.yml` runs on pushes and pull requests using Ubuntu
 24.04 and Python 3.12. It runs the normal `tools/dev.py test --sanitize` command
 (including managed-sketch native/host regressions), a separate bounded DHCP,

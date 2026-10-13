@@ -20,7 +20,11 @@ def sha(data):
 
 
 def checked_resident(path):
-    data = path.read_bytes()
+    return checked_resident_bytes(path.read_bytes())
+
+
+def checked_resident_bytes(data):
+    """Validate the same resident-only UF2 profile from an already captured byte snapshot."""
     if not data or len(data) % 512:
         raise ValueError("resident UF2 size is invalid")
     blocks = [bytearray(data[i:i + 512]) for i in range(0, len(data), 512)]

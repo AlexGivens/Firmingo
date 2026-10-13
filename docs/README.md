@@ -12,8 +12,9 @@ The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketc
 provides the M9 contract, portable vectors, pinned reference build recipe,
 and cross-project acceptance checklist. The
 [compiler contract plan](integration/compiler-contract.md) defines firmware-owned
-build facts, the Firmingo-Compiler/FirmingoKit boundary, and future exact-build
-export acceptance. The split is documented; implementation has not moved.
+build facts, the Firmingo-Compiler/FirmingoKit boundary, and the implemented
+experimental exact-build exporter. [Export evidence](evidence/resident-compiler-export.md)
+records source/artifact checks and independent validation of two actual WASM capsules.
 
 [Evidence index](evidence/README.md) separates actual prior observations and
 raw logs from current release claims. [Research index](research/README.md)
