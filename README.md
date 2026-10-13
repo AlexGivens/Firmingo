@@ -68,9 +68,18 @@ The [protocol contract](docs/protocol.md) separates implemented behavior from
 proposed programming and security capabilities. [Board status](docs/boards.md)
 separates build support from hardware results. The [work ledger](TODO.md) lists
 remaining validation, including FMGO on iOS, repeated attachment, long traffic
-runs, and release security design. FirmingoKit, the future Swift SDK, is a
-separate project. This repository builds firmware and test tools, not a host IDE
-or programming service.
+runs, and release security design.
+
+Firmingo is the device layer of three companion projects. **Firmingo-Compiler**
+owns language-neutral WASM sketch compilation, recipes, packaging, diagnostics,
+and static build metadata. **FirmingoKit** owns Swift hosting, device communication,
+installation, uploads, and device associations. The compiler split is planned;
+the existing experimental compiler still lives in FirmingoKit during migration.
+This repository owns resident ABI/layout and device-side contracts, verified
+firmware build facts, native firmware builds, and independent hardware/validation
+tools. See [the compiler contract plan](docs/integration/compiler-contract.md) for
+the versioned export boundary and remaining work. It does not provide a host IDE
+or consumer compilation service.
 
 The repository includes the [GNU GPL version 3 license](LICENSE). Vendored
 components retain the upstream license and provenance recorded under

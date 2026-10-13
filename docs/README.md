@@ -8,9 +8,12 @@ FMGO development contract; [USB startup](usb-startup.md), [local-only networking
 [cold attachment](cold-attachment.md), and [iOS qualification](ios-qualification.md)
 cover the corresponding implementation and checks.
 
-The experimental [managed-sketch SDK handoff](integration/managed-sketch-sdk.md)
+The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketch-sdk.md)
 provides the M9 contract, portable vectors, pinned reference build recipe,
-and cross-project acceptance checklist.
+and cross-project acceptance checklist. The
+[compiler contract plan](integration/compiler-contract.md) defines firmware-owned
+build facts, the Firmingo-Compiler/FirmingoKit boundary, and future exact-build
+export acceptance. The split is documented; implementation has not moved.
 
 [Evidence index](evidence/README.md) separates actual prior observations and
 raw logs from current release claims. [Research index](research/README.md)

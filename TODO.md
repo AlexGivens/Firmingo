@@ -21,6 +21,19 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
 
 ## Current position and next action
 
+Repository refocus on 2026-10-12 is documented in
+[the compiler contract plan](docs/integration/compiler-contract.md) and
+[the cross-project migration inventory](../FirmingoKit/docs/compiler-migration.md).
+Firmingo retains firmware/ABI/layout, actual build exports, native proof builds,
+independent validators, and hardware tests. Firmingo-Compiler owns the portable
+WASM pipeline/recipes/artifact packaging and static compiler metadata; FirmingoKit
+owns Swift hosting, device evidence and deployment. Portable compiler execution
+now lives in Firmingo-Compiler; FirmingoKit consumes
+a pinned source-only package through its tested macOS WebKit adapter. Local compiler
+tests do not establish Clang-to-resident hardware behavior. Next firmware
+integration work is the verified exact-build export in M10.1 and independent
+qualification of actual Clang capsules against the resident. Existing firmware qualification priorities below are retained.
+
 Version 0.1.0 beta has board-specific build and package metadata. The shared
 application and UART sketches compile for Nano RP2040 Connect and Raspberry Pi
 Pico; exact 0.1.0 images are not yet hardware-qualified. Prior Nano and Pico
@@ -476,27 +489,28 @@ measured installs/interruption checks and remaining manual cases.
 
 ### M10 — Qualify the beginner IDE workflow across projects
 
-Status: firmware handoff prepared; the Swift SDK and IDE are separate repositories.
+Status: firmware handoff prepared; compiler, Swift wrapper, and host applications
+have distinct ownership. Extraction and cross-project acceptance remain open.
 
 - [x] Publish the current wire contract and vectors for the separate Swift SDK.
   The SDK should expose discovery/explicit address, identity and target matching,
   console ownership, image transfer/status reconciliation and reconnect. The IDE
-  should own editing, compiler integration, board choice, visible upload progress
-  and error messages. Firmware does not compile sketches. The
+  should own editing, SDK API calls, board/build choice, visible upload progress
+  and error messages. The SDK hosts Firmingo-Compiler; firmware exports its device
+  contract and does not compile sketches. The
   [SDK handoff](docs/integration/managed-sketch-sdk.md) includes a checksummed
   ZIP export command, shared native-checked state vectors, image metadata,
   pinned proof build recipe, and cross-project test checklist. This completes
   firmware publication, not implementation or consumption in the SDK/IDE.
   The archive, focused test commands/results, and reproduced Blink A capsule
   are recorded in the [handoff evidence](docs/evidence/managed-sketch-sdk-handoff.md).
-- [ ] Provide a reproducible reference build recipe for managed Arduino sketches
-  with pinned board package, libraries, flags, layout and exported image metadata.
-  On macOS, test an IDE/SDK prototype using Arduino CLI; for iPadOS, identify and
-  test a separate compatible compilation path rather than assuming a host CLI is
-  present. Wrong board/core/layout selections must fail before install.
+- [ ] Provide verified resident facts and versioned ABI/layout inputs for the
+  compiler's reproducible Nano recipe. Keep the native GCC proof as independent
+  reference; qualify actual WASM capsules through the Swift web-host adapter on
+  macOS/iPadOS. Wrong board/core/layout selections must fail before install.
   The named-proof capsule recipe ran against the exact M9 ELF and reproduced
   the previously tested Blink A hash. Actual IDE compiler integration and a
-  compatible iPadOS compilation path remain untested.
+  cross-project iPadOS compilation/deployment path remain untested.
 - [ ] Run an end-to-end novice sequence on the Nano: initial physical setup,
   first authorized connection where reproducible, Blink upload, console print
   and input, edit/rebuild/reupload, cold unplug/replug and console resume. Record
@@ -515,6 +529,35 @@ console session complete on the supported Nano using one cable, without manual
 ROM entry after initial installation; both macOS and iPadOS results are labeled
 by the paths actually tested. Evidence: cross-project versions, exact images,
 commands, host/board reports and a reproducible walkthrough; none yet.
+
+### M10.1 — Firmware inputs for the compiler split
+
+Status: prerequisite documentation/inventory complete; export implementation and
+compiler compatibility qualification remain open.
+
+- [x] Align root guidance, README, index, handoff and roadmap with compiler/wrapper
+  ownership while preserving existing native proof builds and measured evidence.
+- [x] Specify actual resident export facts, compatibility rules and independent
+  qualification gates in `docs/integration/compiler-contract.md`; record the source
+  snapshot in FirmingoKit's migration inventory. This completes planning only.
+- [ ] Implement a non-flashing exact-build export alongside the existing parser/
+  documentation ZIP. Derive hashes/API metadata from actual consistent resident
+  ELF/UF2/reports and selected source, with explicit native/composite distinctions.
+- [ ] Test missing/stale/mismatched/corrupt reports/artifacts, unsafe paths, ambiguous
+  selection, provenance and deterministic output where supported; align the local
+  entry point, CI and documentation in that implementation increment.
+- [ ] Publish versioned compatible ABI/facade/layout inputs and explain module
+  compatibility across resident updates; do not make firmware depend on compiler
+  package versions or infer exact installed bytes from hello.
+- [ ] Validate compiler-produced Nano artifacts independently, then qualify two
+  sketches through the wrapper in an authorized hardware workflow. Preserve native
+  GCC results as separate evidence; Pico managed support remains unimplemented.
+
+Acceptance: the compiler consumes verified firmware facts without fake addresses
+or device access; wrappers separately validate installation/deployment. New exports
+and actual compiler/hardware acceptance need their own recorded checks.
+Evidence: documentation and reference inventory only; no exporter, firmware build,
+compiler runtime, CI, device operation or qualification ran in this refocus.
 
 ## iPhone/iPad qualification checklist
 
@@ -542,6 +585,13 @@ a pass. Record desktop packet evidence separately from iOS observations.
   behavior defined before implementation.
 
 ## Decisions and handoff
+
+Ownership accepted 2026-10-12: Firmingo is authoritative for device contracts and
+verified resident facts; Firmingo-Compiler owns portable compiler assets/pipeline;
+FirmingoKit owns Swift hosting, associations and deployment. The three repositories
+may be changed together for an authorized task, with ArduinoKit read-only and
+unrelated work preserved. Existing handoffs/evidence below remain historical;
+their reported results are not compiler migration or qualification results.
 
 Retained decisions: firmware-only product; initial Nano/Philhower CDC-NCM target;
 keep option-1 baseline; rejected extra re-enumeration workaround; fix local DHCP

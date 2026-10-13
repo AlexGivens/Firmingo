@@ -1,10 +1,21 @@
-# Managed-sketch SDK handoff — experimental M9
+# Managed-sketch compiler/SDK handoff — experimental M9
 
-This is the firmware-side handoff for a separate Swift SDK and IDE. The current
+This is the firmware-side handoff for Firmingo-Compiler, Swift/other wrappers,
+and host applications. The current
 reference is Nano RP2040 Connect `0.1.0-m9exp1`, FMGO protocol 1 over TCP 7420.
 The [protocol](../protocol.md) is authoritative; this guide describes how to
 consume it and reproduce the constrained build. Neither an SDK/IDE integration
 pass nor iPadOS FMGO support is established by these files.
+
+Ownership revised on 2026-10-12: Firmingo owns the resident ABI/layout, image and
+wire contracts, device validation/execution, and verified build facts.
+Firmingo-Compiler owns portable preprocessing/WASM recipes, ELF/capsule packaging,
+compiler diagnostics, and static build metadata. FirmingoKit owns Swift web hosting,
+device evidence, communication, installation and uploads. See
+[the compiler contract plan](compiler-contract.md) for the future exact-build export.
+The existing ZIP below remains documentation/parser vectors, not a resident image
+package. Documentation revision changes newly exported guide bytes, not prior ZIP
+hashes or the selected ABI/fixture bytes; retain historical export evidence.
 
 ## Contract and portable vectors
 
@@ -164,14 +175,18 @@ transfer. It remains the reference for protocol behavior, not a Swift client:
 .venv/bin/python experiments/managed_sketch/smoke.py --help
 ```
 
-iPadOS needs a separate compilation route producing this same linked capsule
-and metadata. No local iPad CLI or compatible remote compiler has been tested.
+The intended iPadOS route is Firmingo-Compiler's local web-hosted WASM pipeline
+through FirmingoKit. Its shared-compiler adapter now passes actual macOS WebKit
+and separate packaged-consumer checks; see the SDK's `docs/compiler-adapter.md`.
+These local macOS results do not establish Clang-to-resident hardware behavior
+or physical iPad execution/deployment.
 
 ## Cross-project acceptance checklist
 
 | Check | Current evidence / required next result |
 | --- | --- |
 | Shared vectors | Native tests compare full frames with production Session/stage/switch; archive checksum checks are host-only |
+| Compiler artifacts | Real WASM source-to-capsule output must satisfy this resident contract; GCC proof and parser vectors do not qualify it |
 | SDK framing and ownership | Run these vectors in the separate SDK; exercise split/coalesced reads, partial writes, busy and reconnect |
 | Upload reconciliation | SDK must send one commit, handle loss by read-only status, reject mismatched device/boot/hash and report terminal failure |
 | Two IDE uploads and console | Firmware harness A→B and exact echo passed; repeat through actual IDE/SDK with exact versions/build records |
@@ -180,7 +195,9 @@ and metadata. No local iPad CLI or compatible remote compiler has been tested.
 | iPad workflow | Record real authorization/lock/denial, automatic addressing, compile path, two uploads, exact bytes and Wi-Fi access |
 | Beginner walkthrough | Supply setup/IDE instructions to a new user; record steps, failures and recovery, rather than treating a harness as an IDE |
 
-The SDK owns networking/framing, identity/target validation, session ownership,
-byte delivery, and upload/status reconciliation. The IDE owns editing, compiler
-integration, board choice, progress and user actions. The firmware validates and
-installs capsules; it does not compile source. ROM recovery remains independent.
+The SDK owns Swift compiler hosting, networking/framing, identity/target and
+deployment validation, device associations, byte delivery, and upload/status
+reconciliation. The compiler owns source-to-artifact execution and static build
+metadata from verified firmware facts. The IDE owns editing, source/build selection,
+progress presentation and user actions. Firmware validates, installs and executes
+capsules; it does not compile source. ROM recovery remains independent.

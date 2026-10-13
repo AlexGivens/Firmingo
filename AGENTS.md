@@ -32,6 +32,35 @@ multiple board types through explicit ports and capability reporting. Do not
 assume that every microcontroller has native USB device support, sufficient
 endpoints, or enough memory for NCM and an IP stack.
 
+### Companion repositories and managed-sketch ownership
+
+The ownership split accepted on 2026-10-12 is:
+
+| Repository | Owns |
+| --- | --- |
+| Firmingo | Device firmware, resident ABI/facade and memory layout, capsule/protocol contracts, device validation, authorization, execution, installation, and verified firmware build facts |
+| Firmingo-Compiler | Language-neutral preprocessing, web-hosted WASM execution, board recipes, ELF/capsule packaging, compiler diagnostics, and static compiler/build metadata |
+| FirmingoKit | Swift/web-host adapters, device communication, installation, uploads, device associations, and deployment validation |
+
+Firmingo remains the authoritative source of device constraints. Export versioned,
+checksummed contracts and actual resident build facts for the compiler; do not
+invent recipe identities or claim installed-image attestation from hello. The
+compiler adds compatible recipe/catalogue identities; the SDK binds artifacts to
+real devices and rechecks capabilities before deployment. See
+[the compiler contract plan](docs/integration/compiler-contract.md).
+
+Keep pinned native firmware builds, constrained GCC module proofs, independent
+validators, and hardware harnesses here. They validate firmware and compiler
+compatibility; they are not a second consumer WASM compiler. Do not move USB/IP,
+resident execution, flash code, or device-side validation into the compiler.
+
+The user authorizes work across these three repositories when the requested task
+requires it. Inspect each checkout's guidance and working state, preserve unrelated
+changes, and coordinate compatibility changes and tests. ArduinoKit remains
+strictly read-only, including its generated files and Git state. Cross-repository
+access does not authorize unrequested hardware changes or publication. Normal
+builds/tests must not require sibling checkouts or follow moving sibling branches.
+
 ## What “serial functionality” means
 
 Prioritize a reliable, ordered, full-duplex binary byte stream. Preserve every
