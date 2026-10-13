@@ -54,4 +54,28 @@ qualification and Pico managed support remain open.
 
 CI's maintained managed-sketch build now exports its freshly compiled resident
 against `GITHUB_SHA`, retains the export/logs and preserves failing pipeline status.
-GitHub execution results will be recorded separately after inspection.
+[Run 38378075416](https://github.com/AlexGivens/Firmingo/actions/runs/38378075416)
+at `4d53a285a3a39d4355253760a205fdac1a6b811c` passed all ten jobs; all job
+logs were inspected. Results confirm 20 sanitizer-native/191 host tests, four
+bounded mutation tests, seven pinned board/profile builds and the experimental
+resident/four native modules/two composites/contract archive. Existing vendor
+warnings are retained. These are compile/test outcomes, not hardware evidence.
+
+The new resident ELF hash is
+`5b3116cdcde28f84b86f78cfffb258591455406a1f276b35bb5fd63a6f857304`,
+resident-only UF2
+`35678c95c495c4e06227a992548be893305cc2375f7a6e561d0a7f66433e6983`,
+and export manifest
+`3109c3e97c95f07c39d50fc1591dab8b8cc44022fde5aa71c7602e5a7974a78e`.
+The API address is `0x10022c9c`, four bytes below the historical build's address.
+The exporter again compared 152,840 initialized flash bytes. Reported flash/static
+RAM sizes are 134,328/96,672 bytes within the declared engineering budgets.
+
+Downloaded its named retained artifact to ignored Compiler outputs and imported
+using the manifest hash from the independently retrieved CI log. Both supported
+sketches compiled locally through WASM against this new descriptor; production
+`image.cpp` accepted both with `0x10022c9c`. Supplying the historical API address
+correctly rejected the new GPIO capsule as `wrong_api`. Exact receipts and
+identities are in Compiler's `docs/evidence/ci-resident-validation.json`.
+No binary entered committed resources, no image was installed, and this does
+not establish reproducible bytes between historical macOS and fresh Linux builds.

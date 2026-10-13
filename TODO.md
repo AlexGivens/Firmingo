@@ -562,7 +562,11 @@ exact M9 source/ELF/UF2/report export, 152,840 compared flash bytes, 20 sanitize
 native/191 host tests passed. Compiler imports metadata and two actual WASM
 capsules pass production firmware validation; a repeated build is byte-identical.
 No device operation or new local resident build occurred. CI now produces the
-same export for its newly compiled experimental resident; execution remains to inspect.
+same export for its newly compiled experimental resident; all ten jobs in
+[run 38378075416](https://github.com/AlexGivens/Firmingo/actions/runs/38378075416)
+at `4d53a28` are inspected passing. The fresh export imports into Compiler,
+derives its changed API address and validates two actual WASM capsules;
+the stale historical API address correctly rejects the new capsule.
 
 ## iPhone/iPad qualification checklist
 
