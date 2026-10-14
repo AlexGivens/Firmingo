@@ -125,6 +125,31 @@ That sibling link is a local research convenience, not a build dependency.
 Historical evidence and existing contract pins are preserved; this documentation
 update does not declare a new tested firmware revision or select a new compiler ABI.
 
+## Experimental consumer package
+
+Firmingo-Compiler now binds the exact schema-2 CI export from Firmingo commit
+`e0a79d1e47aa90d5dda02ccd284d40b9c2922c12`, manifest `9246a7da…`, into consumer
+package `0.1.0-nano-managed-experimental.1`. Descriptor `c44d25ef…` retains actual
+API `0x10022c9c`, original ELF/UF2/report identities and all six contract resources.
+The complete package manifest is
+`d042dc7d3869949d8e311fff28c5d66327ba090ba2ec8ff149e3a12019d8ea8c`.
+
+FirmingoKit's experimental catalogue consumes that static descriptor. Its clean
+SDK package-preparation step supplies the reviewed compiler for offline default
+resource loading. Firmware owns the facts and independent validator; it acquires
+no dependency on compiler/SDK checkout or package version. Exported images remain
+evidence inputs, not an automatically selected installation release. Existing
+upstream core/toolchain provenance limits and lack of installed-image/hardware
+qualification remain explicit. No device, ABI, protocol or firmware source changes
+are made by this packaging increment.
+
+The first prepared SDK's default compiler produces the known 316-byte GPIO and
+392-byte console capsules (`958b861b…`, `b372c00e…`). Independent production image
+validation accepts both at `0x10022c9c` and rejects the old `0x10022ca0` binding
+(`wrong_api`). This is offline compiler/validator compatibility, not execution,
+installation, authorization or hardware qualification. No native firmware rebuild
+or device operation is claimed for this packaging increment.
+
 ## Versioned source resources
 
 The exporter now defaults to schema 2, adding a checked source contract and exact
