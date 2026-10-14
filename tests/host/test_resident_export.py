@@ -8,7 +8,7 @@ import subprocess
 
 import pytest
 from experiments.managed_sketch.export_resident import (
-    bounded_file, resident_elf, check_uf2, verified_resident, export_resident)
+    bounded_file, resident_elf, check_uf2, verified_resident, export_resident, compiler_contract, CONTRACT_RESOURCES)
 
 
 def digest(data):
@@ -61,11 +61,13 @@ def resident(tmp_path):
     git(root, "init", "-b", "main")
     source = {
         "boards/nano_rp2040_connect/baseline.json": b'{"fqbn":"synthetic Nano; NEVER DEPLOY"}',
-        "experiments/managed_sketch/abi.h": b"// synthetic API source fixture\n",
+        "experiments/managed_sketch/abi.h": (Path(__file__).resolve().parents[2] / "experiments/managed_sketch/abi.h").read_bytes(),
         "src/core/version.h": b'#define FIRMINGO_VERSION "0.1.0"\n',
         "experiments/managed_sketch/firmingo_managed_resident/firmingo_managed_resident.ino": b'// NEVER DEPLOY\nFIRMINGO_VERSION "-m9exp1"\n',
         "experiments/managed_sketch/build_resident.py": b"# synthetic build-source fixture\n",
     }
+    for _, (name, _) in CONTRACT_RESOURCES.items():
+        source.setdefault(name, (Path(__file__).resolve().parents[2] / name).read_bytes())
     for name, data in source.items():
         path = root / name
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -105,11 +107,19 @@ def test_export_is_deterministic_bounded_and_has_no_device_or_recipe(resident, t
     first, second = tmp_path.resolve() / "first", tmp_path.resolve() / "second"
     result = export_resident(build, first, commit, root)
     export_resident(build, second, commit, root)
-    for path in first.iterdir():
-        assert path.read_bytes() == (second / path.name).read_bytes()
+    for path in first.rglob("*"):
+        if path.is_file():
+            assert path.read_bytes() == (second / path.relative_to(first)).read_bytes()
     manifest = json.loads((first / "manifest.json").read_text())
+    assert manifest["schema"] == 2 and len(manifest["files"]) == 11
+    contract = json.loads((first / "contract.json").read_text())
+    assert contract["image"]["maximumCodeBytes"] == 3840
+    assert contract["firmwareCommit"] == commit
+    assert contract["resources"][0]["role"] == "resident-build-input"
+    assert contract["resources"][2]["role"] == "native-proof-input"
+    assert "recipeIdentifier" not in contract and "deviceID" not in contract
     assert result["manifestSHA256"] == digest((first / "manifest.json").read_bytes())
-    assert set(p.name for p in first.iterdir()) == {"manifest.json"} | {r["path"] for r in manifest["files"]}
+    assert set(p.relative_to(first).as_posix() for p in first.rglob("*") if p.is_file()) == {"manifest.json"} | {r["path"] for r in manifest["files"]}
     facts = json.loads((first / "resident-facts.json").read_text())
     assert facts["firmwareCommit"] == commit and facts["firmwareVersion"] == "0.1.0-m9exp1"
     assert facts["hardwareQualification"] == "not established by export"
@@ -192,3 +202,57 @@ def test_symlinks_directories_and_oversized_files_reject(tmp_path):
     for path, bound in [(alias, 4), (target, 3), (root, 4096)]:
         with pytest.raises(ValueError):
             bounded_file(path, bound)
+
+
+def test_contract_reads_selected_commit_not_changed_worktree_and_requires_resident_build_identity(resident):
+    root, build, commit, _ = resident
+    facts = json.loads(verified_resident(build, root, commit)["resident-facts.json"])
+    expected = compiler_contract(root, commit, facts)
+    (root / "experiments/managed_sketch/abi.h").write_text("// uncommitted drift; must be ignored\n")
+    assert compiler_contract(root, commit, facts) == expected
+    facts["sourceSHA256"].pop("experiments/managed_sketch/image.h")
+    with pytest.raises(ValueError, match="absent from actual build report"):
+        compiler_contract(root, commit, facts)
+
+
+def test_contract_source_layout_changes_fail_closed_before_output(resident, tmp_path):
+    root, build, _, report = resident
+    path = root / "experiments/managed_sketch/image.h"
+    path.write_text(path.read_text().replace("kSlotAddress = 0x10200000", "kSlotAddress = 0x10300000"))
+    git(root, "add", ".")
+    git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "-m", "unsupported layout")
+    report["source_sha256"]["experiments/managed_sketch/image.h"] = digest(path.read_bytes())
+    (build / "report.json").write_text(json.dumps(report))
+    output = tmp_path.resolve() / "invalid-layout"
+    with pytest.raises(ValueError, match="image source layout"):
+        export_resident(build, output, git(root, "rev-parse", "HEAD"), root)
+    assert not output.exists()
+
+
+def test_unsupported_abi_field_order_is_not_labeled_as_abi_one(resident, tmp_path):
+    root, build, _, report = resident
+    path = root / "experiments/managed_sketch/abi.h"
+    path.write_text(path.read_text().replace("uint16_t abi_version;", "uint32_t abi_version;"))
+    git(root, "add", ".")
+    git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "-m", "unsupported ABI")
+    report["source_sha256"]["experiments/managed_sketch/abi.h"] = digest(path.read_bytes())
+    (build / "report.json").write_text(json.dumps(report))
+    output = tmp_path.resolve() / "invalid-abi"
+    with pytest.raises(ValueError, match="ABI-one source layout"):
+        export_resident(build, output, git(root, "rev-parse", "HEAD"), root)
+    assert not output.exists()
+
+
+def test_committed_symlink_cannot_be_exported_as_a_regular_contract_source(resident, tmp_path):
+    root, build, _, report = resident
+    path = root / "experiments/managed_sketch/module.ld"
+    path.unlink()
+    path.symlink_to("image.h")
+    git(root, "add", ".")
+    git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgsign=false", "commit", "-m", "symlink fixture")
+    report["source_sha256"]["experiments/managed_sketch/module.ld"] = digest(b"image.h")
+    (build / "report.json").write_text(json.dumps(report))
+    output = tmp_path.resolve() / "symlink-source"
+    with pytest.raises(ValueError, match="committed regular blob"):
+        export_resident(build, output, git(root, "rev-parse", "HEAD"), root)
+    assert not output.exists()

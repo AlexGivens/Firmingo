@@ -547,8 +547,8 @@ production provenance/publication and compiler hardware compatibility remain ope
 - [x] Test missing/stale/mismatched/corrupt reports/artifacts, unsafe paths, ambiguous
   selection, provenance and deterministic output where supported; align the local
   entry point, CI and documentation in that implementation increment.
-- [ ] Publish versioned compatible ABI/facade/layout inputs and explain module
-  compatibility across resident updates; do not make firmware depend on compiler
+- [x] Export versioned, checksummed ABI/facade/layout source inputs and explain
+  exact API/resource compatibility across resident updates; do not make firmware depend on compiler
   package versions or infer exact installed bytes from hello.
 - [ ] Validate compiler-produced Nano artifacts independently, then qualify two
   sketches through the wrapper in an authorized hardware workflow. Preserve native
@@ -561,7 +561,10 @@ Evidence: [experimental export](docs/evidence/resident-compiler-export.md): exis
 exact M9 source/ELF/UF2/report export, 152,840 compared flash bytes, 20 sanitizer
 native/191 host tests passed. Compiler imports metadata and two actual WASM
 capsules pass production firmware validation; a repeated build is byte-identical.
-No device operation or new local resident build occurred. CI now produces the
+No device operation or new local resident build occurred. The later schema-2
+[source contract](docs/integration/resident-source-contract.md) exports six exact
+source/license resources; compiler mapping/import and candidate inventory pass.
+See [local source-contract evidence](docs/evidence/resident-source-contract.md). CI now produces the
 same export for its newly compiled experimental resident; all ten jobs in
 [run 38378075416](https://github.com/AlexGivens/Firmingo/actions/runs/38378075416)
 at `4d53a28` are inspected passing. The fresh export imports into Compiler,

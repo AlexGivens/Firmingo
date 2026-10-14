@@ -80,7 +80,7 @@ resident-only UF2 using the production UF2 checks. Resident LOAD permissions may
 be RWX; the API object's section must remain readonly. This does not change the
 compiler's stricter stateless module rules. Composite images are rejected.
 
-Schema 1 exports exactly `resident.elf` (up to 8 MiB), `resident.uf2` (4 MiB),
+Historical schema 1 exports exactly `resident.elf` (up to 8 MiB), `resident.uf2` (4 MiB),
 `build-report.json` and `resident-facts.json` (256 KiB each), plus a checksummed
 inventory `manifest.json`. Facts include actual firmware/board/profile/backend,
 ABI/API table, target/capsule limits, artifact/report hashes, commit/source hashes,
@@ -124,3 +124,11 @@ The inventory and compatibility plan are maintained during the transition in
 That sibling link is a local research convenience, not a build dependency.
 Historical evidence and existing contract pins are preserved; this documentation
 update does not declare a new tested firmware revision or select a new compiler ABI.
+
+## Versioned source resources
+
+The exporter now defaults to schema 2, adding a checked source contract and exact
+ABI/image/facade/entry/linker/license resources from the selected firmware commit.
+See [source contract](resident-source-contract.md) for fields, compatibility and
+legacy-import behavior. Actual build facts and descriptor identities retain their
+existing meaning; no runtime ABI or wire change is introduced.

@@ -139,6 +139,7 @@ jobs:
         with:
           name: nano-managed-sketch-experimental-build
           path: |
+            build/managed_sketch/ci/resident-export/**
             build/managed_sketch/ci/*.log
             build/managed_sketch/ci/**/*.json
             build/managed_sketch/ci/**/*.log
