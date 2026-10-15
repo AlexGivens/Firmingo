@@ -38,6 +38,9 @@ independent non-deployable fixture and separate bounded mutation job. Next:
 allocate/budget real resident RAM, define/export API/linker facts and independently
 link a stateful ARM module before compiler/SDK adoption. Existing ABI-one
 restrictions remain intact; no new descriptor or hardware support is offered.
+[Local evidence](docs/evidence/stateful-image-v2.md): 21 sanitizer CTest targets,
+217 host cases, final ten-case focused proof, five mutation targets and pinned ARM
+object compilation pass; real allocation/linking and hardware remain open.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and

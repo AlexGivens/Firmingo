@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "candidate_FMS2_portable_validation_and_generation_initialization_proof",
+  "sourceCommit": "831f0f996cbfb7733aa6469804c6b1ba087c8a71",
+  "sourceSHA256": {
+    "CMakeLists.txt": "4faeb2953df58c7cf9024e06480aca09819293374b787d5c3c351206cf3f325b",
+    ".github/workflows/checks.yml": "c0b2b7f7832937ff44687b85cbcd41c16f2644981ce51e3a632c561473f04ca3",
+    "experiments/managed_sketch/stateful_image.h": "0512c8dd81a092e31010daac69fda2cee9c1ab9c53939c6a063143dd0e86c0b1",
+    "experiments/managed_sketch/stateful_image.cpp": "9535033887eb51ad3cdc3d9098ffb4b8a0398f9106586106c0461a7f06257149",
+    "experiments/managed_sketch/image.h": "658ceac8716a6a6709714f2b51e2e01684a06ba87db999ee0d75cff0b9e6ffd9",
+    "experiments/managed_sketch/image.cpp": "b694ed15b5c6c84b819da31e14961e48cf4ab8338bb6e1fee538f964a3501ca5",
+    "tests/native/test_managed_stateful.cpp": "92e5fb3ba2903360ff06de67db19438dee81a0cdf3a413095b55b0cb4e230559",
+    "tests/fixtures/managed-stateful-v2/initialized.hex": "9e8db927dbccec27a95fe31506e903d4d6bad615aa790c77f093612c77083e3b",
+    "tests/fixtures/managed-stateful-v2/provenance.json": "6fcd7ebd2e4ede1f0db609acd01d0c1baeb497c32b5768e10253e10e2b7c2213",
+    "docs/integration/stateful-image-v2.md": "3971afff5fdf9223397823b36e0f1ec61a7793cae4d7cde9c4e20855ecce1fdd"
+  },
+  "scope": "Native host proof and ARM object compilation only; current resident, FMS1, compiler recipes, SDK pins and installed board unchanged",
+  "contract": {
+    "imageMagic": "FMS2",
+    "imageVersion": 2,
+    "headerBytes": 128,
+    "codeOffset": 256,
+    "maximumCapsuleBytes": 4096,
+    "trustedInputs": [
+      "exact API address",
+      "resident-owned state base and byte capacity",
+      "maximum capsule bytes"
+    ],
+    "hardwareRAMReservationSelected": false,
+    "residentAPIV2Defined": false,
+    "note": "Native synthetic 0x20030000/32-byte mapping is not a board memory allocation or deployable descriptor"
+  },
+  "fixture": {
+    "kind": "independent non-deployable FMS2 native fixture",
+    "bytes": 272,
+    "sha256": "1c955e832d351a9b91a3bd5e5e4463a2f6732e4e87cd1de0d783c769f01ae867",
+    "headerSHA256": "463ef2a1f8393c31403a4e53e32c88e5e7cfd4cd02d13aef54fb8ebe8f65b81f",
+    "payloadSHA256": "31c4f05aec9e2a7f8626c69a2fe0370bbc13f2fba614f5afb3f09a2e971ab42f",
+    "construction": "Python struct.pack_into(<4sHH14I), hashlib.sha256; no production parser/hash used",
+    "apiAddress": "0x10000100",
+    "syntheticStateAddress": "0x20030000",
+    "syntheticStateCapacityBytes": 32,
+    "codeBytes": 8,
+    "initializedWords": [
+      "0x11223344",
+      "0xaabbccdd"
+    ],
+    "bssBytes": 8,
+    "note": "Synthetic API/RAM addresses are never offered for a board; test bytes must not be deployed."
+  },
+  "native": {
+    "ordinaryCommand": ".venv/bin/python tools/dev.py test --sanitize",
+    "ctestTargets": 21,
+    "hostCases": 217,
+    "result": "passed with ASan/UBSan for native code",
+    "finalFocusedCommand": "build/native-sanitize/managed_stateful_tests",
+    "finalFocusedCases": 10,
+    "finalFocusedResult": "passed after additional aligned-overflow, no-data-room and both-direction-alias assertions",
+    "cases": [
+      "independent_golden_validates_and_old_format_still_rejects_it",
+      "initialization_copies_data_zeroes_bss_and_scrubs_unused_arena",
+      "active_generation_retains_loop_state_and_requires_explicit_stop",
+      "smaller_replacement_and_failed_start_do_not_leak_or_reinitialize_old_state",
+      "all_truncations_trailing_bytes_and_null_input_reject_without_ram_writes",
+      "metadata_bounds_reject_even_when_hashes_are_recomputed",
+      "header_and_payload_integrity_cover_entries_ram_and_initial_values",
+      "contract_and_actual_arena_must_match_before_initialization",
+      "boundary_layouts_allow_zero_sections_and_the_exact_capsule_and_ram_limits",
+      "aliasing_image_and_ram_and_generation_wrap_are_rejected"
+    ],
+    "execution": "Host mutation of owned RAM models persistent state; synthetic Thumb code never executes"
+  },
+  "mutation": {
+    "configureCommand": ".venv/bin/cmake -S . -B build/stateful-fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON -DFIRMINGO_STATEFUL_FUZZ=ON",
+    "buildCommand": ".venv/bin/cmake --build build/stateful-fuzz --parallel 2",
+    "allCommand": ".venv/bin/ctest --test-dir build/stateful-fuzz -R '_fuzz$' --output-on-failure",
+    "allTargets": 5,
+    "result": "passed",
+    "finalCandidateCommand": "build/stateful-fuzz/managed_stateful_fuzz",
+    "seed": "0x46534d32",
+    "cases": 20000,
+    "acceptedWithBoundedInitialization": 368,
+    "rejectedWithoutRAMWrites": 19632,
+    "note": "Final candidate binary rebuilt from the committed fixture/test source; failures also require zero output metadata and inactive generation"
+  },
+  "arm": {
+    "toolchainPackage": "pqt-gcc/5.0.0-9576866",
+    "compilerVersion": "arm-none-eabi-g++ (GCC) 16.1.0",
+    "command": "<pinned arm-none-eabi-g++> -std=c++11 -Wall -Wextra -Wpedantic -Werror -ffreestanding -fno-exceptions -fno-rtti -mcpu=cortex-m0plus -mthumb -Iexperiments/managed_sketch -c experiments/managed_sketch/stateful_image.cpp -o build/stateful_image.o",
+    "result": "passed without diagnostics",
+    "objectBytes": 4108,
+    "objectSHA256": "7cc4e400ab77a3713425f46ba7f59f63781fde44be6cf4fb48e4663a5b85a7f7",
+    "format": "ELF32 little-endian ARM relocatable EABI5",
+    "linkedIntoResident": false,
+    "note": "No resident RAM map, complete linked stateful module or hardware execution established"
+  },
+  "workflow": {
+    "localCheck": "YAML parsed and every bash run block passed bash -n",
+    "actionlint": "unavailable",
+    "ciChanges": [
+      "ordinary native suite includes candidate validation/lifecycle",
+      "separate bounded FMS2 mutation target alongside existing four targets",
+      "pinned ARM object compilation in managed job, excluded from ABI-one resident linking"
+    ],
+    "remoteCI": "not yet verified for this increment"
+  },
+  "logSHA256": {
+    "build/stateful-configure-r1.log": "8e92ee1695cb08475f33649e7b0bdfa5a2d53fa78f5583374758678bbc9b8cce",
+    "build/stateful-build-r1.log": "86cceecf4075fee10fc1373c827f983d1f630b687f40d6360dca102dd3c4095e",
+    "build/stateful-full-tests-r2.log": "3a6be364d0c4e19dc8d67ea762a8ec0a11dbe3a651b2bf6dd37dcc291549040b",
+    "build/stateful-unit-build-r3.log": "e436be0479e0e96c6637bbb595beb7368c59657cea3a80aed059ffdae7ef0eb6",
+    "build/stateful-unit-tests-r3.log": "9ebb2108bf4f0ba98bbbddd75c441742d72234b67c527cd8b9e7a2a66dfb32e4",
+    "build/stateful-fuzz-configure-r1.log": "ec5b80142a04601a1b1d34bc0644aaae8fd52081f810f9adb6521d14e0ec224d",
+    "build/stateful-fuzz-build-r3.log": "e33a870307a96a71d4097a9a93da65136b6318ca18c33e3ff606e4103e25250c",
+    "build/stateful-fuzz-tests-r2.log": "c7444dc12a87b86621e8ce50aae6fc0a79296f14df7a51596c2c9e84dcbb4607",
+    "build/stateful-fuzz-direct-r3.log": "8b13dd36331a2d0565b6869d58f753a0eaa28aa066d248277544bd6f90c60929",
+    "build/stateful-arm-object-r1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "remaining": [
+    "Allocate and budget real resident RAM, stack and lifecycle ownership.",
+    "Define/export the new resident API and exact RAM/linker contract; existing exports remain ABI one.",
+    "Build an independently linked ARM module with actual initialized data and BSS, then implement versioned compiler packaging and SDK validation.",
+    "Qualify actual board startup/replacement/interruption, including explicit authorization and recovery, separately.",
+    "Native RAM initialization bounds do not sandbox arbitrary owner-authorized native code.",
+    "Pre-existing unrelated AGENTS.md changes remain preserved and excluded."
+  ]
+}

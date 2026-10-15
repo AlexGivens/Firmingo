@@ -117,3 +117,6 @@ and linker contract, then build an independently linked stateful ARM proof with
 actual `.data`/`.bss`. Only after that should Compiler add versioned packaging/
 recipe validation and FirmingoKit consume the new contract. Physical startup,
 replacement and interruption qualification remain separate selected workflows.
+
+[Local evidence](../evidence/stateful-image-v2.md) records actual tests, mutations,
+source identities and ARM object; remote CI is reviewed separately.
