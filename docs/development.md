@@ -412,3 +412,13 @@ The [FMS2 contract/upload workflow](integration/stateful-upload-contract.md) add
 the complete schema-3 export, tests the target-2 adapter through production
 Session, and adds `FIRMINGO_STATEFUL_UPLOAD_FUZZ=ON` as a sixth independent
 bounded mutation target. These remain experimental build/host checks.
+
+`experiments/managed_sketch/compose_stateful_initial.py --help` prepares an
+offline initial ROM image from independently selected resident/capsule hashes,
+actual API/state facts and an explicit production native validator. It checks
+the resident UF2's FAPI2 bytes, preserves all resident payloads and initializes
+the entire first managed sector. It never selects a board or flashes. CI runs
+the same command against the native ARM proof/export; host tests use only
+non-deployable fixtures. [Selected hardware setup](evidence/nano-fms2-initial.md)
+records the separate explicit ROM write/readback, which is not an SDK
+initial-installation backend qualification.

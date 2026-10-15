@@ -190,6 +190,25 @@ jobs:
           python experiments/managed_sketch/export_stateful.py \
             --resident-dir "$output/stateful-upload/resident" --firmware-commit "$GITHUB_SHA" \
             --output "$output/stateful-export" 2>&1 | tee "$output/stateful-export-driver.log"
+      - name: Compose checked FMS2 initial ROM image without device access
+        run: |
+          python - <<'PY' 2>&1 | tee build/managed_sketch/ci/stateful-initial-driver.log
+          import json, subprocess, sys
+          from pathlib import Path
+          root = Path('build/managed_sketch/ci')
+          proof = json.loads((root / 'stateful-upload/report.json').read_text())
+          contract = proof['contract']
+          subprocess.run([sys.executable, '-I', '-S', '-B', 'experiments/managed_sketch/compose_stateful_initial.py',
+              '--resident-uf2', str(root / 'stateful-export/resident.uf2'),
+              '--expected-resident-sha256', contract['residentUF2SHA256'],
+              '--capsule', str(root / 'stateful-upload/stateful_counter.fms'),
+              '--expected-capsule-sha256', proof['capsuleSHA256'],
+              '--expected-api-address', str(contract['apiAddress']),
+              '--expected-state-address', str(contract['stateAddress']),
+              '--expected-state-capacity', str(contract['stateCapacityBytes']),
+              '--validator', 'build/stateful-check/managed_stateful_check',
+              '--output-dir', str(root / 'stateful-initial')], check=True)
+          PY
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:

@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "selected FMS2 initial image ROM-verified and hello matched; managed workflow separate",
+  "board": "nano_rp2040_connect",
+  "rom": {
+    "chip": "RP2040 B1",
+    "flashBytes": 16777216,
+    "selectedIdentityCheckedBeforeWrite": true,
+    "rawIdentityPublished": false,
+    "softwareReplacementAuthorized": true
+  },
+  "firmwareCommit": "97be7bbbe29ef1d18ec886ae6eea1a2d41905869",
+  "exportManifestSHA256": "90911f7d3684dab4123d36b9a018805cc36ae58cb197c318fe720cb18d434a65",
+  "residentUF2SHA256": "1ef766226ce6a2c51c668562cd51a71ed0bfbe1634b76b54d704c7e710ca1b2f",
+  "residentELFSHA256": "bf32639c7fc2181c9ff6f99aaf8c64e19bda4f83f9690321e2b098bc81e451a8",
+  "residentVersion": "0.1.0-statefulupload-exp1",
+  "sourceFilesRechecked": 60,
+  "sourceMismatches": [],
+  "initialCapsule": {
+    "bytes": 544,
+    "sha256": "537ce260fc33d4b23b2f8829aee6a9b12653236db6baad4c317040dbf087fd89",
+    "source": "signed SDK default public WASM build, State A",
+    "sdkEvidence": "https://github.com/AlexGivens/FirmingoKit/blob/main/docs/nano-fms2-preparation.json"
+  },
+  "initialComposite": {
+    "bytes": 316416,
+    "sha256": "205e2fcf502b0d36132610a5ac425e039e6510eee2da90979241c390e569d6d1",
+    "sdkAndCompilerOutputsMatch": true,
+    "firstManagedSectorFullyInitialized": true
+  },
+  "romVerification": {
+    "loadVerifyPassed": true,
+    "independentVerifyPassed": true,
+    "readbacks": [
+      {
+        "path": "resident-readback.bin",
+        "start": 268435456,
+        "bytes": 154112,
+        "sha256": "87e42a42f1c0fe047981c3ace52b41b905cc207fb3ee373482048e7399eab63c",
+        "comparedBytes": 154112
+      },
+      {
+        "path": "managed-readback.bin",
+        "start": 270532608,
+        "bytes": 4096,
+        "sha256": "0f335abfbf01d221100f354c88a8feff495e7d3796b896cd1be659773572930e",
+        "comparedBytes": 4096
+      }
+    ],
+    "allIncludedBytesCompared": 158208,
+    "rebootOnlyAfterVerification": true,
+    "picotoolVersion": "pqt-picotool/5.0.0-9576866",
+    "picotoolSHA256": "d25535c5d179aa7268a57d5746c46873f53d6c215613c3eaa85caa16ec0d3153"
+  },
+  "hello": {
+    "attempts": 1,
+    "deadlineSeconds": 5,
+    "selectedIdentityMatched": true,
+    "board": "nano_rp2040_connect",
+    "version": "0.1.0-statefulupload-exp1",
+    "targets": [
+      {
+        "id": 2,
+        "format": "nano-managed-v2",
+        "max_size": 4096,
+        "max_chunk": 1024,
+        "authorization": "physical-d2-gnd"
+      }
+    ],
+    "installedImageAttestation": false
+  },
+  "localChecks": {
+    "nativeSanitizerTargets": 23,
+    "hostCases": 250,
+    "focusedComposerCases": 3,
+    "nativeProofComposerPassed": true,
+    "workflowYAMLAndBashSyntaxPassed": true,
+    "actionlintAvailable": false,
+    "initialSandboxInvocation": "failed: 19 existing loopback bind-permission failures; enabled-socket rerun passed"
+  },
+  "localEvidence": {
+    "directory": "build/fms2-ipad-hardware-r1",
+    "romInstallReportSHA256": "ae662494d07639ba616469b4983fee12290470e117285729d370b00dacb54561",
+    "romLogSHA256": "47ada5af12cb2c2ad6600b8e0ce2b8b07b1e624b943add058998764675f24cc4",
+    "helloReportSHA256": "b8c086dd46cf5f9d140b8960bb7b5b1b0f445c8583ada0ec5d634a78d93ffb07"
+  },
+  "limits": [
+    "included regions only, not all flash",
+    "no SDK initial-installation backend qualification",
+    "managed upload/startup/state/echo/reboot require separate evidence",
+    "no new compile matrix or remote CI pass claimed"
+  ]
+}
