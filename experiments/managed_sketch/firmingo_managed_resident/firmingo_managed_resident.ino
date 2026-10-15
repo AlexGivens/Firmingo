@@ -16,6 +16,9 @@
 #include <hardware/sync.h>
 #include <atomic>
 #include <abi.h>
+#ifdef FIRMINGO_STATEFUL_ALLOCATION_PROOF
+#include <stateful_abi.h>
+#endif
 #include <image.h>
 #include <console.h>
 #include <stage.h>
@@ -222,6 +225,22 @@ extern "C" __attribute__((used)) const FirmingoSketchApiV1 firmingo_sketch_api =
     sketchPinMode, sketchDigitalWrite, sketchMillis, sketchDelay,
     sketchConsoleWrite, sketchConsoleWriteAvailable,
     sketchConsoleRead, sketchConsoleAvailable};
+
+#ifdef FIRMINGO_STATEFUL_ALLOCATION_PROOF
+// A real .bss allocation, accounted in the resident's static RAM use. The linker
+// roots the candidate table explicitly; its pointer retains the arena. Runtime
+// boot/upload validation below remains FMS1 only until lifecycle integration.
+extern "C" {
+alignas(4) uint8_t firmingo_sketch_state[kFirmingoStateCapacityBytes];
+extern __attribute__((used)) const FirmingoSketchApiV2 firmingo_sketch_api_v2 = {
+    {kFirmingoApiMagic, 2, sizeof(FirmingoSketchApiV2),
+     sketchPinMode, sketchDigitalWrite, sketchMillis, sketchDelay,
+     sketchConsoleWrite, sketchConsoleWriteAvailable,
+     sketchConsoleRead, sketchConsoleAvailable},
+    firmingo_sketch_state, sizeof(firmingo_sketch_state), 4096};
+}
+static_assert(sizeof(FirmingoSketchApiV2) == 52, "candidate ARM ABI layout changed");
+#endif
 
 void setup1() {}
 

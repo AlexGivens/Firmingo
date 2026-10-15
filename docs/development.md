@@ -5,8 +5,12 @@ portable validator/generation proof to the ordinary native suite. The separate
 `FIRMINGO_STATEFUL_FUZZ=ON` CMake option enables its fixed-seed 20,000-case mutation
 test; CI enables it alongside all four existing fuzz targets. The managed CI job
 also compiles the candidate for pinned Cortex-M0+ GCC/C++11 with warnings as errors,
-without linking it into the old resident. These checks supply no hardware RAM
-reservation, new compiler recipe or stateful device-support claim.
+without linking it into the old resident. The separate
+[allocation/link proof](integration/stateful-link-proof.md) builds an opt-in
+resident with a real 4 KiB arena and candidate API-v2 table, links a stateful ARM
+sketch against its actual symbols, and checks the capsule with production C++
+initialization on the host. CI runs both paths. No new compiler recipe or stateful
+device-support claim follows from these checks.
 
 Current release version: **0.1.0 beta**. The normal release package includes
 board-specific application and UART UF2s; see [releasing](releasing.md).

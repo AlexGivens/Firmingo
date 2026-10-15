@@ -89,8 +89,10 @@ memory or Internet/recovery gates.
 The first increment adds [the managed build profile](../managed-profile.md) using
 the existing resident and independent artifact validators.
 V1-STATE now has a [candidate FMS2 validator and native initialization proof](stateful-image-v2.md).
-Real resident RAM allocation, the API/linker export and an independently linked
-stateful ARM proof come next, before compiler recipe/packaging and SDK validation.
+An [opt-in allocation/link proof](stateful-link-proof.md) now reserves real RAM,
+derives candidate API/linker facts and validates an independently linked ARM
+capsule through host initialization. Runtime lifecycle integration and a versioned
+deployment export come next, before compiler recipe/packaging and SDK validation.
 V1-SOURCE can progress against explicit versioned fixtures while hardware work
 remains separate.
 

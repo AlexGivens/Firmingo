@@ -151,6 +151,16 @@ jobs:
             --expected-api-address "$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["api_address"])' "$output/blink_a/report.json")" \
             --output-dir "$output/selected-initial"
           python experiments/managed_sketch/export_sdk_contract.py --output "$output/sdk-contract.zip"
+      - name: Link candidate stateful ARM sketch against allocated resident RAM
+        run: |
+          output=build/managed_sketch/ci
+          cmake -S . -B build/stateful-check -DFIRMINGO_SANITIZE=ON 2>&1 | tee "$output/stateful-check-configure.log"
+          cmake --build build/stateful-check --target managed_stateful_check --parallel 2 2>&1 | tee "$output/stateful-check-build.log"
+          python experiments/managed_sketch/build_stateful_proof.py \
+            --cli "$(command -v arduino-cli)" \
+            --config-file build/firmware/nano_rp2040_connect/managed/usb-toolchain/arduino-cli.yaml \
+            --validator build/stateful-check/managed_stateful_check \
+            --output-dir "$output/stateful" 2>&1 | tee "$output/stateful-driver.log"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
@@ -164,6 +174,9 @@ jobs:
             build/managed_sketch/ci/**/*.uf2
             build/managed_sketch/ci/**/*.fms
             build/managed_sketch/ci/*.o
+            build/managed_sketch/ci/**/*.o
+            build/managed_sketch/ci/**/*.map
+            build/stateful-check/CMakeFiles/CMakeConfigureLog.yaml
             build/managed_sketch/ci/*.zip
             build/firmware/nano_rp2040_connect/managed/*.json
             build/firmware/nano_rp2040_connect/managed/*.log

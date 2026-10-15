@@ -1,7 +1,8 @@
 # Candidate stateful managed image — FMS2
 
 Status: portable candidate validator and RAM-generation initialization proof,
-2026-10-15. No current resident advertises or accepts this format. FMS1/ABI one,
+2026-10-15, followed by an [opt-in resident allocation and ARM link proof](stateful-link-proof.md).
+No current deployment resident advertises or accepts this format. FMS1/ABI one,
 existing exports, compiler recipes/catalogue and SDK deployment pins remain
 unchanged. This is the first implementation step of
 [V1-STATE](production-v1.md), not stateful sketch support on a board.
@@ -20,12 +21,14 @@ limits, not an increase in the current upload target. The RAM contract requires
 a nonempty word-aligned window wholly in RP2040 main SRAM
 `[0x20000000, 0x20040000)`, excluding both scratch banks. Containment alone does
 not reserve memory or prove separation from resident globals, heap, stacks or
-queues. The future port must allocate a real symbol, derive its actual address
-and size, budget it and export those facts before compiler adoption.
+queues. The separate allocation proof now reserves a real symbol, checks its
+actual address/size and records its budget. Runtime integration and a deployable
+versioned export remain prerequisites for compiler adoption.
 
 Image version 2 below is distinct from the FMGO protocol and product version.
-The future resident API-table/ABI change is still to be defined/exported; this
-proof does not fabricate a FAPI-v2 table or a usable resident descriptor.
+The separate allocation proof defines a candidate FAPI-v2 table; the portable
+fixture below still uses synthetic addresses. Neither proof supplies a usable
+resident deployment descriptor.
 
 ## Exact bytes
 
@@ -112,10 +115,11 @@ it alongside existing mutation jobs. The managed build job separately compiles
 `stateful_image.cpp` for pinned Cortex-M0+ GCC with C++11 and warnings as errors;
 that object is not linked into the old resident.
 
-Next: allocate/budget real resident RAM and define/export the corresponding API
-and linker contract, then build an independently linked stateful ARM proof with
-actual `.data`/`.bss`. Only after that should Compiler add versioned packaging/
-recipe validation and FirmingoKit consume the new contract. Physical startup,
+The [allocation/link proof](stateful-link-proof.md) now supplies real resident RAM,
+candidate API/linker facts and a separately linked ARM sketch with actual
+`.data`/`.bss`, checked through this production initializer on the host. Next:
+integrate the runtime lifecycle and export the versioned deployment contract
+before Compiler packaging/recipe validation and FirmingoKit adoption. Physical startup,
 replacement and interruption qualification remain separate selected workflows.
 
 [Local evidence](../evidence/stateful-image-v2.md) records actual tests, mutations,

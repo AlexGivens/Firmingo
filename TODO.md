@@ -34,13 +34,17 @@ reports all ten jobs successful after CLI PATH resolution; raw remote logs/artif
 were not retrieved. Local native proof/composite/contract builds also pass.
 The [candidate FMS2 contract](docs/integration/stateful-image-v2.md) now has a
 portable validator and generation initializer, ten native behavior cases,
-independent non-deployable fixture and separate bounded mutation job. Next:
-allocate/budget real resident RAM, define/export API/linker facts and independently
-link a stateful ARM module before compiler/SDK adoption. Existing ABI-one
+independent non-deployable fixture and separate bounded mutation job. The
+[allocation/link proof](docs/integration/stateful-link-proof.md) now reserves a
+real 4 KiB resident arena, checks candidate API-v2/linker facts and separately
+links a stateful ARM counter. Production C++ host initialization validates its
+actual capsule. Next: runtime lifecycle integration and a versioned deployment
+export before compiler/SDK adoption. Existing ABI-one
 restrictions remain intact; no new descriptor or hardware support is offered.
 [Local evidence](docs/evidence/stateful-image-v2.md): 21 sanitizer CTest targets,
 217 host cases, final ten-case focused proof, five mutation targets and pinned ARM
-object compilation pass; real allocation/linking and hardware remain open.
+object compilation pass. [New allocation/link evidence](docs/evidence/stateful-link-proof.md)
+records the later real ARM link and RAM allocation; hardware execution remains open.
 [CI at `a7966c5`](https://github.com/AlexGivens/Firmingo/actions/runs/38720627833)
 reports all ten jobs successful; public statuses inspected, raw remote logs and
 artifacts not retrieved. The exact local evidence remains separate.

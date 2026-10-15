@@ -53,6 +53,8 @@ def main():
                         help="Arduino CLI config for a patched Arduino-Pico 6.0.0 overlay")
     parser.add_argument("--output-dir", type=Path,
                         default=ROOT / "build/managed_sketch/resident")
+    parser.add_argument("--stateful-allocation-proof", action="store_true",
+                        help="opt-in candidate FAPI two and 4 KiB .bss arena; FMS2 execution remains disabled")
     args = parser.parse_args()
     cli, config = args.cli.resolve(), args.config_file.resolve()
     board = json.loads((ROOT / "boards/nano_rp2040_connect/baseline.json").read_text())
@@ -70,6 +72,8 @@ def main():
         parser.error("the selected config must contain Arduino-Pico 6.0.0")
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=True)
+    # A failed rebuild must never leave an older successful report behind.
+    (output / "report.json").unlink(missing_ok=True)
     sketch = HERE / "firmingo_managed_resident"
     command = [
         str(cli), "--config-file", str(config), "compile",
@@ -80,6 +84,10 @@ def main():
         "compiler.cpp.extra_flags=-I" + str(HERE) + " -DFIRMINGO_NET_C=77 "
         "-DFIRMINGO_USB_DEFERRED_START -DDISABLE_USB_SERIAL",
     ]
+    if args.stateful_allocation_proof:
+        command[-1] += " -DFIRMINGO_STATEFUL_ALLOCATION_PROOF"
+        command += ["--build-property",
+                    "compiler.c.elf.extra_flags=-Wl,-u,firmingo_sketch_api_v2"]
     print("+", " ".join(command), flush=True)
     with (output / "build.log").open("w") as log:
         result = subprocess.run(command, cwd=ROOT, stdout=log,
@@ -133,6 +141,11 @@ def main():
             ])
         },
     }
+    if args.stateful_allocation_proof:
+        report["status"] = "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed"
+        report["legacy_upload_target"] = report.pop("upload_target")
+        report["stateful_runtime_enabled"] = False
+        report["source_sha256"][str((HERE / "stateful_abi.h").relative_to(ROOT))] = sha(HERE / "stateful_abi.h")
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({key: value for key, value in report.items()
                       if key != "source_sha256"}, indent=2))

@@ -15,6 +15,13 @@ returned readback success and passed exact echo on the selected Nano. See the
 [m7exp3 evidence](../../docs/evidence/managed-sketch-m7exp3.md).
 There is no general Arduino compatibility claim.
 
+The separate [FMS2 allocation/link proof](../../docs/integration/stateful-link-proof.md)
+opts into a real resident RAM arena and candidate API-v2 table, then independently
+links initialized and BSS globals and validates host initialization. It does not
+enable FMS2 boot/upload or change the default M9 path. Run
+`python3 experiments/managed_sketch/build_stateful_proof.py --help` for its
+build-only interface; output must be new and no board is contacted.
+
 ## M9 FMGO upload candidate
 
 ### Selected exported resident and external compiler capsule

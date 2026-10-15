@@ -1,0 +1,133 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "candidate_resident_RAM_allocation_ARM_link_and_host_initialization_passed",
+  "scope": "Build and guarded host initialization only; no ARM execution, flash, deployment export or consumer pin changes.",
+  "proof": {
+    "status": "native ARM link and host initialization passed; not executed on ARM",
+    "runtimeEnabled": false,
+    "hardwareTested": false,
+    "sourceSHA256": {
+      "experiments/managed_sketch/build_stateful_proof.py": "74f25d282f99e96c429d4840e6a900669b976816cd43f3f819430fe97231ab76",
+      "experiments/managed_sketch/build_resident.py": "5733a2e54923dba8a09ed318574656141b0fbd197aa3270e2d10301e39a393d3",
+      "experiments/managed_sketch/stateful_abi.h": "ed946122c0dbc5f0258b285c37d1a0ae05354fcf702e1b02e911c2fd33044e02",
+      "experiments/managed_sketch/abi.h": "941fd824a765e1dc9efaa5c9bdd670d77bdb26fedef98c47d9c7969d5bb6ad2a",
+      "experiments/managed_sketch/facade/Arduino.h": "b35175c2569f4203dac411dadff9e340e562cd5a09f89f82e119e78ed4bca6b3",
+      "experiments/managed_sketch/stateful_counter.ino": "87f524f40c1929cb85d853f8a1b020991b1ad56c8f771c9a4c92f234d5a9a1cc",
+      "experiments/managed_sketch/module_entry.cpp": "cf7458999069224ada262c13f40792c5cef3b6ed3e3760e11fa8062c3c9306df",
+      "experiments/managed_sketch/stateful_module.ld": "b9d97aa1fa0750036351adeaa7de48d5b56d8759e2cef9d72c2fbf90ac6c21e6",
+      "experiments/managed_sketch/stateful_check.cpp": "0dc1d93cf34bc1715d9ea6e577348e0ebac356526f89fcb0522f53b785b69819",
+      "experiments/managed_sketch/stateful_image.h": "0512c8dd81a092e31010daac69fda2cee9c1ab9c53939c6a063143dd0e86c0b1",
+      "experiments/managed_sketch/stateful_image.cpp": "9535033887eb51ad3cdc3d9098ffb4b8a0398f9106586106c0461a7f06257149",
+      "experiments/managed_sketch/image.h": "658ceac8716a6a6709714f2b51e2e01684a06ba87db999ee0d75cff0b9e6ffd9",
+      "experiments/managed_sketch/image.cpp": "b694ed15b5c6c84b819da31e14961e48cf4ab8338bb6e1fee538f964a3501ca5",
+      "experiments/managed_sketch/export_resident.py": "c47f6ffba18bbaa276aa6317d4450d354d7ba1a14e6ed2e2d2d80e33971b8e75",
+      "experiments/managed_sketch/build_composite.py": "ae2d0f00d162bb87dae955edcff1e449b2af307551801d769c2e0c42bb3b46b4"
+    },
+    "contract": {
+      "schema": 1,
+      "purpose": "native stateful allocation/link proof only",
+      "board": "nano_rp2040_connect",
+      "imageVersion": 2,
+      "residentABI": 2,
+      "apiAddress": 268577944,
+      "apiTableBytes": 52,
+      "apiTableSHA256": "f5273378bbf2e94697ca35557d27ca39dc061aec2aca0e53ed61fadb7f05c45b",
+      "stateAddress": 536901908,
+      "stateCapacityBytes": 4096,
+      "maximumCapsuleBytes": 4096,
+      "residentELFSHA256": "cf62504d7c8c939c8cc616f7e1cbeda64b7dbc5355f1eca4ead04293f81257ab",
+      "linkerBounds": {
+        "__bss_start__": 536877584,
+        "__bss_end__": 536971644,
+        "__end__": 536971680,
+        "__HeapLimit": 537133056,
+        "__StackOneBottom": 537135104,
+        "__StackOneTop": 537137152,
+        "__StackBottom": 537139200,
+        "__StackTop": 537141248
+      },
+      "nominalHeapSpanBytes": 161376,
+      "runtimeEnabled": false,
+      "hardwareTested": false,
+      "residentUF2SHA256": "2d5bcc216d59fe6aee3eac84a99e61c76ed4d8d15b9c41aa876525a12f0bfb67",
+      "elfUF2ComparedBytes": 152888
+    },
+    "sections": {
+      "codeBytes": 124,
+      "dataBytes": 4,
+      "bssBytes": 4,
+      "setupAddress": 270532865,
+      "loopAddress": 270532873
+    },
+    "capsuleBytes": 384,
+    "capsuleSHA256": "276afceb134d726d021f86470f0d18cb76591d135a0a2e7ee7efdf1564a249fe",
+    "moduleELFSHA256": "a68b19cdc67034370af9206b6ba6501c01bb76c4c61132f93d8c91a3831c9183",
+    "validatorSHA256": "dbffbdf43e821b710b3cfbd12c794fe2842cc0cf30ce88137881cae33bbf98d3",
+    "corruptCapsuleRejected": true,
+    "flashBytes": 134376,
+    "staticRAMBytes": 100768,
+    "residentReportSHA256": "8b4d585d702d8ec99a03c5f12c2d45193cc887e8b76adda83a23233c9d0c6263",
+    "compilerSHA256": "024806955d0cd61a235457d9d401e2fe7f6cab023b5616454d146078eba35a2c",
+    "compilerVersion": "arm-none-eabi-g++ (GCC) 16.1.0"
+  },
+  "proofReportSHA256": "59020732d126a7073f3f192206267f8c8a9da08ff5a3fed9e1735b6d28205f46",
+  "nativeTests": {
+    "command": ".venv/bin/python tools/dev.py test --sanitize",
+    "ctestTargets": 21,
+    "hostCasesAtFullRun": 231,
+    "result": "passed with local loopback enabled; native ASan/UBSan",
+    "finalHostCommand": ".venv/bin/python -m pytest tests/host -q",
+    "finalHostCases": 233,
+    "newHostCases": 16,
+    "finalResult": "passed",
+    "sandboxAttempt": "Native targets passed; 19 socket-fixture cases were blocked by PermissionError. Authorized rerun with loopback enabled passed."
+  },
+  "initialFailure": {
+    "attempt": "build/stateful-link-r1",
+    "result": "rejected after successful resident and ARM link",
+    "reason": "Default ARM LOAD included ELF headers before .text; explicit PHDRS now excludes them. Failed report/log retained."
+  },
+  "legacyBuild": {
+    "status": "compile-tested",
+    "resident_elf_sha256": "e7614b83deb60964603fe43adc67f8f7bd552b8090ee59fdd24a6c2d6b8bee8d",
+    "resident_uf2_sha256": "f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba",
+    "api_address": "0x10022c98",
+    "resident_abi": 1,
+    "elf_uf2_compared_bytes": 152832,
+    "flash_bytes": 134320,
+    "static_ram_bytes": 96672,
+    "production_ready": false,
+    "hardware_tested": false
+  },
+  "legacyUF2MatchesPriorBaseline": true,
+  "legacyExporterRejectsCandidate": true,
+  "workflow": {
+    "localCheck": "Ruby YAML parsed and every workflow bash block passed bash -n",
+    "actionlint": "unavailable",
+    "remoteCI": "pending source commit/push; local results do not imply CI success"
+  },
+  "sourceSHA256": {
+    ".github/workflows/checks.yml": "eff47500ca6e7d211053a5c89e83b2586f59d43d569356ada3c4502a5ec5938e",
+    "CMakeLists.txt": "2beaf7a91f2dec6a17b5346a3c624451f77bff1567e36c1bd1a01ae7e96103ad",
+    "tests/host/test_stateful_proof.py": "93783a12752087c01b3eef91a62f43bd725eccf39169284151804a90d0b1b750"
+  },
+  "logSHA256": {
+    "build/stateful-link-configure.log": "c1d0840230d438ed6e0c56b30aa373a2b784d192f59a0ce7c12e60195225c716",
+    "build/stateful-link-checker-build.log": "275ee3864c2da437addc647450797ea0bc1909465902513b4a88b1f0240626eb",
+    "build/stateful-link-r1.log": "052f4c706fe020a55f8052e2576c9248f615a05d6007a88fd98b02b5348812eb",
+    "build/stateful-link-r2.log": "0372638dca0564efb9b79fe74645a501eb782dc31d94dc3bc63b9b0b5a27f0eb",
+    "build/stateful-link-full-tests-r1.log": "0ed9785416fc836c25a02ec3134f2099b8cc79e0f294329b08e66b4abefa1197",
+    "build/stateful-link-full-tests-r2.log": "b6e37fd600a3c1f5c93dd4863fb78bcff853bc1d8761c44c625744cd4abe5269",
+    "build/stateful-link-host-final.log": "90c4c900cbb79c6fa589d6ef7eeba7fb85e6439bcf651b9c779f007d7fbbae7c",
+    "build/stateful-link-legacy-build.log": "01060f8f7cb1ed8177d31563d7437826b90df61947452fb8f5205dea896eba71",
+    "build/stateful-link-old-export-rejection.log": "c654a4c9f8c0edc2c08f3ecb1a3edc9b2a4bc65ff18c10d6c41719831778e445"
+  },
+  "remaining": [
+    "Integrate opt-in FMS2 boot/replacement lifecycle after core quiescence, with exact bounded slot spans and initialization before setup.",
+    "Export a versioned deployable contract; then add Compiler packaging/recipes and SDK validation.",
+    "Measure aggregate dynamic heap/stack use; linker headroom is not measured free RAM.",
+    "Qualify actual ARM setup/loops, fresh replacement, interruptions and recovery on an explicitly selected Nano.",
+    "Existing consumer pins and installed hardware are unchanged; pre-existing AGENTS.md edits excluded."
+  ]
+}
