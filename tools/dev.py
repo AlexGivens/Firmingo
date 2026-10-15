@@ -148,6 +148,9 @@ def test(args):
 def build(args):
     manifest = load_manifest(args.board)
     check_baseline(manifest)
+    if args.firmware == "managed":
+        from tools.managed_profile import build_managed
+        return build_managed(args, manifest)
     sketch = selected_sketch(manifest, args.firmware)
     cli = check_arduino(manifest)
     out = ROOT / "build" / "firmware" / args.board
@@ -290,7 +293,8 @@ def main():
     p.set_defaults(function=test)
     p = commands.add_parser("build", help="compile a selected firmware profile; never upload")
     p.add_argument("--board", required=True, choices=BOARDS)
-    p.add_argument("--firmware", choices=["baseline", *REFERENCE_SKETCHES], default="baseline")
+    p.add_argument("--firmware", choices=["baseline", *REFERENCE_SKETCHES, "managed"], default="baseline",
+                   help="managed builds the experimental Nano resident; production qualification remains separate")
     p.add_argument("--subnet-octet", type=int, choices=range(256), default=77,
                    metavar="0..255", help="reference builds: 192.168.X.0/24 (default 77)")
     p.add_argument("--verbose", action="store_true")

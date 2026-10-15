@@ -15,6 +15,11 @@ iOS checks before any hardware-verified release claim. Earlier hardware results
 are indexed in [evidence](docs/evidence/README.md); they apply to the specific
 older images named there.
 
+The [Nano-first 1.0 plan](docs/integration/production-v1.md) defines the next
+production scope. `tools/dev.py build --board nano_rp2040_connect --firmware managed`
+now builds and independently checks the existing experimental resident through
+the ordinary development entry point; see [managed profile](docs/managed-profile.md).
+
 ## Get oriented
 
 | Path | Purpose |

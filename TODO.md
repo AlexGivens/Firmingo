@@ -21,6 +21,15 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
 
 ## Current position and next action
 
+Production direction accepted on 2026-10-15:
+[Nano-first 1.0 gates](docs/integration/production-v1.md) cover mutable sketch RAM,
+explicit source bundles, reproducible delivery, normal SDK setup and exact-candidate
+host/device/recovery qualification. First implementation: the ordinary
+`build --firmware managed` path builds/checks the existing experimental resident,
+with failed-build records and CI integration. See [profile](docs/managed-profile.md).
+Next: version the stateful image/RAM contract and prove generation initialization
+natively before compiler/SDK adoption. Existing ABI-one restrictions remain intact.
+
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and
 [the cross-project migration inventory](../FirmingoKit/docs/compiler-migration.md).

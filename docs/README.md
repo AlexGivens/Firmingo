@@ -8,6 +8,11 @@ FMGO development contract; [USB startup](usb-startup.md), [local-only networking
 [cold attachment](cold-attachment.md), and [iOS qualification](ios-qualification.md)
 cover the corresponding implementation and checks.
 
+[Nano-first 1.0 acceptance](integration/production-v1.md) defines the agreed useful
+sketch subset and cross-repository release gates. The
+[managed build profile](managed-profile.md) begins release engineering using the
+existing experimental resident; it does not promote its hardware/support claims.
+
 The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketch-sdk.md)
 provides the M9 contract, portable vectors, pinned reference build recipe,
 and cross-project acceptance checklist. The

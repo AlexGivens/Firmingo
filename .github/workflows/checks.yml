@@ -116,16 +116,17 @@ jobs:
         with:
           python-version: '3.12'
       - uses: ./.github/actions/setup-firmware
-      - name: Prepare pinned USB overlay with application build
+      - name: Build managed profile through the ordinary development entry point
         run: |
-          mkdir -p build/firmware/nano_rp2040_connect/application
-          python tools/dev.py build --board nano_rp2040_connect --firmware application 2>&1 | tee build/firmware/nano_rp2040_connect/application/driver.log
+          mkdir -p build/firmware/nano_rp2040_connect/managed
+          python tools/dev.py build --board nano_rp2040_connect --firmware managed 2>&1 | tee build/firmware/nano_rp2040_connect/managed/driver.log
       - name: Compile experimental resident, capsules and initial images
         run: |
-          overlay=build/firmware/nano_rp2040_connect/application/usb-toolchain
+          overlay=build/firmware/nano_rp2040_connect/managed/usb-toolchain
           output=build/managed_sketch/ci
           mkdir -p "$output"
-          python experiments/managed_sketch/build_resident.py --cli "$(command -v arduino-cli)" --config-file "$overlay/arduino-cli.yaml" --output-dir "$output/resident" 2>&1 | tee "$output/resident-driver.log"
+          # Use the exact independently checked output; do not rebuild a second resident.
+          cp -R build/firmware/nano_rp2040_connect/managed/resident "$output/resident"
           python experiments/managed_sketch/export_resident.py --resident-dir "$output/resident" --firmware-commit "$GITHUB_SHA" --output "$output/resident-export" 2>&1 | tee "$output/resident-export-driver.log"
           for sketch in blink_a blink_b pause_probe stall_probe; do
             python experiments/managed_sketch/build_module.py --sketch "$sketch" --resident-elf "$output/resident/artifacts/firmingo_managed_resident.ino.elf" --toolchain-bin "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin" --output-dir "$output" 2>&1 | tee "$output/$sketch-driver.log"
@@ -156,6 +157,7 @@ jobs:
             build/managed_sketch/ci/**/*.uf2
             build/managed_sketch/ci/**/*.fms
             build/managed_sketch/ci/*.zip
-            build/firmware/nano_rp2040_connect/application/*.log
-            build/firmware/nano_rp2040_connect/application/report.json
+            build/firmware/nano_rp2040_connect/managed/*.json
+            build/firmware/nano_rp2040_connect/managed/*.log
+            build/firmware/nano_rp2040_connect/managed/resident/**
           if-no-files-found: ignore
