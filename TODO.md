@@ -60,6 +60,12 @@ The [runtime evidence](docs/evidence/stateful-runtime.md) records the newer
 resident modes building locally. [CI at `4e491bc`](https://github.com/AlexGivens/Firmingo/actions/runs/38727327344)
 reports all ten jobs successful, including opt-in FMS2 boot; public statuses
 inspected, raw remote logs/artifacts not retrieved. No board execution ran.
+The [target-2 contract/adapter evidence](docs/evidence/stateful-upload-contract.md)
+adds 23 sanitizer targets, 247 host cases, six mutation targets and a canonical
+39-file FMS2 export. Initial Linux CI caught a GCC test-formatting warning;
+[corrective CI at `97be7bb`](https://github.com/AlexGivens/Firmingo/actions/runs/38810907065)
+passes all ten jobs. Raw native/mutation/export logs were inspected; remote archive
+bytes were not retrieved. Compiler/SDK adoption and physical qualification remain open.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and

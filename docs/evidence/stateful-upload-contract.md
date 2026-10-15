@@ -17,9 +17,10 @@ flash or ARM execution was performed. See [exact receipts](stateful-upload-contr
 - Pinned ARM C++11 freestanding adapter compilation passed with warnings as errors.
   The actual resident/capsule build and production host initializer also passed.
 - An actual-ELF/UF2 preflight export passed against an owned temporary Git source
-  snapshot, producing 39 files plus the manifest. This is an export validation
-  check, not the canonical public firmware commit. The canonical exact-commit
-  export follows the source commit and is recorded separately below/in JSON.
+  snapshot, producing 39 files plus the manifest. The canonical export against
+  corrected source `97be7bbbe29ef1d18ec886ae6eea1a2d41905869` then passed, with
+  manifest SHA-256 `90911f7d3684dab4123d36b9a018805cc36ae58cb197c318fe720cb18d434a65`.
+  Every canonical output length/hash was checked against the manifest.
 - The default ABI-one build passed and retained UF2 SHA-256
   `f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba`.
   Existing exports, original vectors and consumer pins were not upgraded.
@@ -46,9 +47,17 @@ During independent fixture authoring, the type-4 ID prefix was corrected to netw
 byte order and the wrong-target response gained its existing `message` field.
 The initially failing logs are retained; final vectors match production Session.
 The default FMS1 fixtures were untouched. YAML parsed and all bash blocks passed
-`bash -n`; actionlint was unavailable. CI now builds/exports this fourth resident
-mode and runs the sixth mutation target. Remote statuses are inspected after push;
-local counts and actual artifact bytes remain independent evidence.
+`bash -n`; actionlint was unavailable. The first CI run at `e52fec6` failed the
+Linux native/mutation builds: GCC rejected an if/declaration on one line as
+misleading indentation. `97be7bb` splits the statements; seven adapter cases and
+the 2000-case mutation target were rebuilt and passed locally afterward.
+
+[Corrective CI run 38810907065](https://github.com/AlexGivens/Firmingo/actions/runs/38810907065)
+reports all ten jobs successful at `97be7bb`. Raw logs confirm 23 native targets,
+247 host cases, six mutation targets, and the actual 39-file FMS2 export. CI's
+manifest SHA-256 is `41352ab025317c013413c7b5d77c43db95aada7daddfbac52fac7422759545c6`.
+Remote artifact archive bytes were not retrieved; local artifact comparisons and
+remote log evidence remain distinct, without a cross-host bit-identity claim.
 
 Local commands are retained in the JSON and ignored `build/fms2-*` logs; the
 [workflow](../integration/stateful-upload-contract.md#reproduce) gives rerun commands.

@@ -104,7 +104,13 @@
     "adapterCases": 7,
     "finalFocusedExportCommand": ".venv/bin/python -m pytest tests/host/test_stateful_export.py -q",
     "finalFocusedExportCases": 11,
-    "finalFocusedExportResult": "passed"
+    "finalFocusedExportResult": "passed",
+    "afterGCCFix": {
+      "adapterCases": 7,
+      "result": "passed",
+      "mutationCases": 2000,
+      "mutationResult": "passed"
+    }
   },
   "mutation": {
     "command": ".venv/bin/ctest --test-dir build/fms2-adapter-fuzz -R _fuzz$ --output-on-failure",
@@ -141,7 +147,7 @@
   "sourceSHA256": {
     "experiments/managed_sketch/export_stateful.py": "e4e65786949808c662574ae6729337d44edf87c7fb22576c6473c4534d1913d6",
     "experiments/managed_sketch/stateful_contract.json": "7cb346d3881737b1840c0baead9de5edf05baa3bbb2c55ede947dc6cda38c0ca",
-    "tests/native/test_stateful_upload.cpp": "e23002e0e54fe744299cd971d08cc327bd7cb0afbbce0ce07bafbb6a5c6ace2c",
+    "tests/native/test_stateful_upload.cpp": "3acaac830bdac3c2f46fb7a270d612194753ec0ca3e1a5fc6043a000406a2f54",
     "tests/host/test_stateful_export.py": "89f24fc58a5a5dbd470edf3c66043bf19c1f826cd5c598a35fd05a9d192993a0",
     ".github/workflows/checks.yml": "f14bf1399cded283db4eefc50f841930dc1d82a5aaa716f085a81d43cd5b0761"
   },
@@ -160,19 +166,257 @@
     "build/fms2-upload-legacy-build.log": "389cc30e6ecb5432084e32edb70ba2576cc68dcfec11f1722c631179970ff440",
     "build/fms2-upload-r2.log": "df70faba58f6633236dabf88dbd90513d03e7bdf766476b05599a810ec39209c",
     "build/fms2-upload-arm.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "build/fms2-export-preflight.log": "efb45c58e242773a6a9bcab7fea73694cdd352bc872f9ce0cae27a1213c92cca"
+    "build/fms2-export-preflight.log": "efb45c58e242773a6a9bcab7fea73694cdd352bc872f9ce0cae27a1213c92cca",
+    "build/fms2-upload-export.log": "147f2eb31835fba387c0994bc2c34cef0a571e5014b8d4ee76ad27cf5cece5dc",
+    "build/fms2-upload-export-r2.log": "5cc5b3bd33d4eac152e8166167ee28d53e2bd72513085981d10b18ee7810ee10",
+    "build/fms2-ci-native-failure.log": "df3ba501c93f17cd4e2adfc8c614f0720835c4ee909c3b1ff38f894a811475bb",
+    "build/fms2-gcc-fix-build.log": "858961b4385af68e89a6240d2dbb0e6d8218581a50578d8687669206312efca5",
+    "build/fms2-gcc-fix-tests.log": "746efa233ddb2c2cd2ec0228eae764958d85a2acb50776598c5169219dd03e5a",
+    "build/fms2-gcc-fix-fuzz-build.log": "fd307e70ebd733a409d1d43b95f780eddbdbf7079213fee4d63842b061d4a951",
+    "build/fms2-gcc-fix-fuzz-tests.log": "06e0be62dfb70eff67a7fa2b8d5d517810cf3d30ab398939895dd4bda1d1b8b6",
+    "build/fms2-ci-native-success.log": "671c880e90addcb327213e94caeff0a8afae8ba869248e8e4c64a5fc657da265",
+    "build/fms2-ci-mutation-fuzz-success.log": "51fb844aa62d66c32d372814d40a492e1f0a7b4869405ae2adcb91c809a88864",
+    "build/fms2-ci-managed-success.log": "e231428816567eb9ae386e3a06d52edd794b36d4fa5240d202e19ddd22fddf41"
   },
   "workflow": {
     "localCheck": "Ruby YAML parsed; every bash block passed bash -n",
     "actionlint": "unavailable",
-    "remoteCI": "pending committed-source export and push"
+    "remoteCI": {
+      "run": {
+        "id": 38810907065,
+        "head_sha": "97be7bbbe29ef1d18ec886ae6eea1a2d41905869",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/AlexGivens/Firmingo/actions/runs/38810907065"
+      },
+      "jobs": [
+        {
+          "id": 116683579726,
+          "name": "managed-sketch-build",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580020,
+          "name": "firmware-builds (raspberry_pi_pico, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580038,
+          "name": "mutation-fuzz",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580074,
+          "name": "firmware-builds (nano_rp2040_connect, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580114,
+          "name": "firmware-builds (nano_rp2040_connect, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580144,
+          "name": "native",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580149,
+          "name": "firmware-builds (nano_rp2040_connect, application)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580199,
+          "name": "firmware-builds (raspberry_pi_pico, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580229,
+          "name": "firmware-builds (nano_rp2040_connect, baseline)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116683580365,
+          "name": "firmware-builds (raspberry_pi_pico, application)",
+          "conclusion": "success"
+        }
+      ],
+      "managedSteps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/setup-firmware",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build managed profile through the ordinary development entry point",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile experimental resident, capsules and initial images",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Link candidate stateful ARM sketch against allocated resident RAM",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build opt-in FMS2 boot runtime and check its linked capsule on the host",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build FMS2 upload candidate and export versioned contract from exact committed sources",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "statusRecordSHA256": "67b4a9671148f53cd8197ad4155bb832ab78e4806801e69a081bf468dd45de38",
+      "rawLogEvidence": {
+        "nativeTargets": 23,
+        "hostCases": 247,
+        "mutationTargets": 6,
+        "exportResult": {
+          "status": "exported_experimental_stateful_resident",
+          "firmwareCommit": "97be7bbbe29ef1d18ec886ae6eea1a2d41905869",
+          "manifestSHA256": "41352ab025317c013413c7b5d77c43db95aada7daddfbac52fac7422759545c6",
+          "files": 39,
+          "hardwareQualified": false
+        }
+      },
+      "evidenceLimit": "Raw native/mutation/managed job logs inspected. Remote artifact archive bytes were not retrieved; exact local artifact comparisons are recorded separately."
+    },
+    "initialCI": {
+      "run": {
+        "id": 38810268997,
+        "head_sha": "e52fec6642c2412ba1e0caed23dc7ce172a0e718",
+        "status": "completed",
+        "conclusion": "failure",
+        "html_url": "https://github.com/AlexGivens/Firmingo/actions/runs/38810268997"
+      },
+      "jobs": [
+        {
+          "id": 116681444027,
+          "name": "managed-sketch-build",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681444274,
+          "name": "firmware-builds (nano_rp2040_connect, uart)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681444371,
+          "name": "mutation-fuzz",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 116681444372,
+          "name": "native",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 116681444377,
+          "name": "firmware-builds (nano_rp2040_connect, baseline)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681444417,
+          "name": "firmware-builds (raspberry_pi_pico, uart)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681444533,
+          "name": "firmware-builds (raspberry_pi_pico, local-only)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681444692,
+          "name": "firmware-builds (nano_rp2040_connect, application)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681445072,
+          "name": "firmware-builds (raspberry_pi_pico, application)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 116681445277,
+          "name": "firmware-builds (nano_rp2040_connect, local-only)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    "initialCIFailure": "Native raw log identified GCC -Werror=misleading-indentation at the new test line 146; declaration split onto its own line. Local adapter and mutation targets rebuilt/passed after the fix."
   },
   "remaining": [
-    "Canonical export against actual main commit, then inspect CI result.",
     "Compiler schema/recipe/packaging and SDK deployment adoption are explicit follow-up work.",
     "Qualify actual Nano/iPad/iPhone startup, binary console, mutable state, replacement, interruption and recovery.",
     "Static memory includes separate 4 KiB stage and 4 KiB replacement snapshot; dynamic heap/stack peaks remain unmeasured.",
     "No rollback, sandbox or installed-image attestation is implied.",
     "Unrelated pre-existing AGENTS.md edits preserved and excluded."
-  ]
+  ],
+  "sourceCommit": "97be7bbbe29ef1d18ec886ae6eea1a2d41905869",
+  "canonicalExport": {
+    "status": "exported_experimental_stateful_resident",
+    "firmwareCommit": "97be7bbbe29ef1d18ec886ae6eea1a2d41905869",
+    "manifestSHA256": "90911f7d3684dab4123d36b9a018805cc36ae58cb197c318fe720cb18d434a65",
+    "files": 39,
+    "hardwareQualified": false
+  },
+  "implementationCommit": "e52fec6642c2412ba1e0caed23dc7ce172a0e718",
+  "initialCanonicalExport": {
+    "status": "exported_experimental_stateful_resident",
+    "firmwareCommit": "e52fec6642c2412ba1e0caed23dc7ce172a0e718",
+    "manifestSHA256": "c54e7b8573cdb1b9d10ae07c66b33487fc0a1b30ff9b5f5dc53cc1bc65ed2f5b",
+    "files": 39,
+    "hardwareQualified": false
+  }
 }
