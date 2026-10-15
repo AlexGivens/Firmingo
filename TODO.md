@@ -72,8 +72,10 @@ deployment validation. [Selected Nano setup](docs/evidence/nano-fms2-initial.md)
 records the new checked initial composer, full ROM readback, matching Mac hello
 and first physical iPad compilation/inspection. The later linked iPad record now
 passes both target-2 uploads in one boot, initialized data/BSS, advancing state,
-two exact echoes and state after manual RESET. Other host and production gates
-remain open before candidate promotion.
+two exact echoes and state after manual RESET. The same sequence now also passes
+on the selected iPhone; [both scoped records](docs/evidence/nano-fms2-hardware.md)
+retain exact pins and limitations. Other host and production gates remain open
+before candidate promotion.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and

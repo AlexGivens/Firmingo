@@ -68,3 +68,5 @@ observations match State B high and State A low. A separate manual RESET changes
 boot identity and passes State A initialization/progress again. The user removed
 D2 after completion. These are scoped experimental iPad results, distinct from
 initial ROM setup, complete SDK installation, other hosts and production gates.
+The later [combined iPad/iPhone record](nano-fms2-hardware.md) also records the
+identical signed app's separate iPhone pass and final upload-arm removal.
