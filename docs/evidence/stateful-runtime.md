@@ -3,7 +3,7 @@
 Result: the opt-in Nano **boot-only** resident compiles/links and its actual ARM
 capsule passes production runtime initialization/dispatch checks on the host.
 Ten native lifecycle cases exercise the real core pause and replacement driver
-with fake flash. No board was connected, flashed or executed for this increment.
+with fake flash. No device connection, flash or ARM execution was performed.
 See [runtime semantics](../integration/stateful-runtime.md) and
 [exact machine-readable evidence](stateful-runtime.json).
 
@@ -72,8 +72,13 @@ After the ordinary profile prepares the pinned overlay:
 
 Use a new output directory on rerun. The same driver without `--boot-runtime`
 selects allocation only. CI builds both modes, separately compiles the runtime
-ARM object and runs the ordinary native/host suites. Remote results are reviewed
-after push; local test counts and artifact bytes remain independent evidence.
+ARM object and runs the ordinary native/host suites.
+[Implementation CI at `4e491bc`](https://github.com/AlexGivens/Firmingo/actions/runs/38727327344)
+reports all ten jobs successful, including both candidate build steps. Public
+run/job/step statuses were inspected; raw remote logs/artifacts were not retrieved.
+The source inputs match exact committed blobs at
+`4e491bc1ca53b5c800ccbabb8e52417b442f8c86`; the default resident also exports
+successfully against that commit. Local counts and bytes remain separate evidence.
 
 ## Remaining
 

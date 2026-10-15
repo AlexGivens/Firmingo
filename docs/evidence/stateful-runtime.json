@@ -200,7 +200,133 @@
       "standalone pinned ARM C++11 runtime object with warnings as errors",
       "separate opt-in boot-runtime proof after allocation-only proof"
     ],
-    "remoteCI": "pending source commit/push; local results are separate"
+    "remoteCI": {
+      "run": {
+        "id": 38727327344,
+        "head_sha": "4e491bc1ca53b5c800ccbabb8e52417b442f8c86",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/AlexGivens/Firmingo/actions/runs/38727327344"
+      },
+      "jobs": [
+        {
+          "id": 116396312555,
+          "name": "mutation-fuzz",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396312836,
+          "name": "native",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396312927,
+          "name": "managed-sketch-build",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396312954,
+          "name": "firmware-builds (nano_rp2040_connect, application)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396313038,
+          "name": "firmware-builds (nano_rp2040_connect, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396313085,
+          "name": "firmware-builds (raspberry_pi_pico, application)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396313120,
+          "name": "firmware-builds (raspberry_pi_pico, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396313130,
+          "name": "firmware-builds (nano_rp2040_connect, baseline)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396313154,
+          "name": "firmware-builds (raspberry_pi_pico, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116396313207,
+          "name": "firmware-builds (nano_rp2040_connect, uart)",
+          "conclusion": "success"
+        }
+      ],
+      "managedSteps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run ./.github/actions/setup-firmware",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build managed profile through the ordinary development entry point",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile experimental resident, capsules and initial images",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Link candidate stateful ARM sketch against allocated resident RAM",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Build opt-in FMS2 boot runtime and check its linked capsule on the host",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "statusRecordSHA256": "b3dcd2204026c425ec4db8cf5d31e462f7aad5bb2431111bf8777a8952b47d4d",
+      "evidenceLimit": "Public run/job/step statuses inspected; raw remote logs and artifacts not retrieved. Local counts and bytes remain separate."
+    },
+    "localCheck": "Ruby YAML parsed and every workflow bash run block passed bash -n",
+    "actionlint": "not run"
   },
   "sourceSHA256": {
     "CMakeLists.txt": "05da397dbbceb9d68dc0a47b42f346c30b58693b61d6b6825a18b96c3a7cdf89",
@@ -222,7 +348,8 @@
     "build/stateful-runtime-arm-object.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "build/stateful-runtime-legacy-build.log": "79c26e286256c9b61aa89b2855458f09683688edab80d9c6eb0c0fd8f1419163",
     "build/stateful-runtime-r3.log": "c0aa7e0f61033145fc5e8371ffc391927b7e94d1462f8e14659ed9601d84d1a6",
-    "build/stateful-runtime-allocation-r3.log": "3718d538f9633884cab09c1866255c19b6188bdbbaa67472e6806eccf5eff5bc"
+    "build/stateful-runtime-allocation-r3.log": "3718d538f9633884cab09c1866255c19b6188bdbbaa67472e6806eccf5eff5bc",
+    "build/stateful-runtime-legacy-export.log": "43efbd6b503398ff996d975281496db871fab76dfbfe2d95fd73b9625a776f9e"
   },
   "remaining": [
     "Export full versioned FMS2 contract and wire an explicitly versioned upload adapter with ownership, authorization, status and protocol fixtures.",
@@ -231,5 +358,13 @@
     "Qualify actual ARM setup/loops, replacement/interruption, reboot validation and recovery on an explicitly selected Nano.",
     "No persistent failure latch, atomic multi-slot update or rollback; reboot validates whichever slot bytes are present.",
     "Preserve unrelated pre-existing AGENTS.md edits; no sibling code/pin changes in this increment."
-  ]
+  ],
+  "sourceCommit": "4e491bc1ca53b5c800ccbabb8e52417b442f8c86",
+  "legacyCommittedSourceExport": {
+    "files": 11,
+    "firmwareCommit": "4e491bc1ca53b5c800ccbabb8e52417b442f8c86",
+    "hardwareQualified": false,
+    "manifestSHA256": "c59af04b277da712c4813d33df6d105e24e2f19e0e7a8f3bbf3cb4cc6c0a1be2",
+    "status": "exported_experimental_resident"
+  }
 }

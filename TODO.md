@@ -53,6 +53,11 @@ The later [allocation/link CI at `c2f568b`](https://github.com/AlexGivens/Firmin
 also reports all ten jobs successful, including the new candidate link step;
 public statuses inspected, raw remote logs/artifacts not retrieved. Its local
 21 sanitizer targets and final 233 host cases pass.
+The [runtime evidence](docs/evidence/stateful-runtime.md) records the newer
+22 sanitizer targets, 236 host cases and ten lifecycle cases, plus all three
+resident modes building locally. [CI at `4e491bc`](https://github.com/AlexGivens/Firmingo/actions/runs/38727327344)
+reports all ten jobs successful, including opt-in FMS2 boot; public statuses
+inspected, raw remote logs/artifacts not retrieved. No board execution ran.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and
