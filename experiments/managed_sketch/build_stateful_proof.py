@@ -130,13 +130,23 @@ def resident_contract(data):
             <= bounds["__StackOneBottom"] < bounds["__StackOneTop"]
             <= bounds["__StackBottom"] < bounds["__StackTop"] <= 0x20042000):
         raise ValueError("candidate arena/heap/stack linker extents overlap")
-    return {"schema": 1, "purpose": "native stateful allocation/link proof only",
+    runtime_enabled = "firmingo_stateful_boot_mode" in elf.symbols
+    if runtime_enabled:
+        marker, section = elf.object("firmingo_stateful_boot_mode", 4, 1, 2)
+        value = elf.extent(section[4] + marker - section[3], 4)
+        mappings = [payload[marker - base:marker - base + 4] for base, payload in flash
+                    if base <= marker and marker + 4 <= base + len(payload)]
+        if value != struct.pack("<I", 1) or mappings != [value]:
+            raise ValueError("invalid boot runtime marker or LOAD mapping")
+    return {"schema": 1, "purpose": "native stateful proof; no deployment descriptor",
             "board": "nano_rp2040_connect", "imageVersion": 2, "residentABI": 2,
             "apiAddress": address, "apiTableBytes": 52, "apiTableSHA256": sha(table),
             "stateAddress": state, "stateCapacityBytes": capacity, "maximumCapsuleBytes": maximum,
             "residentELFSHA256": sha(data), "linkerBounds": bounds,
             "nominalHeapSpanBytes": bounds["__HeapLimit"] - bounds["__end__"],
-            "runtimeEnabled": False, "hardwareTested": False}, flash
+            "runtimeEnabled": runtime_enabled, "networkUploadsEnabled": not runtime_enabled,
+            "fms2NetworkUploadsEnabled": False,
+            "hardwareTested": False}, flash
 
 
 def module_capsule(data, contract):
@@ -200,6 +210,8 @@ def main():
     parser.add_argument("--config-file", required=True, type=Path, help="pinned patched overlay config")
     parser.add_argument("--validator", required=True, type=Path, help="CMake managed_stateful_check executable")
     parser.add_argument("--output-dir", required=True, type=Path, help="new output directory; refuses existing paths")
+    parser.add_argument("--boot-runtime", action="store_true",
+                        help="link the opt-in FMS2 boot runtime; network uploads remain disabled")
     args = parser.parse_args()
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -209,6 +221,8 @@ def main():
         "build_stateful_proof.py", "build_resident.py", "stateful_abi.h", "abi.h", "facade/Arduino.h",
         "stateful_counter.ino", "module_entry.cpp", "stateful_module.ld", "stateful_check.cpp",
         "stateful_image.h", "stateful_image.cpp", "image.h", "image.cpp", "export_resident.py", "build_composite.py")]
+    sources += [HERE / "stateful_runtime.h", HERE / "stateful_runtime.cpp",
+                HERE / "core1_pause.h", HERE / "core1_pause.cpp", ROOT / "CMakeLists.txt"]
     try:
         report["sourceSHA256"] = {str(p.relative_to(ROOT)): sha(p.read_bytes()) for p in sources}
         config = args.config_file.resolve()
@@ -217,17 +231,25 @@ def main():
         if not compiler.is_file() or not args.validator.is_file():
             raise ValueError("pinned ARM compiler or native validator missing")
         run([sys.executable, HERE / "build_resident.py", "--cli", args.cli.resolve(),
-             "--config-file", config, "--output-dir", output / "resident", "--stateful-allocation-proof"])
+             "--config-file", config, "--output-dir", output / "resident",
+             "--stateful-runtime-proof" if args.boot_runtime else "--stateful-allocation-proof"])
         resident = output / "resident"
         resident_report = json.loads(bounded_file(resident / "report.json", 262144), object_pairs_hook=unique_object)
-        if (resident_report.get("status") != "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed"
-                or resident_report.get("stateful_runtime_enabled") is not False or "upload_target" in resident_report):
+        expected_status = ("compile-tested FMS2 boot runtime candidate; network uploads disabled; not flashed" if args.boot_runtime
+                           else "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed")
+        if (resident_report.get("status") != expected_status
+                or resident_report.get("stateful_runtime_enabled") is not args.boot_runtime or "upload_target" in resident_report):
             raise ValueError("select explicit candidate allocation build")
         elf = bounded_file(resident / "artifacts/firmingo_managed_resident.ino.elf", ELF_LIMIT)
         uf2 = bounded_file(resident / "artifacts/firmingo_managed_resident.ino.uf2", UF2_LIMIT)
         if sha(elf) != resident_report["elf_sha256"] or sha(uf2) != resident_report["uf2_sha256"]:
             raise ValueError("resident report/artifacts mismatch")
         contract, flash = resident_contract(elf)
+        if contract["runtimeEnabled"] is not args.boot_runtime:
+            raise ValueError("resident runtime marker differs from selected build mode")
+        report["runtimeEnabled"] = args.boot_runtime
+        report["networkUploadsEnabled"] = not args.boot_runtime
+        report["fms2NetworkUploadsEnabled"] = False
         contract["residentUF2SHA256"] = sha(uf2)
         contract["elfUF2ComparedBytes"] = check_uf2(uf2, flash)
         (output / "linker-contract.json").write_text(json.dumps(contract, indent=2) + "\n")

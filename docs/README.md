@@ -16,7 +16,9 @@ The [candidate FMS2 contract](integration/stateful-image-v2.md) implements porta
 state validation and generation initialization with native-only fixtures. The
 [allocation/link proof](integration/stateful-link-proof.md) adds a real resident
 RAM arena, candidate API/linker facts and an independently linked ARM capsule.
-Runtime integration, deployment exports and compiler/SDK adoption remain open.
+The [runtime increment](integration/stateful-runtime.md) adds opt-in board boot
+and native replacement tests. Deployment exports, a versioned upload adapter and
+compiler/SDK adoption remain open.
 
 The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketch-sdk.md)
 provides the M9 contract, portable vectors, pinned reference build recipe,

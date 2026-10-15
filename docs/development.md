@@ -11,6 +11,10 @@ resident with a real 4 KiB arena and candidate API-v2 table, links a stateful AR
 sketch against its actual symbols, and checks the capsule with production C++
 initialization on the host. CI runs both paths. No new compiler recipe or stateful
 device-support claim follows from these checks.
+`build_stateful_proof.py --boot-runtime` now selects a separate
+[FMS2 boot candidate](integration/stateful-runtime.md), with network uploads
+disabled. CI builds both candidate modes; ordinary tests also exercise the
+production lifecycle/replacement driver with fake flash and the real core pause.
 
 Current release version: **0.1.0 beta**. The normal release package includes
 board-specific application and UART UF2s; see [releasing](releasing.md).

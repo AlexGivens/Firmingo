@@ -2,7 +2,8 @@
 
 Status: portable candidate validator and RAM-generation initialization proof,
 2026-10-15, followed by an [opt-in resident allocation and ARM link proof](stateful-link-proof.md).
-No current deployment resident advertises or accepts this format. FMS1/ABI one,
+The later [opt-in boot runtime](stateful-runtime.md) accepts it at boot only;
+no network upload target or deployable export accepts it yet. FMS1/ABI one,
 existing exports, compiler recipes/catalogue and SDK deployment pins remain
 unchanged. This is the first implementation step of
 [V1-STATE](production-v1.md), not stateful sketch support on a board.
@@ -117,8 +118,10 @@ that object is not linked into the old resident.
 
 The [allocation/link proof](stateful-link-proof.md) now supplies real resident RAM,
 candidate API/linker facts and a separately linked ARM sketch with actual
-`.data`/`.bss`, checked through this production initializer on the host. Next:
-integrate the runtime lifecycle and export the versioned deployment contract
+`.data`/`.bss`, checked through this production initializer on the host. The later
+[runtime increment](stateful-runtime.md) integrates bounded boot views and token
+publication in an opt-in board build, with replacement failure paths tested
+natively. Next: export the versioned contract and wire a versioned upload adapter
 before Compiler packaging/recipe validation and FirmingoKit adoption. Physical startup,
 replacement and interruption qualification remain separate selected workflows.
 

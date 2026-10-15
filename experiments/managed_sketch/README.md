@@ -21,6 +21,10 @@ links initialized and BSS globals and validates host initialization. It does not
 enable FMS2 boot/upload or change the default M9 path. Run
 `python3 experiments/managed_sketch/build_stateful_proof.py --help` for its
 build-only interface; output must be new and no board is contacted.
+The later [runtime candidate](../../docs/integration/stateful-runtime.md) selects
+`--boot-runtime`, enabling FMS2 boot in a separate build with all network uploads
+disabled. Its replacement driver has native fault-injection coverage and is not
+yet exposed through a board command.
 
 ## M9 FMGO upload candidate
 

@@ -134,6 +134,11 @@ jobs:
             -fno-exceptions -fno-rtti -mcpu=cortex-m0plus -mthumb \
             -Iexperiments/managed_sketch -c experiments/managed_sketch/stateful_image.cpp \
             -o "$output/stateful_image.o" 2>&1 | tee "$output/stateful-object-driver.log"
+          "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin/arm-none-eabi-g++" \
+            -std=c++11 -Wall -Wextra -Wpedantic -Werror -ffreestanding \
+            -fno-exceptions -fno-rtti -mcpu=cortex-m0plus -mthumb \
+            -Iexperiments/managed_sketch -c experiments/managed_sketch/stateful_runtime.cpp \
+            -o "$output/stateful_runtime.o" 2>&1 | tee "$output/stateful-runtime-object-driver.log"
           python experiments/managed_sketch/export_resident.py --resident-dir "$output/resident" --firmware-commit "$GITHUB_SHA" --output "$output/resident-export" 2>&1 | tee "$output/resident-export-driver.log"
           for sketch in blink_a blink_b pause_probe stall_probe; do
             python experiments/managed_sketch/build_module.py --sketch "$sketch" --resident-elf "$output/resident/artifacts/firmingo_managed_resident.ino.elf" --toolchain-bin "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin" --output-dir "$output" 2>&1 | tee "$output/$sketch-driver.log"
@@ -161,6 +166,14 @@ jobs:
             --config-file build/firmware/nano_rp2040_connect/managed/usb-toolchain/arduino-cli.yaml \
             --validator build/stateful-check/managed_stateful_check \
             --output-dir "$output/stateful" 2>&1 | tee "$output/stateful-driver.log"
+      - name: Build opt-in FMS2 boot runtime and check its linked capsule on the host
+        run: |
+          output=build/managed_sketch/ci
+          python experiments/managed_sketch/build_stateful_proof.py --boot-runtime \
+            --cli "$(command -v arduino-cli)" \
+            --config-file build/firmware/nano_rp2040_connect/managed/usb-toolchain/arduino-cli.yaml \
+            --validator build/stateful-check/managed_stateful_check \
+            --output-dir "$output/stateful-runtime" 2>&1 | tee "$output/stateful-runtime-driver.log"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:

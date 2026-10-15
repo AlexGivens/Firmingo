@@ -19,6 +19,11 @@
 #ifdef FIRMINGO_STATEFUL_ALLOCATION_PROOF
 #include <stateful_abi.h>
 #endif
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+#include <stateful_runtime.h>
+#include <stateful_image.cpp>
+#include <stateful_runtime.cpp>
+#endif
 #include <image.h>
 #include <console.h>
 #include <stage.h>
@@ -38,6 +43,13 @@
 #error "Build with the pinned deferred NCM-only Arduino-Pico 6.0.0 overlay"
 #endif
 extern "C" const FirmingoSketchApiV1 firmingo_sketch_api;
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+#ifndef FIRMINGO_STATEFUL_ALLOCATION_PROOF
+#error "Stateful runtime proof requires the owned arena and candidate API"
+#endif
+extern "C" const FirmingoSketchApiV2 firmingo_sketch_api_v2;
+extern "C" uint8_t firmingo_sketch_state[kFirmingoStateCapacityBytes];
+#endif
 namespace {
 constexpr uint16_t PROTOCOL_PORT = 7420;
 // Arduino-Pico uses RP2040 GPIO numbers in pinMode/digitalRead. On this
@@ -73,14 +85,20 @@ class ManagedApplicationEndpoint final : public firmingo::ApplicationEndpoint {
 ManagedApplicationEndpoint backend;
 firmingo::Channel channel(backend);
 firmingo::MemorySamples memorySamples;
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulboot-exp1"};
+#else
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-m9exp1"};
+#endif
 uint8_t applicationBytes[firmingo::ApplicationEndpoint::capacity];
 firmingo_managed::Core1Pause sketchPause;
+#ifndef FIRMINGO_STATEFUL_RUNTIME_PROOF
 firmingo_managed::CapsuleStage capsuleStage;
 std::atomic<bool> sketchReady{false};
 std::atomic<uint32_t> sketchGeneration{0};
 std::atomic<uint32_t> sketchReturnedGeneration{0};
 firmingo_managed::ImageInfo sketchImage{};
+#endif
 static_assert(FLASH_SECTOR_SIZE == firmingo_managed::kProofSectorBytes,
               "Nano proof sector size changed");
 static_assert(FLASH_PAGE_SIZE == firmingo_managed::kProofPageBytes,
@@ -124,6 +142,25 @@ class NanoFlash final : public firmingo_managed::ProofFlashPort {
   uint32_t irq_state_ = 0;
   bool active_ = false;
 };
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+class NanoStatefulExecution final : public firmingo_managed::stateful::ExecutionPort {
+ public:
+  void stopped() override {
+    backend.discard();
+    sketchConsole.stop(applicationBytes, sizeof(applicationBytes));
+  }
+  void invoke(uint32_t entry) override { reinterpret_cast<void (*)()>(entry)(); }
+};
+NanoStatefulExecution statefulExecution;
+firmingo_managed::stateful::Runtime statefulRuntime(
+    {firmingo_sketch_state, sizeof(firmingo_sketch_state),
+     static_cast<uint32_t>(reinterpret_cast<uintptr_t>(firmingo_sketch_state))},
+    {static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&firmingo_sketch_api_v2)),
+     static_cast<uint32_t>(reinterpret_cast<uintptr_t>(firmingo_sketch_state)),
+     sizeof(firmingo_sketch_state), 4096}, statefulExecution);
+// Boot-only candidate: no upload service or FMS1/FMS2 network target is exposed.
+firmingo::TcpSessionServer protocolService(channel, &memorySamples);
+#else
 class NanoSketchRuntime final : public firmingo_managed::SketchRuntime {
  public:
   void stop() override {
@@ -157,6 +194,7 @@ firmingo_managed::FmgoUpload uploadService(capsuleStage, sketchSwitch,
     uploadArmed, generationReturned);
 firmingo::TcpSessionServer protocolService(channel,&memorySamples,&uploadService);
 uint32_t core1RunningGeneration = 0;  // Core 1 only.
+#endif
 uint32_t clockMs() { return millis(); }
 [[noreturn]] void startupFault();
 
@@ -228,8 +266,8 @@ extern "C" __attribute__((used)) const FirmingoSketchApiV1 firmingo_sketch_api =
 
 #ifdef FIRMINGO_STATEFUL_ALLOCATION_PROOF
 // A real .bss allocation, accounted in the resident's static RAM use. The linker
-// roots the candidate table explicitly; its pointer retains the arena. Runtime
-// boot/upload validation below remains FMS1 only until lifecycle integration.
+// roots the candidate table explicitly; its pointer retains the arena.
+// Allocation-only builds retain FMS1; the separate runtime flag enables FMS2 boot.
 extern "C" {
 alignas(4) uint8_t firmingo_sketch_state[kFirmingoStateCapacityBytes];
 extern __attribute__((used)) const FirmingoSketchApiV2 firmingo_sketch_api_v2 = {
@@ -240,6 +278,9 @@ extern __attribute__((used)) const FirmingoSketchApiV2 firmingo_sketch_api_v2 = 
     firmingo_sketch_state, sizeof(firmingo_sketch_state), 4096};
 }
 static_assert(sizeof(FirmingoSketchApiV2) == 52, "candidate ARM ABI layout changed");
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+extern "C" __attribute__((used)) const uint32_t firmingo_stateful_boot_mode = 1;
+#endif
 #endif
 
 void setup1() {}
@@ -247,6 +288,9 @@ void setup1() {}
 void loop1() {
   sketchPause.park_if_requested();
   sketchConsole.sketch_boundary();
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+  if (!statefulRuntime.tick()) delay(1);
+#else
   const uint32_t generation = sketchGeneration.load(std::memory_order_acquire);
   if (!generation) {
     core1RunningGeneration = 0;
@@ -259,6 +303,7 @@ void loop1() {
   }
   reinterpret_cast<void (*)()>(sketchImage.loop_address)();
   sketchReturnedGeneration.store(generation, std::memory_order_release);
+#endif
 }
 
 void setup() {
@@ -288,6 +333,12 @@ void setup() {
   ethernet_arch_lwip_end();
   if (!protocolReady) startupFault();
   const auto* slot = reinterpret_cast<const uint8_t*>(firmingo_managed::kSlotAddress);
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+  // Header-derived exact view is bounded to the one 4 KiB proof sector. The
+  // runtime initializes RAM before publishing any entries to the other core.
+  statefulRuntime.boot_from_slot(slot, firmingo_managed::kProofSectorBytes);
+  USB.begin();
+#else
   const auto result = firmingo_managed::validate_image(
       slot, firmingo_managed::kSlotBytes,
       static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&firmingo_sketch_api)),
@@ -297,11 +348,16 @@ void setup() {
     sketchReady.store(true, std::memory_order_release);
     sketchGeneration.store(1, std::memory_order_release);
   }
+#endif
 }
 
 void loop() {
   // Core 1 owns the built-in LED when a valid sketch is running.
+#ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+  if (!statefulRuntime.active_generation())
+#else
   if (!sketchReady.load(std::memory_order_acquire))
+#endif
     digitalWrite(STATUS_LED_PIN,ethernet.linkStatus() == LinkON ? HIGH : LOW);
   ethernet_arch_lwip_begin();
   // Sample the C heap and approximate current core-0 stack before/after work.
@@ -312,6 +368,8 @@ void loop() {
   ethernet_arch_lwip_end();
 
   transferSketchBytes();
+#ifndef FIRMINGO_STATEFUL_RUNTIME_PROOF
   uploadService.poll(millis()); // Pause/flash/install only outside the lwIP lock.
+#endif
   delay(1);
 }

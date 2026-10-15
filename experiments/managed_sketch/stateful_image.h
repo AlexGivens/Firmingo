@@ -6,13 +6,13 @@
 namespace firmingo_managed {
 namespace stateful {
 
-// Candidate only: no current resident, compiler recipe or upload target accepts FMS2.
+// Candidate only: opt-in boot runtime; no compiler recipe or network upload target.
 constexpr std::uint16_t kImageVersion = 2;
 constexpr std::uint32_t kHeaderBytes = 128;
 constexpr std::uint32_t kMaximumCapsuleBytes = 4096;
 
-// Trusted resident facts, never populated from an image. No board RAM reservation
-// is selected by this portable proof; the future port must allocate/export it.
+// Trusted resident facts, never populated from an image. The portable validator
+// cannot establish ownership: the port must reserve RAM and supply exact facts.
 struct Contract {
   std::uint32_t api_address;
   std::uint32_t state_address;

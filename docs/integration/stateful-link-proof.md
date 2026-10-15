@@ -4,6 +4,9 @@ Status: compile/link and native host initialization passed on 2026-10-15.
 This advances [V1-STATE](production-v1.md) after the portable
 [FMS2 validator](stateful-image-v2.md). It does not enable FMS2 boot, upload,
 execution or compiler/SDK deployment. No board operation is part of this proof.
+The later [boot/runtime increment](stateful-runtime.md) adds a separate opt-in
+build mode and a native-tested replacement driver; the default allocation-only
+command below retains its original scope.
 
 ## Resident allocation and API
 

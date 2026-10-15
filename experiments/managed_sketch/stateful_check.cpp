@@ -1,6 +1,7 @@
 // Native checker for actual independently linked FMS2 capsules. Calls production
 // validation/initialization; it never maps target pointers or executes ARM code.
 #include "stateful_image.h"
+#include "stateful_runtime.h"
 
 #include <algorithm>
 #include <cerrno>
@@ -25,6 +26,35 @@ std::uint32_t number(const char* text) {
           "expected uint32 argument");
   return static_cast<std::uint32_t>(value);
 }
+
+// A host observation port, never an ARM function-pointer call. It checks actual
+// linked initialized data and zero tail before modeling setup/loop RAM writes.
+class ObservedEntries final : public sf::ExecutionPort {
+ public:
+  ObservedEntries(std::uint8_t* ram, std::size_t capacity,
+                  const std::uint8_t* data, sf::ImageInfo image)
+      : ram_(ram), capacity_(capacity), data_(data), image_(image) {}
+  void stopped() override {}
+  void invoke(std::uint32_t address) override {
+    if (address == image_.setup_address) {
+      ++setups;
+      require(std::equal(data_, data_ + image_.data_bytes, ram_), "runtime setup saw wrong initialized data");
+      require(std::all_of(ram_ + image_.data_bytes, ram_ + capacity_,
+                          [](std::uint8_t b) { return b == 0; }), "runtime setup saw uncleared BSS/tail");
+      ram_[capacity_ - 1] = 39;
+    } else {
+      require(address == image_.loop_address, "runtime invoked unexpected entry");
+      ++loops;
+      ++ram_[capacity_ - 1];
+    }
+  }
+  unsigned setups = 0, loops = 0;
+ private:
+  std::uint8_t* ram_;
+  std::size_t capacity_;
+  const std::uint8_t* data_;
+  sf::ImageInfo image_;
+};
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -71,7 +101,19 @@ int main(int argc, char** argv) {
     require(owner.begin(image.data(), image.size(), contract, 2).error == sf::Error::ok,
             "replacement generation rejected");
     verify();
-    std::printf("FMS2 linked capsule: code=%u data=%u bss=%u; guarded initialization and replacement passed; ARM NOT executed\n",
+    owner.stop();
+    ObservedEntries entries(ram, capacity, image.data() + checked.image.data_load_offset, checked.image);
+    sf::Runtime runtime({ram, capacity, contract.state_address}, contract, entries);
+    auto slot = image;
+    slot.resize(4096, 0xff);
+    require(runtime.boot_from_slot(slot.data(), slot.size()).error == sf::Error::ok,
+            "runtime could not derive exact boot view from padded slot");
+    require(!runtime.loop_returned() && runtime.active_generation() == 1, "runtime published bad boot state");
+    require(runtime.tick() && runtime.tick(), "runtime did not invoke host observation port");
+    require(entries.setups == 1 && entries.loops == 2 && ram[capacity - 1] == 41,
+            "runtime lost loop state or repeated setup");
+    require(runtime.loop_returned(), "runtime did not record completed first loop");
+    std::printf("FMS2 linked capsule: code=%u data=%u bss=%u; guarded initialization, generation replacement and host boot dispatch passed; ARM NOT executed\n",
                 checked.image.code_bytes, checked.image.data_bytes, checked.image.bss_bytes);
     return 0;
   } catch (const std::exception& error) {

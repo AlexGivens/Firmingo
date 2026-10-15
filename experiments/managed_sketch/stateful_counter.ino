@@ -13,6 +13,6 @@ void setup() {
 void loop() {
   ++initialized_counter;
   ++loop_counter;
-  digitalWrite(LED_BUILTIN, (initialized_counter + loop_counter) & 1);
+  digitalWrite(LED_BUILTIN, loop_counter & 1);
   delay(100);
 }

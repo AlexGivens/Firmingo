@@ -91,8 +91,10 @@ the existing resident and independent artifact validators.
 V1-STATE now has a [candidate FMS2 validator and native initialization proof](stateful-image-v2.md).
 An [opt-in allocation/link proof](stateful-link-proof.md) now reserves real RAM,
 derives candidate API/linker facts and validates an independently linked ARM
-capsule through host initialization. Runtime lifecycle integration and a versioned
-deployment export come next, before compiler recipe/packaging and SDK validation.
+capsule through host initialization. The [runtime increment](stateful-runtime.md)
+adds an opt-in board boot adapter and native-tested replacement failure handling.
+A versioned contract export and upload adapter come next, before compiler
+recipe/packaging and SDK validation.
 V1-SOURCE can progress against explicit versioned fixtures while hardware work
 remains separate.
 

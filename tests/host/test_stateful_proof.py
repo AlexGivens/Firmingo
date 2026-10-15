@@ -42,10 +42,12 @@ def fixture(sections, symbols, loads):
     return bytes(data)
 
 
-def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000):
+def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000, boot_mode=None):
     calls = [0x10000041] * 8
     rodata = struct.pack("<IHH8I", 0x49504146, 1, 40, *calls)
     rodata += struct.pack("<IHH11I", 0x49504146, version, 52, *calls, state, 4096, 4096)
+    if boot_mode is not None:
+        rodata += struct.pack("<I", boot_mode)
     rodata += bytes(128 - len(rodata))
     sections = [(".text", 1, 6, 0x10000000, bytes(128), 0, 0),
                 (".rodata", 1, 2, 0x10000080, rodata, 0, 0),
@@ -60,6 +62,8 @@ def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, 
         symbols.append((name, value, 0, 0x10, 0xfff1))
     if alias:
         symbols.append(("other_owner", 0x20002004, 4, 0x11, 3))
+    if boot_mode is not None:
+        symbols.append(("firmingo_stateful_boot_mode", 0x100000dc, 4, 0x11, 2))
     return fixture(sections, symbols, [(1, 0x10000000, 256)])
 
 
@@ -80,6 +84,18 @@ def test_actual_table_bytes_bss_and_linker_bounds_define_candidate_contract():
     assert contract["stateAddress"] == 0x20002000 and contract["stateCapacityBytes"] == 4096
     assert not contract["runtimeEnabled"] and not contract["hardwareTested"]
     assert len(flash) == 1 and len(flash[0][1]) == 256
+
+
+def test_boot_runtime_is_distinguished_by_actual_readonly_marker_not_report_claims():
+    contract, _ = resident_contract(resident_fixture(boot_mode=1))
+    assert contract["runtimeEnabled"] and not contract["networkUploadsEnabled"]
+    assert not contract["fms2NetworkUploadsEnabled"] and not contract["hardwareTested"]
+
+
+@pytest.mark.parametrize("mode", [0, 2])
+def test_unknown_boot_mode_marker_rejects(mode):
+    with pytest.raises(ValueError, match="runtime marker"):
+        resident_contract(resident_fixture(boot_mode=mode))
 
 
 @pytest.mark.parametrize("fault", [{"version": 1}, {"arena_type": 1}, {"alias": True},
