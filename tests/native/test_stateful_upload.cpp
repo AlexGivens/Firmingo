@@ -143,7 +143,8 @@ void ownership_offsets_abort_disconnect_and_duplicate_commit_have_no_unrequested
 void digest_and_old_image_failures_never_reach_flash() {
   for(bool bad_digest:{false,true}) {
     Fixture f;auto bytes=image();if(!bad_digest)bytes[3]='1';std::uint8_t hash[32];fm::sha256(bytes.data(),bytes.size(),hash);
-    if(bad_digest)hash[0]^=1;UploadStatus out;
+    if (bad_digest) hash[0] ^= 1;
+    UploadStatus out;
     TEST_ASSERT_EQUAL_INT(int(UploadError::none),int(f.upload.begin(7,bytes.size(),hash,out)));
     TEST_ASSERT_EQUAL_INT(int(UploadError::none),int(f.upload.chunk(7,1,0,bytes.data(),bytes.size(),out)));
     TEST_ASSERT_EQUAL_INT(int(bad_digest?UploadError::digest_mismatch:UploadError::invalid_image),int(f.upload.finish(7,1,out)));
