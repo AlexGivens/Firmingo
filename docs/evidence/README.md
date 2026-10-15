@@ -26,6 +26,7 @@ byte-for-byte originals.
 | Test harness | [attachment harness](attachment-harness.md) | Host-side harness behavior, not device validation |
 | Managed-sketch SDK handoff | [M10 firmware contract export](managed-sketch-sdk-handoff.md) | Shared production-checked vectors, checksummed archive and pinned capsule recipe; no SDK/IDE workflow claim |
 | Exact resident compiler input | [Experimental resident export](resident-compiler-export.md) | Exact source/report/ELF/UF2 binding and independent validation of two WASM capsules; no hardware execution |
+| SDK Nano initial setup | [Selected ROM setup](nano-sdk-initial.md) | Exact exported resident plus SDK WASM GPIO capsule, full initial UF2 verification before boot and macOS hello; no SDK upload/behavior qualification |
 
 The published `.json`, `.log`, and helper-script files retain their
 historical names and are indexed by the narrative reports. A packet capture and

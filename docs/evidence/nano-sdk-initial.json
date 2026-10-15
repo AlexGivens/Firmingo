@@ -1,0 +1,108 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "selected_Nano_initial_ROM_installation_verified_and_hello_checked",
+  "scope": "Full UF2 readback before reboot and one bounded firmware hello on macOS; SDK managed deployment and physical GPIO behavior unqualified",
+  "board": {
+    "operatorSelectedModel": "Arduino Nano RP2040 Connect",
+    "romType": "RP2040",
+    "romRevision": "B1",
+    "reportedFlashKiB": 16384,
+    "deviceIDMatchesSelectedROMFlashID": true,
+    "identityPublication": "raw device and boot identities retained only in ignored local evidence"
+  },
+  "inputs": {
+    "schema": 1,
+    "status": "prepared ROM-only experimental image; not flashed or hardware-qualified",
+    "board": "nano_rp2040_connect",
+    "residentUF2SHA256": "35678c95c495c4e06227a992548be893305cc2375f7a6e561d0a7f66433e6983",
+    "capsuleSHA256": "958b861bbc18d4666ed03e6976b39b9fea4812409ad91a3501abbb9685a80d7d",
+    "capsuleBytes": 316,
+    "apiAddress": "0x10022c9c",
+    "compositeUF2SHA256": "4fb60a485492fc3e3e0f63cabd0cb8e9cd5b7a1f59dda4feb9b5dbee27b404f6",
+    "compositeUF2Bytes": 314368,
+    "residentBlocks": 598,
+    "managedSector": {
+      "address": "0x10200000",
+      "bytes": 4096,
+      "padding": "0xff after capsule"
+    },
+    "effect": "Replace resident payload regions and initialize first managed sector; other flash remains outside this image",
+    "hardwareQualified": false
+  },
+  "firmware": {
+    "commit": "e0a79d1e47aa90d5dda02ccd284d40b9c2922c12",
+    "residentELFSHA256": "5b3116cdcde28f84b86f78cfffb258591455406a1f276b35bb5fd63a6f857304",
+    "sourcePinsMatchedCurrentCheckout": 49,
+    "sdkOfflineSourceCommit": "24993ce998ecf44d0dc426409ebbd77e4f66158d",
+    "sdkCommit": "4edc6aa86040a86eb171c29eff9be0d82800c7b2",
+    "sdkOfflineReportSHA256": "4b96c5585c8aae38ed0779f507835659c627230e49d92a1d7eb416e5013aed30"
+  },
+  "operations": [
+    "read generic INFO_UF2.TXT",
+    "read pinned picotool info -a and match exactly one selected ROM flash identity",
+    "recreate exact composite from independently pinned snapshots before load",
+    "picotool load -v initial.uf2 -t uf2",
+    "picotool verify initial.uf2 -t uf2",
+    "picotool reboot",
+    "read one FMGO hello with five-second bound"
+  ],
+  "hello": {
+    "protocol_major": 1,
+    "firmware_version": "0.1.0-m9exp1",
+    "board_id": "nano_rp2040_connect",
+    "max_payload": 4096,
+    "auth_mode": "open-development",
+    "channels": [
+      {
+        "id": 1,
+        "backend": "application",
+        "controls": [],
+        "rx_queue": 256,
+        "tx_queue": 256,
+        "owned": false
+      }
+    ],
+    "targets": [
+      {
+        "id": 1,
+        "format": "nano-managed-v1",
+        "max_size": 4096,
+        "max_chunk": 1024,
+        "authorization": "physical-d2-gnd"
+      }
+    ]
+  },
+  "localChecks": {
+    "nativeSanitizerCasesPassed": 20,
+    "hostTestsPassed": 200,
+    "focusedComposerAndROMGateCasesPassed": 7,
+    "productionImageValidator": "GPIO and console accepted; wrong resident API and corrupt code rejected",
+    "workflow": "YAML and all bash run-step syntax checked; actionlint unavailable; GitHub run pending",
+    "initialSandboxSuite": "20 native cases passed; host suite had 19 loopback bind permission failures and 181 passes; rerun with loopback access passed all 200; first invocation not a full pass"
+  },
+  "localEvidenceSHA256": {
+    "rom-install.local.log": "b8c92e09ddd0778b2f889767581b8c450e64c05668dd0372f069ed3aba62dfbe",
+    "rom-install.local.json": "324ebe79620666c68e6a23a8d7d83cb502c2f348b8e527ff51559c59350b4426",
+    "hello.local.json": "ace4da7139a1ddf4c202cae5f87615514d6505a6bf2d6b4dda32e2bafb2b2505",
+    "native-check.log": "723e5b4226fda6dc44a351bc7da4b2280d0cc6871c54646b1534fcc92a9a8442",
+    "native-check-network-enabled.log": "fefa513bc893b1dfdd477cd864147430e53b0f14f5e99df0b7888c25e9d11295",
+    "validate.cpp": "cfb871cfd181bb7c2849342141eef40098389f9e0db02992fe210b077408dd23",
+    "validate": "64bcfdc1771b0bef49d9dad5a76ffe07d379ab0e33c810281e8fd96ef4875987"
+  },
+  "firmwareToolsSHA256": {
+    "experiments/managed_sketch/compose_initial.py": "8ffed2e154d730313db28bf3cedf9ec32460260c320e9f78333207f3aadbd6fe",
+    "experiments/managed_sketch/build_composite.py": "ae2d0f00d162bb87dae955edcff1e449b2af307551801d769c2e0c42bb3b46b4",
+    "experiments/managed_sketch/flash_initial.py": "8c771d44205faf8b295a9c1f769fe7e55c2ec520d4dcfed3be0a2ebfe215b012",
+    "experiments/managed_sketch/image.cpp": "b694ed15b5c6c84b819da31e14961e48cf4ab8338bb6e1fee538f964a3501ca5",
+    "experiments/managed_sketch/image.h": "658ceac8716a6a6709714f2b51e2e01684a06ba87db999ee0d75cff0b9e6ffd9"
+  },
+  "limits": [
+    "Readback establishes only the payload regions in this exact composite, not all flash",
+    "Initial image replaces resident payload regions and first 4096-byte managed sector; other flash outside image",
+    "Hello is self-reported identity/capabilities, not installed-image attestation",
+    "No independent GPIO observation, SDK managed upload, one-shot commit, startup reconciliation or console echo in this record",
+    "No iPad/iPhone USB authorization, routing or wireless-development coexistence qualification",
+    "No power-cut, flash-corruption or automatic rollback claim"
+  ]
+}

@@ -133,6 +133,15 @@ jobs:
           for sketch in blink_a blink_b; do
             python experiments/managed_sketch/build_composite.py --sketch "$sketch" --resident-dir "$output/resident" --module-dir "$output" --output-dir "$output/composite"
           done
+          # Exercise selected-artifact composition with real native proof bytes.
+          # SDK/WASM hardware qualification remains a separately selected check.
+          python experiments/managed_sketch/compose_initial.py \
+            --resident-uf2 "$output/resident/artifacts/firmingo_managed_resident.ino.uf2" \
+            --expected-resident-sha256 "$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["uf2_sha256"])' "$output/resident/report.json")" \
+            --capsule "$output/blink_a/blink_a.fms" \
+            --expected-capsule-sha256 "$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["capsule_sha256"])' "$output/blink_a/report.json")" \
+            --expected-api-address "$(python -c 'import json,sys; print(json.load(open(sys.argv[1]))["api_address"])' "$output/blink_a/report.json")" \
+            --output-dir "$output/selected-initial"
           python experiments/managed_sketch/export_sdk_contract.py --output "$output/sdk-contract.zip"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()

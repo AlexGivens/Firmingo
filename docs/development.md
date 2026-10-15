@@ -202,6 +202,14 @@ Blink A/B initial composite UF2s, and SDK contract archive using the scripts in
 `experiments/managed_sketch/README.md`. These artifacts remain outside the beta
 release package. No job flashes, resets, or contacts a board.
 
+The same job also exercises `compose_initial.py` with the resident and native
+Blink A artifacts, their build-report digests and exact API binding, retaining
+the resulting fully initialized first managed-sector image/report. Five focused
+host cases cover capsule bounds/binding/corruption, resident address rejection,
+independent input pins, exact payload preservation and isolated CLI/no-overwrite
+behavior. Source CI does not provision SDK WASM assets or qualify their hardware
+deployment; those remain separately selected integration checks.
+
 Checkout, Python setup and artifact upload are pinned to reviewed Node 24 action
 commits. `.github/actions/setup-firmware/action.yml` downloads Arduino CLI 1.5.1
 from its official release and checks its pinned Linux x64 SHA-256 before

@@ -17,6 +17,29 @@ There is no general Arduino compatibility claim.
 
 ## M9 FMGO upload candidate
 
+### Selected exported resident and external compiler capsule
+
+`compose_initial.py` prepares a ROM-only initial image without assuming a GCC
+Blink report. Supply independently reviewed SHA-256 pins for the exact resident
+UF2 and capsule, plus the resident's exact API address. It validates UF2 bounds,
+capsule structure/code hash/entries/binding and the 4096-byte upload limit; it
+preserves all resident payload bytes and initializes the entire first 4 KiB
+managed sector with the capsule followed by `0xff`. Other flash sectors are
+outside this image. The output directory must be new. This performs no device
+operation and does not establish installed-image identity or hardware support.
+
+```sh
+python3 -I -S -B experiments/managed_sketch/compose_initial.py --help
+```
+
+Review `report.json` and its whole-image digest before a separately selected
+ROM installation. Keep the resident-only identity distinct from the composite
+identity. Use the pinned ROM loader's identity check and full verification before
+reboot; ordinary UF2 copying alone does not establish readback. Firmware source
+CI covers the composer with real native proof inputs and host tests; actual SDK
+WASM bytes, installation and Apple-device behavior remain explicit qualification.
+
+
 The `m9exp1` candidate carries one 4 KiB capsule target onto FMGO TCP 7420
 and removes the private TCP 7421 listener from this resident. It retains
 the constrained Nano capsule/facade and physical D2/GPIO25-to-GND arm.

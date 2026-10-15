@@ -33,3 +33,8 @@ Both LED half-periods were observed, and one power cut before commit preserved
 the installed sketch and allowed another upload. Power loss during flash writing
 remains untested. It is not a release profile
 or a Pico managed-sketch port.
+
+The separate [SDK Nano initial setup](evidence/nano-sdk-initial.md) verifies the
+exported `e0a79d1…` resident with a known SDK WASM GPIO capsule in ROM before
+reboot and checks a macOS hello. It does not yet qualify SDK managed uploads,
+GPIO/console behavior or physical Apple-device deployment for that combination.

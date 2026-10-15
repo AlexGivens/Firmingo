@@ -35,6 +35,13 @@ integration work now has the experimental exact-build export in M10.1 and indepe
 validation of two actual Clang capsules against the exact resident API. Complete
 upstream provenance and wrapper/hardware qualification remain open. Existing firmware qualification priorities below are retained.
 
+The [selected SDK Nano initial setup](docs/evidence/nano-sdk-initial.md) now
+installs and fully verifies the exact exported resident plus the known SDK WASM
+GPIO capsule before reboot, then checks one macOS hello. This is initial setup;
+SDK managed upload/commit/startup, GPIO/console behavior and physical iPad/iPhone
+USB qualification remain separate pending checks. The offline selected-artifact
+composer has focused host tests and is included in the experimental CI build.
+
 Version 0.1.0 beta has board-specific build and package metadata. The shared
 application and UART sketches compile for Nano RP2040 Connect and Raspberry Pi
 Pico; exact 0.1.0 images are not yet hardware-qualified. Prior Nano and Pico
