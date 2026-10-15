@@ -53,4 +53,18 @@ host cases. The initial sandbox invocation passed native targets but failed
 passed. The focused composer suite passes all three cases. The new CI composer
 command also passes locally with the actual native ARM proof. Workflow YAML
 parses and all bash steps pass syntax checking; actionlint is unavailable.
-No new firmware compile matrix or remote CI pass is inferred from these checks.
+No new local firmware compile matrix is inferred from these checks.
+[CI at `6028b6a`](https://github.com/AlexGivens/Firmingo/actions/runs/38822065259)
+reports all ten jobs successful, including the new composition step. Public job/
+step metadata was inspected; raw logs returned HTTP 403 without credentials,
+and the configured GitHub CLI credentials returned HTTP 401. Remote raw logs/
+artifacts were not verified; the exact local results above remain separate.
+
+The later [physical iPad record](https://github.com/AlexGivens/FirmingoKit/blob/main/docs/nano-fms2-ipad.json)
+now records both exact target-2 SDK uploads in the same boot, one host commit
+attempt and fresh boot-confirmed result per sketch, correct initialized data/
+startup BSS, advancing counters and two exact 256-byte echoes. Manual D13
+observations match State B high and State A low. A separate manual RESET changes
+boot identity and passes State A initialization/progress again. The user removed
+D2 after completion. These are scoped experimental iPad results, distinct from
+initial ROM setup, complete SDK installation, other hosts and production gates.

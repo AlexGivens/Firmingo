@@ -89,6 +89,18 @@
     "included regions only, not all flash",
     "no SDK initial-installation backend qualification",
     "managed upload/startup/state/echo/reboot require separate evidence",
-    "no new compile matrix or remote CI pass claimed"
-  ]
+    "No new local compile matrix; remote public status is recorded separately without raw log/artifact verification."
+  ],
+  "ci": {
+    "commit": "6028b6af97538d2e62fe6d26aabb84b685e47591",
+    "url": "https://github.com/AlexGivens/Firmingo/actions/runs/38822065259",
+    "publicJobStatuses": {
+      "success": 10
+    },
+    "newComposerStepReportedSuccess": true,
+    "rawLogsRetrieved": false,
+    "rawLogLimitation": "GitHub CLI credentials returned 401; unsigned public job log endpoints returned 403. Public job/step metadata only; exact local results are separate."
+  },
+  "composerSourceCommit": "6028b6af97538d2e62fe6d26aabb84b685e47591",
+  "composerSHA256": "8c74377a772aa62ec584a49053ca6e6e128e55f1429a4e39aa4741bf3a973477"
 }

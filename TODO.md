@@ -70,8 +70,10 @@ bytes were not retrieved. Compiler/SDK adoption and physical qualification remai
 Compiler/SDK FMS2 adoption now has explicit pinned descriptors and target-2
 deployment validation. [Selected Nano setup](docs/evidence/nano-fms2-initial.md)
 records the new checked initial composer, full ROM readback, matching Mac hello
-and first physical iPad compilation/inspection. Managed upload, state replacement
-and reboot behavior still need their own evidence before candidate promotion.
+and first physical iPad compilation/inspection. The later linked iPad record now
+passes both target-2 uploads in one boot, initialized data/BSS, advancing state,
+two exact echoes and state after manual RESET. Other host and production gates
+remain open before candidate promotion.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and
