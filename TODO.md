@@ -41,6 +41,9 @@ restrictions remain intact; no new descriptor or hardware support is offered.
 [Local evidence](docs/evidence/stateful-image-v2.md): 21 sanitizer CTest targets,
 217 host cases, final ten-case focused proof, five mutation targets and pinned ARM
 object compilation pass; real allocation/linking and hardware remain open.
+[CI at `a7966c5`](https://github.com/AlexGivens/Firmingo/actions/runs/38720627833)
+reports all ten jobs successful; public statuses inspected, raw remote logs and
+artifacts not retrieved. The exact local evidence remains separate.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and

@@ -103,7 +103,69 @@
       "separate bounded FMS2 mutation target alongside existing four targets",
       "pinned ARM object compilation in managed job, excluded from ABI-one resident linking"
     ],
-    "remoteCI": "not yet verified for this increment"
+    "remoteCI": {
+      "run": {
+        "id": 38720627833,
+        "head_sha": "a7966c51a803725bf4123176b7e1b38f6be539b9",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/AlexGivens/Firmingo/actions/runs/38720627833"
+      },
+      "jobs": [
+        {
+          "id": 116374008738,
+          "name": "managed-sketch-build",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008740,
+          "name": "firmware-builds (raspberry_pi_pico, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008772,
+          "name": "mutation-fuzz",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008829,
+          "name": "firmware-builds (raspberry_pi_pico, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008848,
+          "name": "firmware-builds (raspberry_pi_pico, application)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008876,
+          "name": "firmware-builds (nano_rp2040_connect, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008887,
+          "name": "native",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374008979,
+          "name": "firmware-builds (nano_rp2040_connect, application)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374009031,
+          "name": "firmware-builds (nano_rp2040_connect, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116374009058,
+          "name": "firmware-builds (nano_rp2040_connect, baseline)",
+          "conclusion": "success"
+        }
+      ],
+      "statusRecordSHA256": "6274d3d547d599eaa3fce95381b116756ad99bd9b998bb9f7c4d333d5d430795",
+      "evidenceLimit": "Public run/job/step statuses inspected; raw remote logs/artifact bytes not retrieved. Actual local counts and bytes are recorded separately."
+    }
   },
   "logSHA256": {
     "build/stateful-configure-r1.log": "8e92ee1695cb08475f33649e7b0bdfa5a2d53fa78f5583374758678bbc9b8cce",
@@ -124,5 +186,23 @@
     "Qualify actual board startup/replacement/interruption, including explicit authorization and recovery, separately.",
     "Native RAM initialization bounds do not sandbox arbitrary owner-authorized native code.",
     "Pre-existing unrelated AGENTS.md changes remain preserved and excluded."
-  ]
+  ],
+  "readOnlyExistingResidentLinkMap": {
+    "status": "read_only_existing_resident_link_map_baseline_not_RAM_allocation",
+    "elfSHA256": "1a6aaddf320384c05e0d7b61800735e31bd898f9b733d98768b30eb95b9b4c46",
+    "symbols": {
+      "__bss_end__": "0x2001797c",
+      "__end__": "0x200179a0",
+      "__HeapLimit": "0x20040000",
+      "__StackLimit": "0x20040000",
+      "__StackOneBottom": "0x20040800",
+      "__StackOneTop": "0x20041000",
+      "__StackBottom": "0x20041800",
+      "__StackTop": "0x20042000"
+    },
+    "nominalEndToHeapLimitBytes": 165472,
+    "core1LinkerStackReservationBytes": 2048,
+    "core0LinkerStackReservationBytes": 2048,
+    "note": "Linker extents only; heap usage and stack high-water are not measured. No candidate state RAM is allocated or inferred free."
+  }
 }

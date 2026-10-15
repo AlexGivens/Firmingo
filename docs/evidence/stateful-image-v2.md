@@ -32,6 +32,18 @@ object, not a linked resident/module. CI now runs the candidate native tests,
 separate mutation job and object check; local YAML/bash checks pass. The subsequent
 GitHub result remains separate from these inspected local outputs.
 
+The [run at `a7966c5`](https://github.com/AlexGivens/Firmingo/actions/runs/38720627833)
+reports all ten jobs successful. Public job and step statuses were inspected;
+raw remote logs/artifacts were not retrieved, so remote test counts and binary
+bytes are not claimed from those statuses. The JSON retains the run and jobs.
+
+A read-only inspection of the existing local ABI-one resident's ELF also records
+its actual linker symbols for follow-up allocation work: `__end__` at
+`0x200179a0`, heap limit `0x20040000`, and 2048-byte linker stack reservations on
+each core in the scratch banks. The 165,472-byte nominal end-to-heap-limit gap is
+not measured free RAM. Heap use, stack peaks and a new state reservation remain
+unmeasured; no candidate address or capacity was selected from this inspection.
+
 Real resident RAM allocation/budget, API/linker export, independently linked
 stateful ARM modules, compiler/SDK adoption and physical qualification remain
 open. Current FMS1/ABI-one behavior, exported contracts and consumer pins remain
