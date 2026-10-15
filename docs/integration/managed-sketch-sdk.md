@@ -202,6 +202,20 @@ evidence remain separate gates.
 | iPad workflow | Record real authorization/lock/denial, automatic addressing, compile path, two uploads, exact bytes and Wi-Fi access |
 | Beginner walkthrough | Supply setup/IDE instructions to a new user; record steps, failures and recovery, rather than treating a harness as an IDE |
 
+The separate SDK Nano host now has a scoped physical iPad two-sketch pass in
+FirmingoKit's `docs/nano-hardware-ipad.json`: known WASM capsule bytes and exact
+resident association, RAM verification, one host commit attempt and fresh
+boot-confirmed reconciliation per sketch, exact 256-byte console echo and manual
+D13 off-to-on observation after RESET/fresh boot. This closes that narrow SDK
+compatibility check, not the IDE/beginner, timing, Internet-routing or broader
+USB authorization/cold-attachment rows above. Earlier network and prerequisite
+failures stay recorded. The identical signed host now passes the equivalent
+iPhone 15 Pro Max/iOS 27.0 workflow, with the initial access-prompt inspection
+failure and explicit successful retry retained. See
+[the exact cross-project scope](../evidence/nano-sdk-hardware.md). Neither result
+qualifies production releases, the complete-firmware SDK writer, broader board/OS
+matrices, timing, Internet routing, cold attachment or power loss.
+
 The SDK owns Swift compiler hosting, networking/framing, identity/target and
 deployment validation, device associations, byte delivery, and upload/status
 reconciliation. The compiler owns source-to-artifact execution and static build

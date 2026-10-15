@@ -37,9 +37,10 @@ upstream provenance and wrapper/hardware qualification remain open. Existing fir
 
 The [selected SDK Nano initial setup](docs/evidence/nano-sdk-initial.md) now
 installs and fully verifies the exact exported resident plus the known SDK WASM
-GPIO capsule before reboot, then checks one macOS hello. This is initial setup;
-SDK managed upload/commit/startup, GPIO/console behavior and physical iPad/iPhone
-USB qualification remain separate pending checks. The offline selected-artifact
+GPIO capsule before reboot, then checks one macOS hello. That record covers initial setup.
+The later [scoped iPad/iPhone SDK checks](docs/evidence/nano-sdk-hardware.md)
+demonstrate console/GPIO uploads, startup, exact bytes and manual LED transitions;
+broader USB/Internet/recovery qualification remains open. The offline selected-artifact
 composer has focused host tests and is included in the experimental CI build.
 
 Version 0.1.0 beta has board-specific build and package metadata. The shared
@@ -540,8 +541,9 @@ commands, host/board reports and a reproducible walkthrough; none yet.
 
 ### M10.1 — Firmware inputs for the compiler split
 
-Status: experimental exact-build export and independent capsule validation implemented;
-production provenance/publication and compiler hardware compatibility remain open.
+Status: experimental exact-build export, independent capsule validation and scoped
+iPad two-sketch SDK compatibility demonstrated; production provenance/publication
+and broader wrapper/hardware qualification remain open.
 
 - [x] Align root guidance, README, index, handoff and roadmap with compiler/wrapper
   ownership while preserving existing native proof builds and measured evidence.
@@ -557,9 +559,17 @@ production provenance/publication and compiler hardware compatibility remain ope
 - [x] Export versioned, checksummed ABI/facade/layout source inputs and explain
   exact API/resource compatibility across resident updates; do not make firmware depend on compiler
   package versions or infer exact installed bytes from hello.
-- [ ] Validate compiler-produced Nano artifacts independently, then qualify two
+- [x] Validate compiler-produced Nano artifacts independently, then qualify two
   sketches through the wrapper in an authorized hardware workflow. Preserve native
   GCC results as separate evidence; Pico managed support remains unimplemented.
+  The scoped iPad result is pinned in FirmingoKit's `docs/nano-hardware-ipad.json`:
+  both known capsules, RAM verification, one host commit attempt and fresh
+  boot-confirmed reconciliation per operation, exact 256-byte console echo and
+  manual D13 off-to-on transition after a RESET baseline. Earlier failures remain
+  recorded; no timing, Internet routing, cold-attachment matrix, minimum-OS or
+  power-loss qualification follows. The equivalent iPhone result is now recorded
+  separately in `docs/nano-hardware-iphone.json`; see
+  [the cross-project hardware summary](docs/evidence/nano-sdk-hardware.md).
 
 Acceptance: the compiler consumes verified firmware facts without fake addresses
 or device access; wrappers separately validate installation/deployment. New exports

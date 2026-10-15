@@ -152,6 +152,14 @@ or device operation is claimed for this packaging increment.
 
 ## Versioned source resources
 
+The subsequent [scoped SDK hardware checks](../evidence/nano-sdk-hardware.md)
+now run those exact two WASM capsule identities through the signed iPad/iPhone
+host, with reviewed ROM resident evidence, verified staging, one host commit
+attempt and fresh boot-confirmed status per sketch, exact console bytes and
+manual GPIO transitions. Earlier failed attempts remain recorded. The initial
+offline packaging claim above retains its narrower meaning; no resident/ABI/
+descriptor change or normal firmware dependency on sibling checkouts is added.
+
 The exporter now defaults to schema 2, adding a checked source contract and exact
 ABI/image/facade/entry/linker/license resources from the selected firmware commit.
 See [source contract](resident-source-contract.md) for fields, compatibility and

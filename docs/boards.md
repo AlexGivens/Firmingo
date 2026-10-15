@@ -36,5 +36,9 @@ or a Pico managed-sketch port.
 
 The separate [SDK Nano initial setup](evidence/nano-sdk-initial.md) verifies the
 exported `e0a79d1…` resident with a known SDK WASM GPIO capsule in ROM before
-reboot and checks a macOS hello. It does not yet qualify SDK managed uploads,
-GPIO/console behavior or physical Apple-device deployment for that combination.
+reboot and checks a macOS hello. The later scoped
+[iPad/iPhone SDK check](evidence/nano-sdk-hardware.md) adds two managed uploads
+per host, boot-confirmed reconciliation, exact 256-byte console echo and manual
+D13 off-to-on observations. Initial inspection failures remain recorded. This
+does not qualify release images, general board/OS/USB matrices, Internet routing,
+electrical timing, soak, minimum OS or power loss.
