@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "compile_tested_experimental_managed_build_profile_not_production_or_hardware_qualification",
+  "sourceCommit": "57ab0f4dd81f20ec59c2807430605da58bb0d72f",
+  "scope": "New ordinary build/evidence path for the existing stateless ABI-one resident; runtime, compiler pins and installed board unchanged",
+  "profile": {
+    "status": "compile-tested",
+    "qualification": "experimental",
+    "production_ready": false,
+    "hardware_tested": false,
+    "resident_report_sha256": "dc534c7c1bec9877c46b70ca2fc4f8cf1559d93c15202844cc32f20d5ccacd99",
+    "resident_elf_sha256": "1a6aaddf320384c05e0d7b61800735e31bd898f9b733d98768b30eb95b9b4c46",
+    "resident_uf2_sha256": "f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba",
+    "api_address": "0x10022c98",
+    "resident_abi": 1,
+    "elf_uf2_compared_bytes": 152832,
+    "flash_bytes": 134320,
+    "static_ram_bytes": 96672
+  },
+  "profileReportSHA256": "8d169a7096db32e3bfc9f129aa76d68158b70a4cd91c6c636ea5e532a18968e5",
+  "profileSourceSHA256": {
+    "tools/dev.py": "f528bfd93ebd42ab72a63a4021ea8267e4e6970673d1ddf955de037fa95e7d52",
+    "tools/managed_profile.py": "46efca35c583a066051607554bc0bdd56445be633a0c785809488d0ce7e36e1e",
+    "tools/usb_core.py": "291aa905937ab28b2adb4c642059a7b2f6c07a87ac52a084fb09b040dabcae02",
+    "boards/nano_rp2040_connect/baseline.json": "227cf02f03d35fa36b227fd32be1c5e784f35f89c0be18387e683a42c3c2a23a",
+    "boards/nano_rp2040_connect/core-lock.json": "a53fc4653d6ffda348f3fed36c86d68d7f13b31aa4fda98b0a9aec5934242b24",
+    "patches/arduino-pico-6.0.0-usb-startup/manifest.json": "b01c41da1d7b9e67a619f42ef23e3e0c048e4581848ca8db6f3276c531bdb1f0"
+  },
+  "artifacts": [
+    {
+      "file": "firmingo_managed_resident.ino.elf",
+      "bytes": 2858472,
+      "sha256": "1a6aaddf320384c05e0d7b61800735e31bd898f9b733d98768b30eb95b9b4c46"
+    },
+    {
+      "file": "firmingo_managed_resident.ino.uf2",
+      "bytes": 305664,
+      "sha256": "f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba"
+    }
+  ],
+  "budgets": {
+    "flashBytes": 1048576,
+    "staticRAMBytes": 196608,
+    "note": "Engineering caps; no new dynamic-memory measurement"
+  },
+  "parkFunction": {
+    "address": "0x200000c0",
+    "bytes": 58,
+    "verification": "Pinned nm/objdump checks confirm SRAM placement without helper calls or PC-relative loads"
+  },
+  "toolchain": {
+    "arduinoCLI": "1.5.1",
+    "core": "rp2040:rp2040@6.0.0",
+    "configuration": "Explicit existing isolated local configuration; checked USB patch overlay",
+    "upstreamProvenance": "Core/toolchain version and overlay verification do not establish full input inventory or clean upstream reproduction"
+  },
+  "compilerWarnings": {
+    "count": 6,
+    "uniqueMessages": [
+      "'virtual size_t WiFiClient::write(uint8_t)' was hidden [-Woverloaded-virtual=]"
+    ],
+    "logSHA256": "7df01a67d1fafe8d9653de99d11a57e5e77af9d3f6332c61106d7cdfc8a4b74b"
+  },
+  "validation": {
+    "nativeCommand": ".venv/bin/python tools/dev.py test --sanitize",
+    "nativeResult": "20/20 sanitizer-backed CTest targets; initial 214 host cases passed",
+    "finalHostCommand": ".venv/bin/python -m pytest tests/host -q",
+    "finalHostResult": "217/217 passed, including 17 managed-profile cases",
+    "buildCommand": ".venv/bin/python tools/dev.py build --board nano_rp2040_connect --firmware managed",
+    "buildEnvironment": "Explicit documented ARDUINO_CLI and ARDUINO_CONFIG_FILE for the pinned installation",
+    "buildResult": "passed; artifacts independently checked after removal of older exported images",
+    "workflowCheck": "YAML parsed and every run block passed bash -n; actionlint unavailable",
+    "remoteCI": "not yet verified for this increment",
+    "logs": {
+      "build/managed-profile-tests-r1.log": "c47774f2eccce70e8735aad170b028148548a1df1225a9f66651a90afeb77641",
+      "build/managed-profile-host-tests-r3.log": "cb2637590e7a2ce4a6cb6883f2c33b754bf86134e776c4e448aaa8dfed57951e",
+      "build/managed-profile-driver-r3.log": "e2603e30cff7c5de38609cb46e9fa3b811a011c3ab2f04fe5ad6143c0d131a75",
+      "build/managed-profile-export-r1.log": "38624554d0b6906c7d56d840adf3fa29b6f9f89692c42599381785461c516790",
+      "build/managed-profile-export-r2.log": "06009ab8049fe44973ab6d2a0633b56b5425954e5bcdacb8f1f2159413c4b257"
+    }
+  },
+  "export": {
+    "schema": 2,
+    "payloads": 11,
+    "manifestSHA256": "456a01460db5dcba8d9583bada5649990544113e5ca9132f27a00e198051c9d7",
+    "factsSHA256": "92c371d50b6d2609dd018d5af867b21e0b616a30c047e11e06ed231aecfa67a1",
+    "command": ".venv/bin/python experiments/managed_sketch/export_resident.py --resident-dir build/firmware/nano_rp2040_connect/managed/resident --firmware-commit 57ab0f4dd81f20ec59c2807430605da58bb0d72f --output build/managed-profile-export-r1",
+    "initialRejectedInvocation": "Abbreviated commit rejected before output; corrected command used the full 40-character commit",
+    "hardwareQualified": false
+  },
+  "compilerImport": {
+    "result": {
+      "status": "imported_experimental_resident_metadata",
+      "firmwareBuildID": "c7424af2603b5199c19273be042d27b2c3fefc1903da052ac617c220cfe51e47",
+      "imagesCopied": false,
+      "apiAddress": 268577944,
+      "defaultCatalogueChanged": false
+    },
+    "descriptorSHA256": "033ea8e38b9eaecd183acdc650b0188d58f5861b32328678faa83f9bbbd789b0",
+    "receiptSHA256": "3a2c8a90c6cc6f45aa82ed3daee7bb9b764626e16e3aa33ff4afdb36ff70f1bb",
+    "sourceContractImported": true,
+    "command": "node tools/dev.mjs import-resident <explicit verified firmware export> 456a01460db5dcba8d9583bada5649990544113e5ca9132f27a00e198051c9d7 .build/managed-profile-import-r1",
+    "contractReceiptSHA256": "5d07d1fccabb36bcc28245ccb5219bc45c34763f9e02416065feb4cddb9d66be"
+  },
+  "limitations": [
+    "No mutable-state or multi-file implementation; existing FMS1 and 4096-byte upload limits remain.",
+    "This development build permits working-tree inputs; the separate export binds reported project inputs to the exact committed snapshot.",
+    "No compiler execution against this newly imported descriptor, consumer pin promotion, device installation, flash, reset or hardware test occurred.",
+    "Production package/export provenance, useful stateful contract, supported installation/update/recovery and exact-candidate host/device qualification remain open.",
+    "Pre-existing unrelated AGENTS.md changes were preserved and excluded from the implementation commit."
+  ]
+}

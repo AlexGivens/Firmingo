@@ -27,6 +27,9 @@ explicit source bundles, reproducible delivery, normal SDK setup and exact-candi
 host/device/recovery qualification. First implementation: the ordinary
 `build --firmware managed` path builds/checks the existing experimental resident,
 with failed-build records and CI integration. See [profile](docs/managed-profile.md).
+The [local evidence](docs/evidence/managed-profile.md) records 20 sanitizer CTest
+targets, 217 host cases, a fresh resident build, exact-commit export and successful
+compiler metadata import. Remote CI remains a separate check.
 Next: version the stateful image/RAM contract and prove generation initialization
 natively before compiler/SDK adoption. Existing ABI-one restrictions remain intact.
 

@@ -57,3 +57,6 @@ profile and resident logs/reports are retained through `if: always()` uploads.
 Local tests are `python3 -m pytest tests/host/test_managed_profile.py -q` and
 `python3 tools/dev.py test --sanitize`. Artifact fixtures are non-executable;
 neither native tests nor compilation supplies physical evidence.
+
+[Initial local evidence](evidence/managed-profile.md) records the actual build,
+20 sanitizer CTest targets, 217 host cases, exact-commit export and compiler import.
