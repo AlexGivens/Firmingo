@@ -32,8 +32,12 @@ targets, 217 host cases, a fresh resident build, exact-commit export and success
 compiler metadata import. Corrective [CI run at `05e8c4b`](https://github.com/AlexGivens/Firmingo/actions/runs/38717838985)
 reports all ten jobs successful after CLI PATH resolution; raw remote logs/artifacts
 were not retrieved. Local native proof/composite/contract builds also pass.
-Next: version the stateful image/RAM contract and prove generation initialization
-natively before compiler/SDK adoption. Existing ABI-one restrictions remain intact.
+The [candidate FMS2 contract](docs/integration/stateful-image-v2.md) now has a
+portable validator and generation initializer, ten native behavior cases,
+independent non-deployable fixture and separate bounded mutation job. Next:
+allocate/budget real resident RAM, define/export API/linker facts and independently
+link a stateful ARM module before compiler/SDK adoption. Existing ABI-one
+restrictions remain intact; no new descriptor or hardware support is offered.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and

@@ -12,6 +12,9 @@ cover the corresponding implementation and checks.
 sketch subset and cross-repository release gates. The
 [managed build profile](managed-profile.md) begins release engineering using the
 existing experimental resident; it does not promote its hardware/support claims.
+The [candidate FMS2 contract](integration/stateful-image-v2.md) implements portable
+state validation and generation initialization with native-only fixtures. Actual
+resident RAM allocation, linker/ABI exports and compiler/SDK adoption remain open.
 
 The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketch-sdk.md)
 provides the M9 contract, portable vectors, pinned reference build recipe,

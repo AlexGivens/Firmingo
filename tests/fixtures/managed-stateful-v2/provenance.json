@@ -1,0 +1,18 @@
+{
+  "kind": "independent non-deployable FMS2 native fixture",
+  "bytes": 272,
+  "sha256": "1c955e832d351a9b91a3bd5e5e4463a2f6732e4e87cd1de0d783c769f01ae867",
+  "headerSHA256": "463ef2a1f8393c31403a4e53e32c88e5e7cfd4cd02d13aef54fb8ebe8f65b81f",
+  "payloadSHA256": "31c4f05aec9e2a7f8626c69a2fe0370bbc13f2fba614f5afb3f09a2e971ab42f",
+  "construction": "Python struct.pack_into(<4sHH14I), hashlib.sha256; no production parser/hash used",
+  "apiAddress": "0x10000100",
+  "syntheticStateAddress": "0x20030000",
+  "syntheticStateCapacityBytes": 32,
+  "codeBytes": 8,
+  "initializedWords": [
+    "0x11223344",
+    "0xaabbccdd"
+  ],
+  "bssBytes": 8,
+  "note": "Synthetic API/RAM addresses are never offered for a board; test bytes must not be deployed."
+}

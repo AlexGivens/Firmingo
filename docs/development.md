@@ -1,5 +1,13 @@
 # Development
 
+The [candidate FMS2 state contract](integration/stateful-image-v2.md) adds a
+portable validator/generation proof to the ordinary native suite. The separate
+`FIRMINGO_STATEFUL_FUZZ=ON` CMake option enables its fixed-seed 20,000-case mutation
+test; CI enables it alongside all four existing fuzz targets. The managed CI job
+also compiles the candidate for pinned Cortex-M0+ GCC/C++11 with warnings as errors,
+without linking it into the old resident. These checks supply no hardware RAM
+reservation, new compiler recipe or stateful device-support claim.
+
 Current release version: **0.1.0 beta**. The normal release package includes
 board-specific application and UART UF2s; see [releasing](releasing.md).
 Older hardware reports in [evidence](evidence/README.md) refer to exact earlier

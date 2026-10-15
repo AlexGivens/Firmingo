@@ -43,10 +43,10 @@ jobs:
           python-version: '3.12'
       - run: python -m venv .venv
       - run: .venv/bin/python -m pip install -r requirements-dev.txt
-      - name: Bounded DHCP, protocol, session and managed-upload mutation fuzz
+      - name: Bounded DHCP, protocol, session, managed-upload and candidate FMS2 mutation fuzz
         run: |
           mkdir -p build/fuzz
-          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON 2>&1 | tee build/fuzz/configure.log
+          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON -DFIRMINGO_STATEFUL_FUZZ=ON 2>&1 | tee build/fuzz/configure.log
           .venv/bin/cmake --build build/fuzz --parallel 2 2>&1 | tee build/fuzz/build.log
           .venv/bin/ctest --test-dir build/fuzz -R '_fuzz$' --output-on-failure 2>&1 | tee build/fuzz/test.log
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -127,6 +127,13 @@ jobs:
           mkdir -p "$output"
           # Use the exact independently checked output; do not rebuild a second resident.
           cp -R build/firmware/nano_rp2040_connect/managed/resident "$output/resident"
+          # Compile the portable candidate for ARM without linking it into this
+          # ABI-one resident or claiming an allocated sketch-RAM window.
+          "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin/arm-none-eabi-g++" \
+            -std=c++11 -Wall -Wextra -Wpedantic -Werror -ffreestanding \
+            -fno-exceptions -fno-rtti -mcpu=cortex-m0plus -mthumb \
+            -Iexperiments/managed_sketch -c experiments/managed_sketch/stateful_image.cpp \
+            -o "$output/stateful_image.o" 2>&1 | tee "$output/stateful-object-driver.log"
           python experiments/managed_sketch/export_resident.py --resident-dir "$output/resident" --firmware-commit "$GITHUB_SHA" --output "$output/resident-export" 2>&1 | tee "$output/resident-export-driver.log"
           for sketch in blink_a blink_b pause_probe stall_probe; do
             python experiments/managed_sketch/build_module.py --sketch "$sketch" --resident-elf "$output/resident/artifacts/firmingo_managed_resident.ino.elf" --toolchain-bin "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin" --output-dir "$output" 2>&1 | tee "$output/$sketch-driver.log"
@@ -156,6 +163,7 @@ jobs:
             build/managed_sketch/ci/**/*.elf
             build/managed_sketch/ci/**/*.uf2
             build/managed_sketch/ci/**/*.fms
+            build/managed_sketch/ci/*.o
             build/managed_sketch/ci/*.zip
             build/firmware/nano_rp2040_connect/managed/*.json
             build/firmware/nano_rp2040_connect/managed/*.log

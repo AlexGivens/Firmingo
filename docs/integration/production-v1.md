@@ -87,10 +87,12 @@ new stateful format, production profile, full installation, cold matrix, aggrega
 memory or Internet/recovery gates.
 
 The first increment adds [the managed build profile](../managed-profile.md) using
-the existing resident and independent artifact validators. Next implement
-V1-STATE's firmware-owned memory/image contract and native initialization proof,
-then its compiler recipe/packaging and SDK validation. V1-SOURCE can progress
-against explicit versioned fixtures while hardware work remains separate.
+the existing resident and independent artifact validators.
+V1-STATE now has a [candidate FMS2 validator and native initialization proof](stateful-image-v2.md).
+Real resident RAM allocation, the API/linker export and an independently linked
+stateful ARM proof come next, before compiler recipe/packaging and SDK validation.
+V1-SOURCE can progress against explicit versioned fixtures while hardware work
+remains separate.
 
 See [compiler ownership/exports](compiler-contract.md),
 [release publication gates](../releasing.md), and
