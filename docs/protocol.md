@@ -575,3 +575,23 @@ committing, installed, boot-confirmed, explicit abort, disconnect abort,
 install-failed status, and an unauthorized response. Native tests compare their
 complete bytes against the production Session/stage/switch. This adds test
 coverage without changing wire version, operation schemas, or runtime behavior.
+
+## Experimental FMS2 target 2
+
+The separately selected `-statefulupload-exp1` resident uses the existing FMGO
+major-1 methods and frame types with **target ID 2 / `nano-managed-v2`**. It accepts
+FMS2/ABI-two capsules and rejects target 1/FMS1. The default M9 path above and
+its fixtures remain unchanged; release references still have no upload target.
+See [the versioned contract and adapter](integration/stateful-upload-contract.md)
+for exact versions, exported facts and limits, and the
+[target-2 vectors](../tests/fixtures/protocol-v1/managed-upload-v2/README.md)
+for complete byte-level request/response examples. Hardware behavior is unqualified.
+
+The staging lease is 30,000 ms from begin, including verified RAM and a queued
+commit not yet started by the port. Expiry produces retained `state:"failed"`,
+`error:"io_error"`, with no flash work. Once replacement starts, its independent
+1000 ms core-park deadline applies. Callback commit acknowledgement remains only
+`committing`; outer-loop readback and RAM initialization produce `installed`, and
+the exact new generation's first returned loop produces `boot_confirmed`.
+Disconnect aborts accepted/verified stages but does not replay/cancel committing
+work. Status remains readable from another session within the same boot.

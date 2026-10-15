@@ -39,8 +39,10 @@ independent non-deployable fixture and separate bounded mutation job. The
 real 4 KiB resident arena, checks candidate API-v2/linker facts and separately
 links a stateful ARM counter. Production C++ host initialization validates its
 actual capsule. The [runtime increment](docs/integration/stateful-runtime.md) adds
-opt-in FMS2 boot and native-tested replacement failure handling. Next: a versioned
-contract export and upload adapter before compiler/SDK adoption. Existing ABI-one
+opt-in FMS2 boot and native-tested replacement failure handling. The
+[versioned contract and target-2 adapter](docs/integration/stateful-upload-contract.md)
+now add a separate upload candidate and exact-commit export. Next: explicit
+compiler/SDK adoption and selected-board qualification. Existing ABI-one
 restrictions remain intact; no new descriptor or hardware support is offered.
 [Local evidence](docs/evidence/stateful-image-v2.md): 21 sanitizer CTest targets,
 217 host cases, final ten-case focused proof, five mutation targets and pinned ARM

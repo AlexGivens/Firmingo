@@ -138,15 +138,36 @@ def resident_contract(data):
                     if base <= marker and marker + 4 <= base + len(payload)]
         if value != struct.pack("<I", 1) or mappings != [value]:
             raise ValueError("invalid boot runtime marker or LOAD mapping")
+    upload = upload_facts(elf, flash) if "firmingo_stateful_upload_contract" in elf.symbols else None
+    if upload and not runtime_enabled:
+        raise ValueError("FMS2 uploads require the boot runtime")
     return {"schema": 1, "purpose": "native stateful proof; no deployment descriptor",
             "board": "nano_rp2040_connect", "imageVersion": 2, "residentABI": 2,
             "apiAddress": address, "apiTableBytes": 52, "apiTableSHA256": sha(table),
             "stateAddress": state, "stateCapacityBytes": capacity, "maximumCapsuleBytes": maximum,
             "residentELFSHA256": sha(data), "linkerBounds": bounds,
             "nominalHeapSpanBytes": bounds["__HeapLimit"] - bounds["__end__"],
-            "runtimeEnabled": runtime_enabled, "networkUploadsEnabled": not runtime_enabled,
-            "fms2NetworkUploadsEnabled": False,
+            "runtimeEnabled": runtime_enabled, "networkUploadsEnabled": not runtime_enabled or bool(upload),
+            "fms2NetworkUploadsEnabled": bool(upload), "uploadTarget": upload,
             "hardwareTested": False}, flash
+
+
+def upload_facts(elf, flash):
+    """Read FUP2 facts actually used by the service; no invented target identity."""
+    address, section = elf.object("firmingo_stateful_upload_contract", 56, 1, 2)
+    table = elf.extent(section[4] + address - section[3], 56)
+    fields = struct.unpack("<IHH4I16s16s", table)
+    if fields != (0x32505546, 1, 56, 2, 4096, 1024, 30000,
+                  b"nano-managed-v2\0", b"physical-d2-gnd\0"):
+        raise ValueError("unsupported FUP2 upload contract")
+    mappings = [payload[address-base:address-base+56] for base, payload in flash
+                if base <= address and address+56 <= base+len(payload)]
+    if mappings != [table]:
+        raise ValueError("upload contract differs from flash LOAD bytes")
+    return {"id": fields[3], "format": fields[7][:-1].decode(), "max_size": fields[4],
+            "max_chunk": fields[5], "authorization": fields[8][:-1].decode(),
+            "stagingTimeoutMs": fields[6], "tableAddress": address, "tableSHA256": sha(table),
+            "tableVersion": 1, "tableBytes": 56}
 
 
 def module_capsule(data, contract):
@@ -212,7 +233,11 @@ def main():
     parser.add_argument("--output-dir", required=True, type=Path, help="new output directory; refuses existing paths")
     parser.add_argument("--boot-runtime", action="store_true",
                         help="link the opt-in FMS2 boot runtime; network uploads remain disabled")
+    parser.add_argument("--upload-runtime", action="store_true", help="link experimental target-2 FMS2 upload adapter")
     args = parser.parse_args()
+    if args.boot_runtime and args.upload_runtime:
+        parser.error("select one runtime mode")
+    runtime_enabled = args.boot_runtime or args.upload_runtime
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
     report = {"status": "failed", "runtimeEnabled": False, "hardwareTested": False}
@@ -222,7 +247,8 @@ def main():
         "stateful_counter.ino", "module_entry.cpp", "stateful_module.ld", "stateful_check.cpp",
         "stateful_image.h", "stateful_image.cpp", "image.h", "image.cpp", "export_resident.py", "build_composite.py")]
     sources += [HERE / "stateful_runtime.h", HERE / "stateful_runtime.cpp",
-                HERE / "core1_pause.h", HERE / "core1_pause.cpp", ROOT / "CMakeLists.txt"]
+                HERE / "core1_pause.h", HERE / "core1_pause.cpp", ROOT / "CMakeLists.txt",
+                HERE / "stateful_upload.h", HERE / "stateful_upload.cpp", HERE / "facade_v2/Arduino.h"]
     try:
         report["sourceSHA256"] = {str(p.relative_to(ROOT)): sha(p.read_bytes()) for p in sources}
         config = args.config_file.resolve()
@@ -232,24 +258,26 @@ def main():
             raise ValueError("pinned ARM compiler or native validator missing")
         run([sys.executable, HERE / "build_resident.py", "--cli", args.cli.resolve(),
              "--config-file", config, "--output-dir", output / "resident",
-             "--stateful-runtime-proof" if args.boot_runtime else "--stateful-allocation-proof"])
+             "--stateful-upload-proof" if args.upload_runtime else "--stateful-runtime-proof" if args.boot_runtime else "--stateful-allocation-proof"])
         resident = output / "resident"
         resident_report = json.loads(bounded_file(resident / "report.json", 262144), object_pairs_hook=unique_object)
-        expected_status = ("compile-tested FMS2 boot runtime candidate; network uploads disabled; not flashed" if args.boot_runtime
+        expected_status = ("compile-tested FMS2 boot runtime candidate; network uploads disabled; not flashed" if runtime_enabled
                            else "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed")
+        if args.upload_runtime:
+            expected_status = "compile-tested FMS2 upload candidate; not flashed"
         if (resident_report.get("status") != expected_status
-                or resident_report.get("stateful_runtime_enabled") is not args.boot_runtime or "upload_target" in resident_report):
+                or resident_report.get("stateful_runtime_enabled") is not runtime_enabled or ("upload_target" in resident_report) != args.upload_runtime):
             raise ValueError("select explicit candidate allocation build")
         elf = bounded_file(resident / "artifacts/firmingo_managed_resident.ino.elf", ELF_LIMIT)
         uf2 = bounded_file(resident / "artifacts/firmingo_managed_resident.ino.uf2", UF2_LIMIT)
         if sha(elf) != resident_report["elf_sha256"] or sha(uf2) != resident_report["uf2_sha256"]:
             raise ValueError("resident report/artifacts mismatch")
         contract, flash = resident_contract(elf)
-        if contract["runtimeEnabled"] is not args.boot_runtime:
+        if contract["runtimeEnabled"] is not runtime_enabled or contract["fms2NetworkUploadsEnabled"] is not args.upload_runtime:
             raise ValueError("resident runtime marker differs from selected build mode")
-        report["runtimeEnabled"] = args.boot_runtime
-        report["networkUploadsEnabled"] = not args.boot_runtime
-        report["fms2NetworkUploadsEnabled"] = False
+        report["runtimeEnabled"] = runtime_enabled
+        report["networkUploadsEnabled"] = not runtime_enabled or args.upload_runtime
+        report["fms2NetworkUploadsEnabled"] = args.upload_runtime
         contract["residentUF2SHA256"] = sha(uf2)
         contract["elfUF2ComparedBytes"] = check_uf2(uf2, flash)
         (output / "linker-contract.json").write_text(json.dumps(contract, indent=2) + "\n")
@@ -260,7 +288,7 @@ def main():
                  "-fno-builtin", "-fno-exceptions", "-fno-rtti", "-fno-unwind-tables",
                  "-fno-asynchronous-unwind-tables", "-fno-stack-protector", "-fno-common",
                  "-ffunction-sections", "-fdata-sections", "-Wall", "-Wextra", "-Werror",
-                 "-I" + str(HERE / "facade"), f"-DFIRMINGO_API_ADDRESS={contract['apiAddress']}",
+                 "-I" + str(HERE / "facade_v2"), f"-DFIRMINGO_API_ADDRESS={contract['apiAddress']}",
                  "-x", "c++", "-c", source, "-o", obj])
             objects.append(obj)
         module = output / "stateful_counter.elf"

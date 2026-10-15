@@ -43,10 +43,10 @@ jobs:
           python-version: '3.12'
       - run: python -m venv .venv
       - run: .venv/bin/python -m pip install -r requirements-dev.txt
-      - name: Bounded DHCP, protocol, session, managed-upload and candidate FMS2 mutation fuzz
+      - name: Bounded DHCP, protocol, session, managed-upload, FMS2 and target-2 adapter mutations
         run: |
           mkdir -p build/fuzz
-          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON -DFIRMINGO_STATEFUL_FUZZ=ON 2>&1 | tee build/fuzz/configure.log
+          .venv/bin/cmake -S . -B build/fuzz -DFIRMINGO_SANITIZE=ON -DFIRMINGO_DHCP_FUZZ=ON -DFIRMINGO_PROTOCOL_FUZZ=ON -DFIRMINGO_UPLOAD_FUZZ=ON -DFIRMINGO_STATEFUL_FUZZ=ON -DFIRMINGO_STATEFUL_UPLOAD_FUZZ=ON 2>&1 | tee build/fuzz/configure.log
           .venv/bin/cmake --build build/fuzz --parallel 2 2>&1 | tee build/fuzz/build.log
           .venv/bin/ctest --test-dir build/fuzz -R '_fuzz$' --output-on-failure 2>&1 | tee build/fuzz/test.log
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
@@ -139,6 +139,11 @@ jobs:
             -fno-exceptions -fno-rtti -mcpu=cortex-m0plus -mthumb \
             -Iexperiments/managed_sketch -c experiments/managed_sketch/stateful_runtime.cpp \
             -o "$output/stateful_runtime.o" 2>&1 | tee "$output/stateful-runtime-object-driver.log"
+          "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin/arm-none-eabi-g++" \
+            -std=c++11 -Wall -Wextra -Wpedantic -Werror -ffreestanding \
+            -fno-exceptions -fno-rtti -mcpu=cortex-m0plus -mthumb -Isrc \
+            -Iexperiments/managed_sketch -c experiments/managed_sketch/stateful_upload.cpp \
+            -o "$output/stateful_upload.o" 2>&1 | tee "$output/stateful-upload-object-driver.log"
           python experiments/managed_sketch/export_resident.py --resident-dir "$output/resident" --firmware-commit "$GITHUB_SHA" --output "$output/resident-export" 2>&1 | tee "$output/resident-export-driver.log"
           for sketch in blink_a blink_b pause_probe stall_probe; do
             python experiments/managed_sketch/build_module.py --sketch "$sketch" --resident-elf "$output/resident/artifacts/firmingo_managed_resident.ino.elf" --toolchain-bin "$overlay/data/packages/rp2040/tools/pqt-gcc/5.0.0-9576866/bin" --output-dir "$output" 2>&1 | tee "$output/$sketch-driver.log"
@@ -174,12 +179,24 @@ jobs:
             --config-file build/firmware/nano_rp2040_connect/managed/usb-toolchain/arduino-cli.yaml \
             --validator build/stateful-check/managed_stateful_check \
             --output-dir "$output/stateful-runtime" 2>&1 | tee "$output/stateful-runtime-driver.log"
+      - name: Build FMS2 upload candidate and export versioned contract from exact committed sources
+        run: |
+          output=build/managed_sketch/ci
+          python experiments/managed_sketch/build_stateful_proof.py --upload-runtime \
+            --cli "$(command -v arduino-cli)" \
+            --config-file build/firmware/nano_rp2040_connect/managed/usb-toolchain/arduino-cli.yaml \
+            --validator build/stateful-check/managed_stateful_check \
+            --output-dir "$output/stateful-upload" 2>&1 | tee "$output/stateful-upload-driver.log"
+          python experiments/managed_sketch/export_stateful.py \
+            --resident-dir "$output/stateful-upload/resident" --firmware-commit "$GITHUB_SHA" \
+            --output "$output/stateful-export" 2>&1 | tee "$output/stateful-export-driver.log"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: nano-managed-sketch-experimental-build
           path: |
             build/managed_sketch/ci/resident-export/**
+            build/managed_sketch/ci/stateful-export/**
             build/managed_sketch/ci/*.log
             build/managed_sketch/ci/**/*.json
             build/managed_sketch/ci/**/*.log

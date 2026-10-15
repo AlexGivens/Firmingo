@@ -17,8 +17,9 @@ state validation and generation initialization with native-only fixtures. The
 [allocation/link proof](integration/stateful-link-proof.md) adds a real resident
 RAM arena, candidate API/linker facts and an independently linked ARM capsule.
 The [runtime increment](integration/stateful-runtime.md) adds opt-in board boot
-and native replacement tests. Deployment exports, a versioned upload adapter and
-compiler/SDK adoption remain open.
+and native replacement tests. The [target-2 contract/adapter](integration/stateful-upload-contract.md)
+adds an exact-commit versioned export and opt-in FMS2 upload build. Compiler/SDK
+adoption and hardware qualification remain open.
 
 The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketch-sdk.md)
 provides the M9 contract, portable vectors, pinned reference build recipe,

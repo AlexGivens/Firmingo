@@ -1,0 +1,289 @@
+{
+  "schema": 1,
+  "identifier": "firmingo-nano-managed-abi2-v1-experimental",
+  "contractVersion": 1,
+  "board": "nano_rp2040_connect",
+  "profile": "nano-managed-v2",
+  "qualification": "experimental; no hardware qualification",
+  "residentABI": 2,
+  "apiTableBytes": 52,
+  "image": {
+    "magic": "FMS2",
+    "version": 2,
+    "headerBytes": 128,
+    "codeOffset": 256,
+    "boardTag": 1330528590,
+    "slotAddress": 270532608,
+    "slotBytes": 4194304,
+    "maximumCapsuleBytes": 4096,
+    "sectionAlignment": 4,
+    "fields": [
+      {
+        "name": "magic",
+        "offset": 0,
+        "bytes": 4,
+        "kind": "ascii"
+      },
+      {
+        "name": "version",
+        "offset": 4,
+        "bytes": 2,
+        "kind": "uint-le"
+      },
+      {
+        "name": "headerBytes",
+        "offset": 6,
+        "bytes": 2,
+        "kind": "uint-le"
+      },
+      {
+        "name": "boardTag",
+        "offset": 8,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "apiAddress",
+        "offset": 12,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "codeAddress",
+        "offset": 16,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "codeBytes",
+        "offset": 20,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "setupAddress",
+        "offset": 24,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "loopAddress",
+        "offset": 28,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "dataAddress",
+        "offset": 32,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "dataBytes",
+        "offset": 36,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "bssAddress",
+        "offset": 40,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "bssBytes",
+        "offset": 44,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "dataLoadOffset",
+        "offset": 48,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "imageBytes",
+        "offset": 52,
+        "bytes": 4,
+        "kind": "uint-le"
+      },
+      {
+        "name": "flags",
+        "offset": 56,
+        "bytes": 4,
+        "kind": "zero"
+      },
+      {
+        "name": "reserved",
+        "offset": 60,
+        "bytes": 4,
+        "kind": "zero"
+      },
+      {
+        "name": "payloadSHA256",
+        "offset": 64,
+        "bytes": 32,
+        "kind": "sha256"
+      },
+      {
+        "name": "headerSHA256",
+        "offset": 96,
+        "bytes": 32,
+        "kind": "sha256"
+      },
+      {
+        "name": "padding",
+        "offset": 128,
+        "bytes": 128,
+        "kind": "zero"
+      }
+    ],
+    "hashSpans": {
+      "payloadSHA256": {
+        "start": 256,
+        "endField": "imageBytes"
+      },
+      "headerSHA256": {
+        "start": 0,
+        "end": 96
+      }
+    },
+    "layout": {
+      "codeAddress": "slotAddress + codeOffset",
+      "dataLoadOffset": "codeOffset + codeBytes",
+      "imageBytes": "dataLoadOffset + dataBytes",
+      "dataAddress": "resident stateAddress",
+      "bssAddress": "dataAddress + dataBytes",
+      "stateBound": "dataBytes + bssBytes <= resident stateCapacityBytes",
+      "entryRule": "Thumb entry with at least two bytes in code extent",
+      "inputRule": "exact image span; reject truncation and trailing bytes"
+    }
+  },
+  "upload": {
+    "protocolMajor": 1,
+    "targetID": 2,
+    "format": "nano-managed-v2",
+    "maximumCapsuleBytes": 4096,
+    "maximumChunkBytes": 1024,
+    "authorization": "physical-d2-gnd",
+    "stagingTimeoutMs": 30000,
+    "stagingTimeoutError": "io_error",
+    "pauseTimeoutMs": 1000,
+    "commitMeaning": "queued only; no flash in Session callback",
+    "installedMeaning": "full sector readback and generation initialization completed",
+    "bootConfirmedMeaning": "the installed generation returned its first loop",
+    "disconnectRule": "abort accepted/verified; retain committing/terminal status without replay",
+    "statusRetention": "one latest transaction per boot; IDs never reused in that boot"
+  },
+  "initialization": {
+    "copyData": true,
+    "clearBSS": true,
+    "clearUnusedArena": true,
+    "beforeSetup": true,
+    "repeatEachGeneration": true,
+    "nonvolatile": false,
+    "constructors": false,
+    "heap": false,
+    "sandbox": false,
+    "rollback": false
+  },
+  "buildDefinitions": {
+    "cpp": [
+      "FIRMINGO_API_ADDRESS"
+    ],
+    "linker": [
+      "FIRMINGO_STATE_ADDRESS",
+      "FIRMINGO_STATE_BYTES"
+    ]
+  },
+  "compatibility": "Exact resident ELF/API/RAM facts and reviewed installed UF2 association required. Hello is not installed-image attestation. Compiler owns recipe/catalogue identities.",
+  "api": {
+    "magic": 1229996358,
+    "version": 2,
+    "bytes": 52,
+    "pointerBytes": 4,
+    "endianness": "little",
+    "functions": [
+      {
+        "name": "pin_mode",
+        "offset": 8,
+        "signature": "void(uint32,uint32)"
+      },
+      {
+        "name": "digital_write",
+        "offset": 12,
+        "signature": "void(uint32,uint32)"
+      },
+      {
+        "name": "clock_ms",
+        "offset": 16,
+        "signature": "uint32()"
+      },
+      {
+        "name": "delay_ms",
+        "offset": 20,
+        "signature": "void(uint32)"
+      },
+      {
+        "name": "console_write",
+        "offset": 24,
+        "signature": "uint32(const uint8*,uint32)"
+      },
+      {
+        "name": "console_write_available",
+        "offset": 28,
+        "signature": "uint32()"
+      },
+      {
+        "name": "console_read",
+        "offset": 32,
+        "signature": "int32()"
+      },
+      {
+        "name": "console_available",
+        "offset": 36,
+        "signature": "uint32()"
+      }
+    ],
+    "stateFields": {
+      "stateAddress": 40,
+      "stateCapacityBytes": 44,
+      "maximumCapsuleBytes": 48
+    }
+  },
+  "architecture": {
+    "family": "armv6-m",
+    "cpu": "cortex-m0plus",
+    "instructionSet": "thumb",
+    "endianness": "little",
+    "pointerBytes": 4,
+    "floatABI": "soft"
+  },
+  "supportedSurface": {
+    "gpio": {
+      "pinRange": [
+        0,
+        29
+      ],
+      "reservedPins": [
+        25
+      ],
+      "modes": [
+        1
+      ],
+      "values": [
+        0,
+        1
+      ],
+      "invalidArguments": "ignored by void ABI calls"
+    },
+    "timing": [
+      "millis",
+      "delay"
+    ],
+    "console": "bounded resident binary stream",
+    "serialBegin": "compatibility no-op; network stream has no UART baud rate",
+    "scope": "supported facade only; no general Arduino library compatibility"
+  }
+}

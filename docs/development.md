@@ -406,3 +406,9 @@ and the [first traffic-only run](evidence/application-soak.md). The Nano now als
 passes a [two-minute required-diagnostics run](evidence/application-diagnostics.md),
 with stable sampled values and explicit exclusions; this is development evidence,
 not long-duration release qualification.
+
+The [FMS2 contract/upload workflow](integration/stateful-upload-contract.md) adds
+`build_stateful_proof.py --upload-runtime` and `export_stateful.py`. CI retains
+the complete schema-3 export, tests the target-2 adapter through production
+Session, and adds `FIRMINGO_STATEFUL_UPLOAD_FUZZ=ON` as a sixth independent
+bounded mutation target. These remain experimental build/host checks.

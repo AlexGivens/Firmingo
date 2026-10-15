@@ -57,7 +57,10 @@ def main():
                         help="opt-in candidate FAPI two and 4 KiB .bss arena; FMS2 execution remains disabled")
     parser.add_argument("--stateful-runtime-proof", action="store_true",
                         help="opt-in FMS2 boot runtime with owned arena; all network uploads disabled")
+    parser.add_argument("--stateful-upload-proof", action="store_true",
+                        help="opt-in FMS2 boot and physically armed target-2 network uploads")
     args = parser.parse_args()
+    stateful_runtime = args.stateful_runtime_proof or args.stateful_upload_proof
     cli, config = args.cli.resolve(), args.config_file.resolve()
     board = json.loads((ROOT / "boards/nano_rp2040_connect/baseline.json").read_text())
     version = subprocess.run([str(cli), "--config-file", str(config),
@@ -86,13 +89,16 @@ def main():
         "compiler.cpp.extra_flags=-I" + str(HERE) + " -DFIRMINGO_NET_C=77 "
         "-DFIRMINGO_USB_DEFERRED_START -DDISABLE_USB_SERIAL",
     ]
-    if args.stateful_allocation_proof or args.stateful_runtime_proof:
+    if args.stateful_allocation_proof or stateful_runtime:
         command[-1] += " -DFIRMINGO_STATEFUL_ALLOCATION_PROOF"
         command += ["--build-property",
                     "compiler.c.elf.extra_flags=-Wl,-u,firmingo_sketch_api_v2"]
-        if args.stateful_runtime_proof:
+        if stateful_runtime:
             command[-3] += " -DFIRMINGO_STATEFUL_RUNTIME_PROOF"
             command[-1] += " -Wl,-u,firmingo_sketch_api -Wl,-u,firmingo_stateful_boot_mode"
+            if args.stateful_upload_proof:
+                command[-3] += " -DFIRMINGO_STATEFUL_UPLOAD_PROOF"
+                command[-1] += " -Wl,-u,firmingo_stateful_upload_contract"
     print("+", " ".join(command), flush=True)
     with (output / "build.log").open("w") as log:
         result = subprocess.run(command, cwd=ROOT, stdout=log,
@@ -146,18 +152,29 @@ def main():
             ])
         },
     }
-    if args.stateful_allocation_proof or args.stateful_runtime_proof:
+    if args.stateful_allocation_proof or stateful_runtime:
         report["status"] = "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed"
         report["legacy_upload_target"] = report.pop("upload_target")
         report["stateful_runtime_enabled"] = False
         report["source_sha256"][str((HERE / "stateful_abi.h").relative_to(ROOT))] = sha(HERE / "stateful_abi.h")
-    if args.stateful_runtime_proof:
+    if stateful_runtime:
         report["status"] = "compile-tested FMS2 boot runtime candidate; network uploads disabled; not flashed"
         report.pop("legacy_upload_target")
         report["stateful_runtime_enabled"] = True
         report["network_uploads_enabled"] = False
         for name in ("stateful_image.h", "stateful_image.cpp", "stateful_runtime.h", "stateful_runtime.cpp"):
             report["source_sha256"][str((HERE / name).relative_to(ROOT))] = sha(HERE / name)
+    if args.stateful_upload_proof:
+        report["status"] = "compile-tested FMS2 upload candidate; not flashed"
+        report["network_uploads_enabled"] = True
+        report["upload_target"] = {"id": 2, "format": "nano-managed-v2", "max_size": 4096,
+                                   "max_chunk": 1024, "authorization": "physical-d2-gnd"}
+        for name in ("stateful_upload.h", "stateful_upload.cpp"):
+            report["source_sha256"][str((HERE / name).relative_to(ROOT))] = sha(HERE / name)
+        for name in ("boards/nano_rp2040_connect/core-lock.json",
+                     "patches/arduino-pico-6.0.0-usb-startup/manifest.json",
+                     "patches/arduino-pico-6.0.0-usb-startup/deferred-ncm.patch"):
+            report["source_sha256"][name] = sha(ROOT / name)
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({key: value for key, value in report.items()
                       if key != "source_sha256"}, indent=2))

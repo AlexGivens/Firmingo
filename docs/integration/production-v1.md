@@ -93,8 +93,9 @@ An [opt-in allocation/link proof](stateful-link-proof.md) now reserves real RAM,
 derives candidate API/linker facts and validates an independently linked ARM
 capsule through host initialization. The [runtime increment](stateful-runtime.md)
 adds an opt-in board boot adapter and native-tested replacement failure handling.
-A versioned contract export and upload adapter come next, before compiler
-recipe/packaging and SDK validation.
+The [versioned contract export and upload adapter](stateful-upload-contract.md)
+now provide a separate target-2 candidate. Compiler recipe/packaging and SDK
+validation come next, followed by exact-candidate hardware qualification.
 V1-SOURCE can progress against explicit versioned fixtures while hardware work
 remains separate.
 

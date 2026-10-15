@@ -42,13 +42,18 @@ def fixture(sections, symbols, loads):
     return bytes(data)
 
 
-def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000, boot_mode=None):
+def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000, boot_mode=None, upload=False):
     calls = [0x10000041] * 8
     rodata = struct.pack("<IHH8I", 0x49504146, 1, 40, *calls)
     rodata += struct.pack("<IHH11I", 0x49504146, version, 52, *calls, state, 4096, 4096)
     if boot_mode is not None:
         rodata += struct.pack("<I", boot_mode)
-    rodata += bytes(128 - len(rodata))
+    upload_address = 0x10000080 + len(rodata)
+    if upload:
+        rodata += struct.pack("<IHH4I16s16s", 0x32505546, 1, 56, 2, 4096, 1024, 30000,
+                              b"nano-managed-v2", b"physical-d2-gnd")
+        rodata += b"0.1.0-statefulupload-exp1\0"
+    rodata += bytes((256 if upload else 128) - len(rodata))
     sections = [(".text", 1, 6, 0x10000000, bytes(128), 0, 0),
                 (".rodata", 1, 2, 0x10000080, rodata, 0, 0),
                 (".bss", arena_type, 3, 0x20002000, 4096 if arena_type == 8 else bytes(4096), 0, 0)]
@@ -64,7 +69,9 @@ def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, 
         symbols.append(("other_owner", 0x20002004, 4, 0x11, 3))
     if boot_mode is not None:
         symbols.append(("firmingo_stateful_boot_mode", 0x100000dc, 4, 0x11, 2))
-    return fixture(sections, symbols, [(1, 0x10000000, 256)])
+    if upload:
+        symbols.append(("firmingo_stateful_upload_contract", upload_address, 56, 0x11, 2))
+    return fixture(sections, symbols, [(1, 0x10000000, 128 + len(rodata))])
 
 
 def module_fixture(*, extra=False, bss=4, data_base=0x20002000, load=0x10200108, entry=0x10200101):

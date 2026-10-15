@@ -24,6 +24,10 @@
 #include <stateful_image.cpp>
 #include <stateful_runtime.cpp>
 #endif
+#ifdef FIRMINGO_STATEFUL_UPLOAD_PROOF
+#include <stateful_upload.h>
+#include <stateful_upload.cpp>
+#endif
 #include <image.h>
 #include <console.h>
 #include <stage.h>
@@ -86,7 +90,11 @@ ManagedApplicationEndpoint backend;
 firmingo::Channel channel(backend);
 firmingo::MemorySamples memorySamples;
 #ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
+#ifdef FIRMINGO_STATEFUL_UPLOAD_PROOF
+firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulupload-exp1"};
+#else
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulboot-exp1"};
+#endif
 #else
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-m9exp1"};
 #endif
@@ -158,8 +166,19 @@ firmingo_managed::stateful::Runtime statefulRuntime(
     {static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&firmingo_sketch_api_v2)),
      static_cast<uint32_t>(reinterpret_cast<uintptr_t>(firmingo_sketch_state)),
      sizeof(firmingo_sketch_state), 4096}, statefulExecution);
+#ifdef FIRMINGO_STATEFUL_UPLOAD_PROOF
+NanoFlash statefulFlash;
+firmingo_managed::stateful::Replacement statefulReplacement(statefulRuntime, sketchPause, statefulFlash);
+bool statefulUploadArmed() { return digitalRead(PROOF_ARM_PIN) == LOW; }
+firmingo_managed::stateful::Upload statefulUpload(
+    {static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&firmingo_sketch_api_v2)),
+     static_cast<uint32_t>(reinterpret_cast<uintptr_t>(firmingo_sketch_state)),
+     sizeof(firmingo_sketch_state), 4096}, statefulRuntime, statefulReplacement, statefulUploadArmed);
+firmingo::TcpSessionServer protocolService(channel, &memorySamples, &statefulUpload);
+#else
 // Boot-only candidate: no upload service or FMS1/FMS2 network target is exposed.
 firmingo::TcpSessionServer protocolService(channel, &memorySamples);
+#endif
 #else
 class NanoSketchRuntime final : public firmingo_managed::SketchRuntime {
  public:
@@ -368,6 +387,9 @@ void loop() {
   ethernet_arch_lwip_end();
 
   transferSketchBytes();
+#ifdef FIRMINGO_STATEFUL_UPLOAD_PROOF
+  statefulUpload.poll(millis()); // All pause/flash work is outside the lwIP lock.
+#endif
 #ifndef FIRMINGO_STATEFUL_RUNTIME_PROOF
   uploadService.poll(millis()); // Pause/flash/install only outside the lwIP lock.
 #endif

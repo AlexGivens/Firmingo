@@ -6,7 +6,7 @@
 namespace firmingo_managed {
 namespace stateful {
 
-// Candidate only: opt-in boot runtime; no compiler recipe or network upload target.
+// Candidate only: opt-in FMS2 runtimes; consumer recipes require explicit adoption.
 constexpr std::uint16_t kImageVersion = 2;
 constexpr std::uint32_t kHeaderBytes = 128;
 constexpr std::uint32_t kMaximumCapsuleBytes = 4096;

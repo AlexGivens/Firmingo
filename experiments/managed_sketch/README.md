@@ -496,3 +496,8 @@ FMGO hello available on the same boot. ROM readback matched the exact 4 KiB
 stall sector, and the verified Blink B composite restored full exact-byte
 service on a new boot. See the
 [m7exp3 evidence](../../docs/evidence/managed-sketch-m7exp3.md).
+
+The [target-2 increment](../../docs/integration/stateful-upload-contract.md) adds
+`--upload-runtime` and `export_stateful.py`: a physically armed FMS2 service and
+versioned, checksummed exact-build contract. Allocation-only and boot-only modes
+remain distinct; no existing compiler/SDK pin is silently upgraded.

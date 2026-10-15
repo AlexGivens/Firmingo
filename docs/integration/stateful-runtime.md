@@ -2,7 +2,8 @@
 
 Status: portable lifecycle and opt-in Nano boot adapter implemented; native and
 compile/link evidence is [recorded separately](../evidence/stateful-runtime.md).
-No hardware execution or FMS2 network-upload target is claimed. This follows the
+No hardware execution is claimed. The later [target-2 adapter](stateful-upload-contract.md)
+adds a separately selected upload build; this document describes the boot-only mode. This follows the
 [allocation/link proof](stateful-link-proof.md) and advances
 [V1-STATE](production-v1.md). Compiler recipes, SDK pins and installed firmware
 remain on the earlier experimental contract.
@@ -96,9 +97,9 @@ flash and the real cooperative pause. No operation here flashes a board.
 
 ## Next integration
 
-Define/export the complete versioned FMS2 resource and build-fact contract, then
-wire an explicitly versioned firmware upload adapter to this driver with protocol
-fixtures and retained transaction status. Compiler packaging/recipes and SDK
+The [versioned export and upload adapter](stateful-upload-contract.md) now provide
+firmware resources/build facts and an opt-in target-2 service with protocol
+fixtures and retained status. Compiler packaging/recipes and SDK
 deployment checks must adopt those exact facts together. Qualify actual setup,
 loop state, replacement, interruption and recovery on a selected Nano; native
 fault injection and linker headroom cannot establish board behavior or measured

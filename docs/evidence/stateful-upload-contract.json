@@ -1,0 +1,178 @@
+{
+  "schema": 1,
+  "date": "2026-10-15",
+  "status": "experimental_FMS2_contract_upload_adapter_native_host_and_compile_checks_passed",
+  "scope": "Versioned firmware-owned export and target-2 adapter only; no consumer pin adoption, device connection, flash or ARM execution.",
+  "proof": {
+    "status": "native ARM link and host initialization passed; not executed on ARM",
+    "runtimeEnabled": true,
+    "hardwareTested": false,
+    "sourceSHA256": {
+      "experiments/managed_sketch/build_stateful_proof.py": "9ed0b179bc2a9d0ad15592fde241bf40e925499c725794c965554b106791db5b",
+      "experiments/managed_sketch/build_resident.py": "7bc1426131457616a5faf9964cfcb489106159595e4e903909fce8c04e2a23ed",
+      "experiments/managed_sketch/stateful_abi.h": "ed946122c0dbc5f0258b285c37d1a0ae05354fcf702e1b02e911c2fd33044e02",
+      "experiments/managed_sketch/abi.h": "941fd824a765e1dc9efaa5c9bdd670d77bdb26fedef98c47d9c7969d5bb6ad2a",
+      "experiments/managed_sketch/facade/Arduino.h": "b35175c2569f4203dac411dadff9e340e562cd5a09f89f82e119e78ed4bca6b3",
+      "experiments/managed_sketch/stateful_counter.ino": "1d5cc9bc8a5e8d5e87092235ecd6198405c7d39f77fca642e0e33ed0bdc75bd6",
+      "experiments/managed_sketch/module_entry.cpp": "cf7458999069224ada262c13f40792c5cef3b6ed3e3760e11fa8062c3c9306df",
+      "experiments/managed_sketch/stateful_module.ld": "b9d97aa1fa0750036351adeaa7de48d5b56d8759e2cef9d72c2fbf90ac6c21e6",
+      "experiments/managed_sketch/stateful_check.cpp": "db93347df9aa4996012abad18328f93d015028f2e4ef8b8b9df0c4ebb5310b57",
+      "experiments/managed_sketch/stateful_image.h": "916fb47da2d8cc772f0e7c0620a092dcbad6bdd34356fcbd075b647730268974",
+      "experiments/managed_sketch/stateful_image.cpp": "9535033887eb51ad3cdc3d9098ffb4b8a0398f9106586106c0461a7f06257149",
+      "experiments/managed_sketch/image.h": "658ceac8716a6a6709714f2b51e2e01684a06ba87db999ee0d75cff0b9e6ffd9",
+      "experiments/managed_sketch/image.cpp": "b694ed15b5c6c84b819da31e14961e48cf4ab8338bb6e1fee538f964a3501ca5",
+      "experiments/managed_sketch/export_resident.py": "c47f6ffba18bbaa276aa6317d4450d354d7ba1a14e6ed2e2d2d80e33971b8e75",
+      "experiments/managed_sketch/build_composite.py": "ae2d0f00d162bb87dae955edcff1e449b2af307551801d769c2e0c42bb3b46b4",
+      "experiments/managed_sketch/stateful_runtime.h": "165a02ab22e6a87951e55fa525ac4d7c27dd0648767149216d9cc15dc93af449",
+      "experiments/managed_sketch/stateful_runtime.cpp": "055995f88580c4fc43228c9d23f8f74b96f231e4ffdf0726a8aed3da11bd2988",
+      "experiments/managed_sketch/core1_pause.h": "07184403ec59786b1b6196d292c853fb42222ac08a9ab795a624d6e5f82e387c",
+      "experiments/managed_sketch/core1_pause.cpp": "25a48ec0ac94bca0b1f1e8307576d6d0ff28c0b5faa51e6eae3d96de10fea5f7",
+      "CMakeLists.txt": "81c4add56b5536d3d2d3438984b50b59a1c931617a8bbf5e636f1a044efa2846",
+      "experiments/managed_sketch/stateful_upload.h": "df1fbe0b6dffcc6e6deca353e5129d69a253c219322afce473fe01ec00c25292",
+      "experiments/managed_sketch/stateful_upload.cpp": "9d1280c7fc1848e392ccaa8860773ee06758d5c7425aad221d4f961903c61ca5",
+      "experiments/managed_sketch/facade_v2/Arduino.h": "51a64fc530129ce7f03ee49821eca983df50875d3b5fa953eb6df7767926fe9b"
+    },
+    "networkUploadsEnabled": true,
+    "fms2NetworkUploadsEnabled": true,
+    "contract": {
+      "schema": 1,
+      "purpose": "native stateful proof; no deployment descriptor",
+      "board": "nano_rp2040_connect",
+      "imageVersion": 2,
+      "residentABI": 2,
+      "apiAddress": 268578932,
+      "apiTableBytes": 52,
+      "apiTableSHA256": "d4cf6da45cb0fb2e8abe787aca0fcc4a438cd13abb022cac248f46c4553b66ac",
+      "stateAddress": 536906044,
+      "stateCapacityBytes": 4096,
+      "maximumCapsuleBytes": 4096,
+      "residentELFSHA256": "bf32639c7fc2181c9ff6f99aaf8c64e19bda4f83f9690321e2b098bc81e451a8",
+      "linkerBounds": {
+        "__bss_start__": 536877584,
+        "__bss_end__": 536975780,
+        "__end__": 536975816,
+        "__HeapLimit": 537133056,
+        "__StackOneBottom": 537135104,
+        "__StackOneTop": 537137152,
+        "__StackBottom": 537139200,
+        "__StackTop": 537141248
+      },
+      "nominalHeapSpanBytes": 157240,
+      "runtimeEnabled": true,
+      "networkUploadsEnabled": true,
+      "fms2NetworkUploadsEnabled": true,
+      "uploadTarget": {
+        "id": 2,
+        "format": "nano-managed-v2",
+        "max_size": 4096,
+        "max_chunk": 1024,
+        "authorization": "physical-d2-gnd",
+        "stagingTimeoutMs": 30000,
+        "tableAddress": 268579280,
+        "tableSHA256": "e38042ea40ac6d3439969701051b105808a235048a7198eef88f1a9f2084df7e",
+        "tableVersion": 1,
+        "tableBytes": 56
+      },
+      "hardwareTested": false,
+      "residentUF2SHA256": "1ef766226ce6a2c51c668562cd51a71ed0bfbe1634b76b54d704c7e710ca1b2f",
+      "elfUF2ComparedBytes": 153984
+    },
+    "sections": {
+      "codeBytes": 120,
+      "dataBytes": 4,
+      "bssBytes": 4,
+      "setupAddress": 270532865,
+      "loopAddress": 270532873
+    },
+    "capsuleBytes": 380,
+    "capsuleSHA256": "f6f10055e506b84ae04ce94202442d99426337a3bf3f74a7655ef2203945ebca",
+    "moduleELFSHA256": "7bd387a7bae0ffde5fc34dd2eae60b438446744b2e750ed511604329e837c8c5",
+    "validatorSHA256": "4d42d0aa975f11146769e9e2670e1cad5e2edec0e0cffb721b57737b253a8949",
+    "corruptCapsuleRejected": true,
+    "flashBytes": 135472,
+    "staticRAMBytes": 104904,
+    "residentReportSHA256": "3d16b00e111da3cea5f6a0d47d6543db7e36460c23e70ac631fe6d2a0209ff73",
+    "compilerSHA256": "024806955d0cd61a235457d9d401e2fe7f6cab023b5616454d146078eba35a2c",
+    "compilerVersion": "arm-none-eabi-g++ (GCC) 16.1.0"
+  },
+  "proofReportSHA256": "06150c64a9457ec72445296b20592d20bbd8587f15976cd2f7b2dd1376b8582a",
+  "native": {
+    "command": ".venv/bin/python tools/dev.py test --sanitize",
+    "ctestTargets": 23,
+    "hostCases": 247,
+    "result": "passed with ASan/UBSan and authorized local loopback",
+    "adapterCases": 7,
+    "finalFocusedExportCommand": ".venv/bin/python -m pytest tests/host/test_stateful_export.py -q",
+    "finalFocusedExportCases": 11,
+    "finalFocusedExportResult": "passed"
+  },
+  "mutation": {
+    "command": ".venv/bin/ctest --test-dir build/fms2-adapter-fuzz -R _fuzz$ --output-on-failure",
+    "targets": 6,
+    "result": "passed",
+    "adapterSeed": "0x46555032",
+    "adapterCases": 2000,
+    "verified": 1205,
+    "rejected": 795,
+    "flashInCallbacks": false
+  },
+  "preflight": {
+    "scope": "actual ELF/UF2 export against an owned temporary source snapshot; canonical main export follows commit",
+    "result": {
+      "status": "exported_experimental_stateful_resident",
+      "firmwareCommit": "13a65b5c21051be3423a421de5aadfb9d454b70f",
+      "manifestSHA256": "cce84ddb185b8e421d890421a97dd94a7c94f658826d7382f794935aea9b4ea1",
+      "files": 39,
+      "hardwareQualified": false
+    }
+  },
+  "legacyRegression": {
+    "status": "compile-tested",
+    "resident_uf2_sha256": "f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba",
+    "resident_abi": 1,
+    "flash_bytes": 134320,
+    "static_ram_bytes": 96672,
+    "elf_uf2_compared_bytes": 152832
+  },
+  "standaloneARM": {
+    "result": "Cortex-M0+ C++11 freestanding runtime upload object passed with warnings as errors",
+    "objectSHA256": "1d9b3e8b5dfab66b505c1c5dae92d3a84eb302a32ae481a0d4eeb5dce0655dac"
+  },
+  "sourceSHA256": {
+    "experiments/managed_sketch/export_stateful.py": "e4e65786949808c662574ae6729337d44edf87c7fb22576c6473c4534d1913d6",
+    "experiments/managed_sketch/stateful_contract.json": "7cb346d3881737b1840c0baead9de5edf05baa3bbb2c55ede947dc6cda38c0ca",
+    "tests/native/test_stateful_upload.cpp": "e23002e0e54fe744299cd971d08cc327bd7cb0afbbce0ce07bafbb6a5c6ace2c",
+    "tests/host/test_stateful_export.py": "89f24fc58a5a5dbd470edf3c66043bf19c1f826cd5c598a35fd05a9d192993a0",
+    ".github/workflows/checks.yml": "f14bf1399cded283db4eefc50f841930dc1d82a5aaa716f085a81d43cd5b0761"
+  },
+  "logSHA256": {
+    "build/fms2-upload-configure.log": "8e92ee1695cb08475f33649e7b0bdfa5a2d53fa78f5583374758678bbc9b8cce",
+    "build/fms2-upload-build.log": "619368e10c8b583a4ac680d8b988076a513e788cd6acc2ca7315cbbaa0e6ab80",
+    "build/fms2-upload-tests-r1.log": "06d3f310538078b8aa55f7f62c3e254f57cfc87cf8c2407e3050b5b2f42d50a7",
+    "build/fms2-upload-tests-r2.log": "8577a9e6c88583b5bf102b2c9e59d4c47d66a3a4765e2cfff74ae28239060ab7",
+    "build/fms2-upload-tests-final.log": "658a3fe98e80baeaa723671feccb3c7cd8e490f3ab41d3701524a1b227943106",
+    "build/fms2-upload-full-tests.log": "849365226dce0bece08bd62503e094d59a13305146af9c1058201c8bcc246b6b",
+    "build/fms2-export-host-tests-final-source.log": "d0c7cb6bd67de6918a0a37a2872c65e15115ab688b42db5b1ff2488d6f508883",
+    "build/fms2-fuzz-configure.log": "42c811bd86e925257f1aed29f527b0a07a80cd2e548fb81e7eafe26d7550d456",
+    "build/fms2-fuzz-build.log": "1b10c2c48a33bf33e8bcf8c6507910ab1fef39737ab410cbe4f0e93ba87c97fc",
+    "build/fms2-fuzz-tests.log": "ac6624158cb948b528ca0610451a7e7f45031011e016e0e1c9aade472f6262d6",
+    "build/fms2-adapter-fuzz-direct.log": "6d4d0682fde1323a42561cda2c729fe5d7720c1c80fdfd8782d200e699409861",
+    "build/fms2-upload-legacy-build.log": "389cc30e6ecb5432084e32edb70ba2576cc68dcfec11f1722c631179970ff440",
+    "build/fms2-upload-r2.log": "df70faba58f6633236dabf88dbd90513d03e7bdf766476b05599a810ec39209c",
+    "build/fms2-upload-arm.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build/fms2-export-preflight.log": "efb45c58e242773a6a9bcab7fea73694cdd352bc872f9ce0cae27a1213c92cca"
+  },
+  "workflow": {
+    "localCheck": "Ruby YAML parsed; every bash block passed bash -n",
+    "actionlint": "unavailable",
+    "remoteCI": "pending committed-source export and push"
+  },
+  "remaining": [
+    "Canonical export against actual main commit, then inspect CI result.",
+    "Compiler schema/recipe/packaging and SDK deployment adoption are explicit follow-up work.",
+    "Qualify actual Nano/iPad/iPhone startup, binary console, mutable state, replacement, interruption and recovery.",
+    "Static memory includes separate 4 KiB stage and 4 KiB replacement snapshot; dynamic heap/stack peaks remain unmeasured.",
+    "No rollback, sandbox or installed-image attestation is implied.",
+    "Unrelated pre-existing AGENTS.md edits preserved and excluded."
+  ]
+}
