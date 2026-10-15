@@ -68,12 +68,19 @@ also passed with the isolated pinned CLI/config. Its default ABI-one API remaine
 bytes matching UF2. Its UF2 hash remains the preceding local baseline
 `f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba`.
 A direct check confirmed the old exporter rejects the candidate report status.
+The default resident also exported successfully against exact committed source
+`c2f568b48ed6709115dbeb027e6859568af7a6d0`, with manifest SHA-256
+`bd8aad112f8b05fd705d375c9fc7d608c0dcb46d0d2ec56a7945f462a2a5e9bb`.
 Existing consumer pins and installed firmware were not changed.
 
 Workflow YAML parsed through Ruby YAML and all bash blocks passed `bash -n`;
 `actionlint` was unavailable. The managed CI job now runs the same candidate
-command and retains its logs, actual binaries, map and receipts. Remote CI is
-reviewed after committing/pushing; local results alone do not establish it.
+command and retains its logs, actual binaries, map and receipts.
+[CI run 38724190142](https://github.com/AlexGivens/Firmingo/actions/runs/38724190142)
+at `c2f568b48ed6709115dbeb027e6859568af7a6d0` reports all ten jobs successful,
+including the new allocation/link step. Public run, job and step statuses were
+inspected; raw remote logs/artifacts were not retrieved. The exact local counts
+and byte identities above remain separate evidence.
 
 ## Remaining
 

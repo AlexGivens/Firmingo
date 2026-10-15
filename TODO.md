@@ -48,6 +48,10 @@ records the later real ARM link and RAM allocation; hardware execution remains o
 [CI at `a7966c5`](https://github.com/AlexGivens/Firmingo/actions/runs/38720627833)
 reports all ten jobs successful; public statuses inspected, raw remote logs and
 artifacts not retrieved. The exact local evidence remains separate.
+The later [allocation/link CI at `c2f568b`](https://github.com/AlexGivens/Firmingo/actions/runs/38724190142)
+also reports all ten jobs successful, including the new candidate link step;
+public statuses inspected, raw remote logs/artifacts not retrieved. Its local
+21 sanitizer targets and final 233 host cases pass.
 
 Repository refocus on 2026-10-12 is documented in
 [the compiler contract plan](docs/integration/compiler-contract.md) and
