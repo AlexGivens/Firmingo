@@ -14,6 +14,8 @@ existing `experiments/managed_sketch/build_resident.py`. It does not build an
 extra application image to obtain an overlay. Pico is rejected before toolchain
 work. This profile currently fixes subnet 77 and uses `resident/build.log`;
 nondefault subnet and verbose overrides are explicitly rejected.
+CLI selections found through `PATH` are resolved to an executable path before
+invoking the legacy resident builder, which accepts a filesystem path.
 
 Outputs are under `build/firmware/nano_rp2040_connect/managed/`:
 

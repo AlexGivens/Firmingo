@@ -103,8 +103,11 @@ def build_managed(args, manifest):
         # Retain intermediate caches/logs, but never reuse an older exported image.
         if (resident / "artifacts").exists():
             shutil.rmtree(resident / "artifacts")
+        executable = shutil.which(cli[0])
+        if executable is None:
+            raise RuntimeError("selected Arduino CLI executable is no longer available")
         command = [sys.executable, dev.ROOT / "experiments/managed_sketch/build_resident.py",
-                   "--cli", cli[0], "--config-file", cli[2], "--output-dir", resident]
+                   "--cli", executable, "--config-file", cli[2], "--output-dir", resident]
         dev.run(command, timeout=660)
         profile.update(verify_outputs(dev.ROOT, resident, manifest))
         for name, expected in profile["source_sha256"].items():

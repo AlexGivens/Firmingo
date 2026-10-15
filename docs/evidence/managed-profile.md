@@ -39,3 +39,21 @@ consumer pins remain unchanged. Full upstream toolchain reproduction, stateful
 images, source bundles and the other production gates remain open. A local pass
 does not establish GitHub CI success; remote validation is recorded separately
 when available.
+
+## CLI selection portability follow-up
+
+The first pushed [workflow run](https://github.com/AlexGivens/Firmingo/actions/runs/38717390355)
+reports failure in the new managed build step; its other nine jobs report success.
+Raw remote logs were not retrieved, so step metadata alone does not establish
+the precise remote exception. Source review found that the ordinary driver could
+pass bare `arduino-cli` to the legacy builder, which treats its argument as a
+filesystem path. The local baseline above supplied an absolute path and did not
+exercise this CI selection mode.
+
+The driver now resolves the selected executable through `PATH` before invoking
+that builder. Regression callbacks use an actual owned executable in a temporary
+PATH and require the child argument to be its absolute path. The final full host
+suite still passes 217/217. An additional actual managed build with `ARDUINO_CLI`
+unset and the installed CLI directory on PATH passes, producing the same
+ELF/UF2/API bytes. The JSON records these additional logs and source hashes;
+the corrected remote workflow remains a separate result.

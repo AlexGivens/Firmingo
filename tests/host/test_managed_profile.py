@@ -2,7 +2,9 @@
 
 import argparse
 import json
+import os
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -61,6 +63,12 @@ def setup_profile(root, monkeypatch):
         path = root / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("owned tooling fixture; NEVER DEPLOY")
+    # CI selects CLI from PATH; the legacy resident builder resolves a Path argument.
+    binary = root / "test-bin/fixture-cli"
+    binary.parent.mkdir()
+    binary.write_text("#!/bin/sh\nexit 99\n")  # Never executed by these callback fixtures.
+    binary.chmod(0o755)
+    monkeypatch.setenv("PATH", str(binary.parent) + os.pathsep + os.environ.get("PATH", ""))
     return argparse.Namespace(board="nano_rp2040_connect", subnet_octet=77, verbose=False)
 
 
@@ -85,7 +93,7 @@ def test_setup_failure_invalidates_earlier_success_before_any_compiler(resident,
 
 
 @pytest.mark.parametrize("changed", [False, True])
-def test_success_requires_verified_outputs_and_unchanged_profile_inputs(resident, monkeypatch, changed):
+def test_success_resolves_PATH_cli_and_requires_unchanged_profile_inputs(resident, monkeypatch, changed):
     root, build, _, report = resident
     args = setup_profile(root, monkeypatch)
     output = root / "build/firmware/nano_rp2040_connect/managed"
@@ -95,6 +103,8 @@ def test_success_requires_verified_outputs_and_unchanged_profile_inputs(resident
 
     def compile_fixture(command, timeout):
         assert command[-2] == "--output-dir" and timeout == 660
+        selected = Path(command[command.index("--cli") + 1])
+        assert selected.is_absolute() and selected == root / "test-bin/fixture-cli"
         shutil.copytree(build, output / "resident")
         if changed:
             (root / "tools/usb_core.py").write_text("changed during compilation")
