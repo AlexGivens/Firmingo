@@ -56,4 +56,12 @@ PATH and require the child argument to be its absolute path. The final full host
 suite still passes 217/217. An additional actual managed build with `ARDUINO_CLI`
 unset and the installed CLI directory on PATH passes, producing the same
 ELF/UF2/API bytes. The JSON records these additional logs and source hashes;
-the corrected remote workflow remains a separate result.
+the corrected remote workflow has the separate result below.
+
+The corrective [run at `05e8c4b`](https://github.com/AlexGivens/Firmingo/actions/runs/38717838985)
+reports all ten jobs successful. Public job and step statuses were inspected;
+raw remote logs/artifacts were not retrieved, so this is not a claim of inspected
+remote test counts or artifact bytes. Locally, the same checked resident also
+passes all four existing GCC capsule builds, both initial composite builds,
+selected-artifact composition and SDK contract export. Their reports and hashes
+are retained in the JSON. Neither local nor remote build status qualifies hardware.

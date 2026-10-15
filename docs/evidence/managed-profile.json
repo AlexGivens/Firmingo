@@ -71,7 +71,7 @@
     "buildEnvironment": "Explicit documented ARDUINO_CLI and ARDUINO_CONFIG_FILE for the pinned installation",
     "buildResult": "passed; artifacts independently checked after removal of older exported images",
     "workflowCheck": "YAML parsed and every run block passed bash -n; actionlint unavailable",
-    "remoteCI": "not yet verified for this increment",
+    "remoteCI": "Initial managed step failed; corrective source commit 05e8c4b reports all ten jobs successful. Public statuses inspected; raw logs/artifacts not retrieved.",
     "logs": {
       "build/managed-profile-tests-r1.log": "c47774f2eccce70e8735aad170b028148548a1df1225a9f66651a90afeb77641",
       "build/managed-profile-host-tests-r3.log": "cb2637590e7a2ce4a6cb6883f2c33b754bf86134e776c4e448aaa8dfed57951e",
@@ -109,5 +109,176 @@
     "No compiler execution against this newly imported descriptor, consumer pin promotion, device installation, flash, reset or hardware test occurred.",
     "Production package/export provenance, useful stateful contract, supported installation/update/recovery and exact-candidate host/device qualification remain open.",
     "Pre-existing unrelated AGENTS.md changes were preserved and excluded from the implementation commit."
-  ]
+  ],
+  "cliPathPortabilityFollowup": {
+    "sourceCommit": "05e8c4b4e30a2e40722211187f800d207541f115",
+    "firstRemoteRun": "https://github.com/AlexGivens/Firmingo/actions/runs/38717390355",
+    "firstRunStatus": "managed build step failed; other nine jobs reported success; raw logs not retrieved",
+    "fix": "Resolve selected CLI executable through PATH before passing it to the path-based resident builder",
+    "implementationSourceSHA256": "77edc4e7433bd7ef3ba2b090e1bd06773821ab6518376d185526eef3144528ec",
+    "regressionSourceSHA256": "9efa96bc949a05fc3a04d75dad4bef91e9acd0bb599d8a24897e70cbc4cfde6d",
+    "finalHostTests": "217 passed",
+    "realPathBuild": "passed with ARDUINO_CLI unset and installed CLI directory on PATH; original explicit ARDUINO_CONFIG_FILE retained",
+    "binaryIdentity": "ELF/UF2/API bytes identical to initial local build",
+    "profileReportSHA256": "29ec575d456cc996c9faa6cda1dbe882e415120ba9064c869d7b20bf3934b49c",
+    "sourceSHA256": {
+      "tools/dev.py": "f528bfd93ebd42ab72a63a4021ea8267e4e6970673d1ddf955de037fa95e7d52",
+      "tools/managed_profile.py": "77edc4e7433bd7ef3ba2b090e1bd06773821ab6518376d185526eef3144528ec",
+      "tools/usb_core.py": "291aa905937ab28b2adb4c642059a7b2f6c07a87ac52a084fb09b040dabcae02",
+      "boards/nano_rp2040_connect/baseline.json": "227cf02f03d35fa36b227fd32be1c5e784f35f89c0be18387e683a42c3c2a23a",
+      "boards/nano_rp2040_connect/core-lock.json": "a53fc4653d6ffda348f3fed36c86d68d7f13b31aa4fda98b0a9aec5934242b24",
+      "patches/arduino-pico-6.0.0-usb-startup/manifest.json": "b01c41da1d7b9e67a619f42ef23e3e0c048e4581848ca8db6f3276c531bdb1f0"
+    },
+    "logs": {
+      "build/managed-profile-host-tests-r4.log": "15fc57de10e319935bca417efb7eaabdb1a29fc46d70e457a1eab50379cf00c9",
+      "build/managed-profile-driver-r4.log": "e2603e30cff7c5de38609cb46e9fa3b811a011c3ab2f04fe5ad6143c0d131a75",
+      "build/managed-profile-path-build-r1.log": "cadf2eb7c69038148743aee3d1ab7953e2a1ff2da2862880c3bc0030fa082796"
+    },
+    "correctedRemoteCI": {
+      "run": {
+        "id": 38717838985,
+        "head_sha": "05e8c4b4e30a2e40722211187f800d207541f115",
+        "status": "completed",
+        "conclusion": "success",
+        "html_url": "https://github.com/AlexGivens/Firmingo/actions/runs/38717838985"
+      },
+      "jobs": [
+        {
+          "id": 116364762372,
+          "name": "managed-sketch-build",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762631,
+          "name": "native",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762774,
+          "name": "firmware-builds (nano_rp2040_connect, baseline)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762788,
+          "name": "mutation-fuzz",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762840,
+          "name": "firmware-builds (nano_rp2040_connect, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762942,
+          "name": "firmware-builds (raspberry_pi_pico, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762963,
+          "name": "firmware-builds (raspberry_pi_pico, application)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364762983,
+          "name": "firmware-builds (nano_rp2040_connect, uart)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364763016,
+          "name": "firmware-builds (raspberry_pi_pico, local-only)",
+          "conclusion": "success"
+        },
+        {
+          "id": 116364763062,
+          "name": "firmware-builds (nano_rp2040_connect, application)",
+          "conclusion": "success"
+        }
+      ],
+      "statusRecordSHA256": "a4f17c34af980dba7f943b40052ab3330fbc0b768503a5cc500844b30558b6fc",
+      "evidenceLimit": "Public run/job/step statuses inspected; raw remote logs and artifact contents not retrieved. Local command outputs independently recorded."
+    }
+  },
+  "nativeBuildPathFollowup": {
+    "status": "four native proof capsules, two composites, selected-artifact composition and SDK contract ZIP completed locally",
+    "logSHA256": "ee043d6f8440f464b60ed6eed878a4f09a2e6aee8253002542a3679ff25401f6",
+    "outputs": [
+      {
+        "path": "blink_a/blink_a.fms",
+        "bytes": 688,
+        "sha256": "b992c3388bd0da3bc722907cc3406d8cb5e79e17d83a9e3ef695d17ea1152fc2"
+      },
+      {
+        "path": "blink_a/report.json",
+        "bytes": 1458,
+        "sha256": "efc692df2f22627ce5f0dafb0ed9da1bb0e0c068656470fecfd22f22d358d76f"
+      },
+      {
+        "path": "blink_b/blink_b.fms",
+        "bytes": 692,
+        "sha256": "d27b45e24ada727295fdafdd21e3e253cda4d5db3191d705e83dd3521afc8b19"
+      },
+      {
+        "path": "blink_b/report.json",
+        "bytes": 1458,
+        "sha256": "a30a118923cb1b5aadf7c68fe72bae18b41af8d2471aba7859c19eeae0dc2466"
+      },
+      {
+        "path": "composite/blink_a-initial-rom-only.uf2",
+        "bytes": 307200,
+        "sha256": "7e32e30e8638a348921163920184928bfb54165d538786f1f98721c0a0e73b8c"
+      },
+      {
+        "path": "composite/blink_a-report.json",
+        "bytes": 501,
+        "sha256": "b5d577e00d06de9d2cb380a582e3e4af098a1d695ff7470f9c1e8a30a4b651ab"
+      },
+      {
+        "path": "composite/blink_b-initial-rom-only.uf2",
+        "bytes": 307200,
+        "sha256": "be2653d9e9d7fe14176bd6730d2aa85937063fab8450ccd0a6cc27842ab065e2"
+      },
+      {
+        "path": "composite/blink_b-report.json",
+        "bytes": 501,
+        "sha256": "df4939420dc12748ed99dca06f584ed88164e02a0779fa3dd2fd54390499abe4"
+      },
+      {
+        "path": "pause_probe/pause_probe.fms",
+        "bytes": 696,
+        "sha256": "0badfe8e7a4774e3235e14f802f5c6629c7d1bfc664816d3e115b0bb3312b40d"
+      },
+      {
+        "path": "pause_probe/report.json",
+        "bytes": 1466,
+        "sha256": "9c5da58c857955a65906c4249c365cd6ee78b2a350abc3ccb60891ddfa8a78e8"
+      },
+      {
+        "path": "sdk-contract.zip",
+        "bytes": 34364,
+        "sha256": "cb850b6610c6a0c18d144d360c7140c96ffa9965b6efe81f5f1f66462a34d7fe"
+      },
+      {
+        "path": "selected-initial/initial.uf2",
+        "bytes": 313856,
+        "sha256": "27aba7aa12201242af59a26c9896c6136cb1bb737ea81ab12eeb7bc4d703f21a"
+      },
+      {
+        "path": "selected-initial/report.json",
+        "bytes": 782,
+        "sha256": "db3394a898fdb4a170aa1d31b4626d9259a6f3e9c463aedd4ac54501a52ca0da"
+      },
+      {
+        "path": "stall_probe/report.json",
+        "bytes": 1466,
+        "sha256": "16439027bd0c4bb9ae4c4e0f4cfee07959f7fc7b60690281763f3f96d654a9a9"
+      },
+      {
+        "path": "stall_probe/stall_probe.fms",
+        "bytes": 696,
+        "sha256": "41c7bcf99bd5cbd8176c1317699b3a49a1f051a850ae0d4e6f66b476bef2d997"
+      }
+    ],
+    "hardwareOperation": false,
+    "note": "Existing firmware-owned GCC proofs; not a consumer WASM build or hardware execution"
+  }
 }

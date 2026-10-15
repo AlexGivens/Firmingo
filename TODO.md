@@ -29,7 +29,9 @@ host/device/recovery qualification. First implementation: the ordinary
 with failed-build records and CI integration. See [profile](docs/managed-profile.md).
 The [local evidence](docs/evidence/managed-profile.md) records 20 sanitizer CTest
 targets, 217 host cases, a fresh resident build, exact-commit export and successful
-compiler metadata import. Remote CI remains a separate check.
+compiler metadata import. Corrective [CI run at `05e8c4b`](https://github.com/AlexGivens/Firmingo/actions/runs/38717838985)
+reports all ten jobs successful after CLI PATH resolution; raw remote logs/artifacts
+were not retrieved. Local native proof/composite/contract builds also pass.
 Next: version the stateful image/RAM contract and prove generation initialization
 natively before compiler/SDK adoption. Existing ABI-one restrictions remain intact.
 
