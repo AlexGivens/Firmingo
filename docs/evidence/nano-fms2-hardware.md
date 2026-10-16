@@ -42,19 +42,19 @@ interruption/power loss, rollback or recovery. Separately scoped interruption
 results follow below; broader production gates remain separate. Earlier ABI-one
 evidence retains its original scope.
 
-## Separate iPad interruption and recovery checks
+## Separate interruption and recovery checks
 
 The same selected resident and compiler inputs now pass the scoped sequence on
 the recorded iPad through development-signed **NanoRecovery** build 1. Test-host
 source is FirmingoKit `f5fb34f5fb5ce2dce1a30ecd28d5efb05ff8b6a6`; the unchanged
 prepared SDK is `e0bed36…`. The executable SHA-256 is
 `4f9c9a6dc70fbdbc64797f6969971a98adb4ec9d7cc717afb01383ddd5dd245c`.
-The [pinned SDK evidence](https://github.com/AlexGivens/FirmingoKit/blob/57fb7b05cae1fac5eef7ae04382713b5b0e30f27/docs/nano-fms2-interruption-ipad.json)
-has SHA-256 `85ce5019657115b0053b2358cc3c7dd30c97ce5ffb6eccf91029893165dbf6f0`
+The [pinned iPad SDK evidence](https://github.com/AlexGivens/FirmingoKit/blob/bd772b258a660f6305bd0fa6bb458ab3658c739d/docs/nano-fms2-interruption-ipad.json)
+has SHA-256 `cf02b212ed0eed43c44fe2deb9d48cd9fa62f341be9df08b2db19526f744d687`
 and preserves both app runs, journal/checkpoint/transaction hashes, decoded state
 snapshots, actual withheld reply and process-restart receipts.
 
-| Selected fault/check | Observed result |
+| Selected fault/check | iPad observed result |
 | --- | --- |
 | Verified B RAM stage, explicit socket close without abort/commit | Fresh `aborted`, `disconnected`, untouched slot; retained A counters continue in the same boot |
 | Verified B RAM stage, operator USB unplug/wait/reconnect before commit | Saved transaction stays `unknown(bootChanged)`; A survives with seed 7, zero startup BSS and advancing counters |
@@ -65,8 +65,36 @@ snapshots, actual withheld reply and process-restart receipts.
 
 Both freshly exported capsules retain the known hashes and pass the production
 native validator. The original pre-restart journal stays unchanged. The user
-confirms D2 removed afterward, with REC disconnected. iPhone interruption checks
-remain pending. This tests power removal **before** flash writing and deliberate
+confirms D2 removed afterward, with REC disconnected. This tests power removal
+**before** flash writing and deliberate
 application-level reply loss after a real accepted commit. It does not test power
 loss during erase/program, corruption, rollback or complete SDK ROM recovery.
 No firmware, compiler asset, public SDK API or production support claim changes.
+
+### iPhone follow-through
+
+The identical signed NanoRecovery app separately passes the same scoped sequence
+on the recorded iPhone 15 Pro Max/iOS 27.0. The
+[pinned iPhone SDK evidence](https://github.com/AlexGivens/FirmingoKit/blob/bd772b258a660f6305bd0fa6bb458ab3658c739d/docs/nano-fms2-interruption-iphone.json)
+has SHA-256 `2d8a89e5c5216934c8396c575a42e71c71310f66d26ce4e1b56a7001a711a140`.
+It pins an original 39-event journal and a new 22-event journal after actual
+SIGKILL/relaunch. Pre-commit disconnect returns aborted/disconnected with an
+untouched slot and continuous A state. Pre-commit USB power-cycle preserves A
+and leaves the old transaction unknown after boot change; explicit host-context
+retirement preserves that unknown result.
+
+One observed real B commit reply is withheld, producing SDK uncertainty with
+durable commit intent. The new app run restores the unchanged checkpoint for
+queries only and passes matching fresh boot-confirmed B, initialized data/zero
+startup BSS/advancing counters and exact binary echo without host commit replay.
+Its later ordinary A stage/commit/startup/state/echo passes in the same Nano boot
+with a distinct transaction. D13 is observed on for B and off for A, and the user
+confirms D2 removed. The original journal is unchanged and all capture prefixes
+and capsule identities are independently checked.
+
+The new iPhone journal also retains one prerequisite rejection after inspection
+and before successful final association, before A staging. It does not identify
+the triggering action, and the operator does not recall it. The later A stage
+and commit each occur once; the earlier rejection is not counted as a successful
+attempt. These observations retain the same flash-write power-loss, rollback,
+ROM recovery, minimum-OS and broader production limitations as the iPad result.
