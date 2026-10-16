@@ -512,5 +512,7 @@ from compiler export and are separate from ordinary builds, smoke and prior
 iPad/iPhone evidence. Manual USB unplugging does not establish an intra-command
 power cut. Exact images, recovery prerequisites and observations live in the
 linked procedure/ledger. The later post-erase manual checkpoint/new full SDK
-recovery passes its scoped readback/boot/echo checks; first-page and SDK partial
-transfer cases remain open.
+recovery passes its scoped readback/boot/echo checks. The separate first-page
+and actual partial SDK-host SIGKILL/context recovery cases now also have exact
+readback/echo evidence; the first-page initial network timeout is preserved. See
+[dated physical results](../../docs/evidence/nano-flash-checkpoints.md).

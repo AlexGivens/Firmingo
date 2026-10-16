@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-16",
-  "status": "both exact power-cut byte patterns verified; first-page boot had one connection timeout followed by separately selected successful hello without reset; first-page SDK recovery pending",
+  "status": "scoped post-erase/first-page manual power cuts and accepted-prefix SDK host SIGKILL/restart/new full recovery complete with exact byte evidence",
   "hardwareQualified": false,
   "powerControl": "manual USB unplug only",
   "chipCommandPowerCutQualified": false,
@@ -104,7 +104,7 @@
       "compilerSHA256": "024806955d0cd61a235457d9d401e2fe7f6cab023b5616454d146078eba35a2c",
       "validatorSHA256": "f6d777a255de88600e52357637db8689fbc122a3925065bb0000f4b73cc21729",
       "nativeCheck": "FMS2 linked capsule: code=120 data=4 bss=4; guarded initialization, generation replacement and host boot dispatch passed; ARM NOT executed",
-      "hardwareExecuted": false
+      "hardwareExecuted": true
     },
     {
       "phase": "first-page",
@@ -193,7 +193,7 @@
       "compilerSHA256": "024806955d0cd61a235457d9d401e2fe7f6cab023b5616454d146078eba35a2c",
       "validatorSHA256": "f6d777a255de88600e52357637db8689fbc122a3925065bb0000f4b73cc21729",
       "nativeCheck": "FMS2 linked capsule: code=120 data=4 bss=4; guarded initialization, generation replacement and host boot dispatch passed; ARM NOT executed",
-      "hardwareExecuted": false
+      "hardwareExecuted": true
     }
   ],
   "checks": {
@@ -211,14 +211,21 @@
       "status": "in_progress",
       "conclusion": null
     },
-    "remoteCIReportedStatus": "all ten job conclusions report success for 38c24bc; raw-log retrieval requires authorization (public API HTTP 403), so remote test contents are not independently verified"
+    "remoteCIReportedStatus": "all ten job conclusions report success for 38c24bc; raw-log retrieval requires authorization (public API HTTP 403), so remote test contents are not independently verified",
+    "finalSnapshotChecks": {
+      "sourceSnapshotsStillMatch": true,
+      "firmwareSourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd",
+      "compilerAssetsChanged": false
+    }
   },
   "limits": [
-    "Post-erase full SDK recovery passes exact echo/readback. First-page exact interrupted bytes/resident readback pass; initial post-boot TCP timeout is preserved alongside later read-only success. Its SDK recovery and paused-host test remain open.",
-    "Manual power removal during a deliberate between-command hold cannot establish a flash-chip-busy power cut.",
-    "Native GCC capsules do not extend prior WASM/iPad/iPhone qualification.",
-    "Fault images change exact resident/API identities and cannot be compiler-exported.",
-    "No rollback, data preservation, minimum-OS, Pico or direct iOS/iPadOS ROM claim."
+    "First-page invalid-slot first TCP connect timed out after five seconds; later separately selected inspection passed without reset/reconnect. Cause and first-attempt network availability remain unresolved.",
+    "Both manual managed checkpoints are between completed chip commands. No power cut inside a chip erase/program command is qualified.",
+    "Native fault capsules and SDK complete-image recovery do not extend prior WASM/iPad/iPhone qualification or change compiler assets.",
+    "Signed hardened macOS 27.0 SDK host is unsandboxed. Minimum OS, Pico, direct iOS/iPadOS ROM programming, authenticated production package and first non-Firmingo installation remain separate gates.",
+    "New full SDK recovery installs the ordinary observed 0.1.0 application, not the previous FMS2 sketch/resident. No preservation or rollback guarantee.",
+    "The mixed partial SDK image stayed in ROM until recovery; its boot/network behavior was not tested.",
+    "Public Actions reports all ten jobs successful for the source commit, but raw-log retrieval failed with HTTP 403; no independent remote test-output verification claim."
   ],
   "observations": [
     {
@@ -443,7 +450,257 @@
       ],
       "observed": "Nano USB device and active en5 with expected IPv4/route present; no ARP entry at that observation",
       "cause": "unresolved; diagnostics and later hello do not identify the lost exchange or timing cause"
+    },
+    {
+      "kind": "new full SDK recovery after first-page checkpoint",
+      "sdkRuns": [
+        {
+          "command": "install",
+          "runID": "03522E63-A902-49E0-A262-5E35051CFEDA",
+          "reportSHA256": "5e0f1f5269ef7ea0f9b4004d7e17267000a397defb50e6d1438d798b105c5296",
+          "records": [
+            {
+              "sha256": "7260151e5facf5ebe4787c0b51ca712952ef3e185ee0cc40eac8523b98d3f77c",
+              "state": "prepared",
+              "acceptedBytes": 0
+            },
+            {
+              "sha256": "7260151e5facf5ebe4787c0b51ca712952ef3e185ee0cc40eac8523b98d3f77c",
+              "state": "prepared",
+              "acceptedBytes": 0
+            },
+            {
+              "sha256": "806d02205b6bdc9e107584138c3b97abace04b93cfbd89af14fb3a4acfdc6117",
+              "state": "writeStarted",
+              "acceptedBytes": 0
+            },
+            {
+              "sha256": "883f73bca6031f76ecdcc785a598ce93098d2fd60cac185c70debf42a4f65e65",
+              "state": "writeStarted",
+              "acceptedBytes": 65536
+            },
+            {
+              "sha256": "bea96e7004a61ad30b68802acd5a102b3d08ebf37accc83e5bdcc8604a2505cf",
+              "state": "writeStarted",
+              "acceptedBytes": 131072
+            },
+            {
+              "sha256": "7c4c406cd39eb08c0039e0e1f60f325f66913f0982395a738ba9bcc05f13e8e2",
+              "state": "writeStarted",
+              "acceptedBytes": 196608
+            },
+            {
+              "sha256": "83e4fb7fd081d959b0a4771086cb2de4e4f7028721bdf41a04e918904ae8205b",
+              "state": "writeStarted",
+              "acceptedBytes": 262144
+            },
+            {
+              "sha256": "df47ef55529525245e438998a4c882032604994f271f96c3af51006917ad07d5",
+              "state": "writeStarted",
+              "acceptedBytes": 288256
+            },
+            {
+              "sha256": "21feea6d212123690adfaef0ec64d26c89dfb0430e3c33e7f89f704d7f1abb73",
+              "state": "transferComplete",
+              "acceptedBytes": 288256
+            }
+          ],
+          "binaryEcho": null
+        },
+        {
+          "command": "verify",
+          "runID": "1F18FD64-7232-475A-80FC-219B99507B56",
+          "reportSHA256": "ac555fcfbcf57dcf9a054533f402fd4a405446171541d35284a3161ac789badf",
+          "records": [
+            {
+              "sha256": "21feea6d212123690adfaef0ec64d26c89dfb0430e3c33e7f89f704d7f1abb73",
+              "state": "transferComplete",
+              "acceptedBytes": 288256
+            },
+            {
+              "sha256": "105840277447bb8342dc67da7d01fa8280560e6e17d66b710617142944fb2a19",
+              "state": "helloMatched",
+              "acceptedBytes": 288256
+            }
+          ],
+          "binaryEcho": "256/256 exact bytes; hello is not installed-image attestation"
+        }
+      ],
+      "readbackReportSHA256": "b4d3b66705333016b999281cfaa1194d7eba6003772fcc0a125cb33c72ccb33f",
+      "readback": {
+        "schema": 1,
+        "kind": "exact SDK recovered-image readback after first-page checkpoint power cut",
+        "imageSHA256": "2e2d6082d07fd25257664918de02737ce77585451f3945add56cdcf99643f0a6",
+        "payloadBytes": 144128,
+        "payloadSHA256": "872bf96e5054827b7811ff245d3d057c730ed744d166f93f67bf19930060cbf5",
+        "allUF2BlocksMatch": true,
+        "managedSectorRemainsOutsideRecoveryImage": true,
+        "managedSectorSHA256": "515885ef30bebc2fbee0322483a18f13f6ce11a56fde1c9baa79be225a12774f",
+        "picotoolVerifyExitCode": 0,
+        "identitySHA256": "63f3f4d475b00af192df08b006fa7cbe5afb703b99c39fa28e22059d4729c0bf",
+        "newWritePerformed": false,
+        "rebootPerformed": false
+      },
+      "priorInitialHelloTimeoutPreserved": true
+    },
+    {
+      "kind": "distinct reviewed prior resident for partial SDK write test",
+      "reportSHA256": "0a1dba54f68da4531b1363ceb0b355f5916a337c35c2ada5faa563e091dfef5f",
+      "schema": 1,
+      "residentUF2SHA256": "5025f2c96f741f470be81b978fb66b6450154a190ea759c06f002e088c1ef879",
+      "residentReadbackBytes": 154112,
+      "residentReadbackSHA256": "a5bb1635a5a23a6c4587a80fe85c38b5c4382a0f896d8f1b78715a94ccb8f9ca",
+      "fullResidentVerifyPassed": true,
+      "rebootPerformed": false,
+      "managedSectorNotWritten": true,
+      "meaning": "ROM remains selected; no claim of a healthy managed sketch before partial full-image transfer"
+    },
+    {
+      "kind": "SDK accepted-prefix host interruption and actual partial overwrite",
+      "hostAcceptedUF2Bytes": 65536,
+      "ownedHostSIGKILLExitCode": 137,
+      "newProcessContextOnly": true,
+      "originalCheckpointUnchanged": true,
+      "readbackReportSHA256": "a46c21f737e1f75ebb180603e1e8f61c488af3a38002348dac0a9b60d149f719",
+      "readback": {
+        "schema": 1,
+        "kind": "ROM readback after accepted-prefix SDK host interruption",
+        "hostAcceptedUF2Bytes": 65536,
+        "correspondingFilePayloadBytes": 32768,
+        "readbackBytes": 154112,
+        "readbackSHA256": "547dfbca59bbd763cda03098454ca0c6e2538c0d14dd05c938175823b15ea672",
+        "priorReadbackSHA256": "a5bb1635a5a23a6c4587a80fe85c38b5c4382a0f896d8f1b78715a94ccb8f9ca",
+        "matchesPriorResident": false,
+        "matchesCompleteRecoveryPayload": false,
+        "matchesFirst32768RecoveryBytesAndRemainingPriorResident": true,
+        "bytesDifferentFromPrior": 19500,
+        "firstDifferentOffset": 12580,
+        "lastDifferentOffset": 32767,
+        "managedSectorUnchanged": true,
+        "managedSectorSHA256": "515885ef30bebc2fbee0322483a18f13f6ce11a56fde1c9baa79be225a12774f",
+        "newWritePerformed": false,
+        "rebootPerformed": false,
+        "chipBusyInterruptionQualified": false
+      },
+      "newFullSDKRecoveryRuns": [
+        {
+          "command": "install",
+          "runID": "6DE0A22C-589C-4EFB-B1BE-3244CE08D2D8",
+          "reportSHA256": "e3c10d04301df7dfae4d4dc1db435d21fd82d670e3a2ef366f6ba29344bcde65",
+          "records": [
+            {
+              "sha256": "7e77d6ae9c7618e4447ecf422c540219559b4e87fb32d0f86efe8a6dbc65db5d",
+              "state": "prepared",
+              "acceptedBytes": 0
+            },
+            {
+              "sha256": "7e77d6ae9c7618e4447ecf422c540219559b4e87fb32d0f86efe8a6dbc65db5d",
+              "state": "prepared",
+              "acceptedBytes": 0
+            },
+            {
+              "sha256": "f3ad546bf913dc2e0f11e271fd106e3ae942a563274a7c8574306154e95a7803",
+              "state": "writeStarted",
+              "acceptedBytes": 0
+            },
+            {
+              "sha256": "278d476426348a31dff8526890ad8aa078f3bba1d1f258b8e54fc2a852a45140",
+              "state": "writeStarted",
+              "acceptedBytes": 65536
+            },
+            {
+              "sha256": "b86363b6f2c923a203ecf4492241de0b3081586ba8f47bec550a9d662d740e1b",
+              "state": "writeStarted",
+              "acceptedBytes": 131072
+            },
+            {
+              "sha256": "95bac98a081ed51512a1c927bb915e6fa41bdf6faec0f7b64e65b87288459bbd",
+              "state": "writeStarted",
+              "acceptedBytes": 196608
+            },
+            {
+              "sha256": "ede56c36393ca107c57d13650f15a2825fd07ca73d10cd3334af2d43976a671f",
+              "state": "writeStarted",
+              "acceptedBytes": 262144
+            },
+            {
+              "sha256": "17bfa1f6196013b50e125405b5614b8a0ff81b5e0e8931e74b72af8e5af5236c",
+              "state": "writeStarted",
+              "acceptedBytes": 288256
+            },
+            {
+              "sha256": "d7dd43aadff1777e40d2a595121ed757adce8a1cdf2db9dc24d46b3ad9a07e7a",
+              "state": "transferComplete",
+              "acceptedBytes": 288256
+            }
+          ],
+          "binaryEcho": null
+        },
+        {
+          "command": "verify",
+          "runID": "C7FF80A0-2A96-4865-B515-B4A301C7EB7F",
+          "reportSHA256": "5ec2e5c9c40e8b8d30aafbccbb12d952fb9ea2674f69b18bf5e6351e7734619a",
+          "records": [
+            {
+              "sha256": "d7dd43aadff1777e40d2a595121ed757adce8a1cdf2db9dc24d46b3ad9a07e7a",
+              "state": "transferComplete",
+              "acceptedBytes": 288256
+            },
+            {
+              "sha256": "1d098a62fe2f28c71aa9d34c3057033419210a3d3ac3813311ddbc1e9e84ad7b",
+              "state": "helloMatched",
+              "acceptedBytes": 288256
+            }
+          ],
+          "binaryEcho": "256/256 exact bytes; hello is not installed-image attestation"
+        },
+        {
+          "command": "verify",
+          "runID": "104639E7-C213-4B1D-9056-E1473AA3201A",
+          "reportSHA256": "8feca4b7eea0d118af9a71769e57b3c112277d7c549cb72130ce2a358e7d63a0",
+          "records": [
+            {
+              "sha256": "8f926a4e194dcdeb71f9bb2f01d0bc44ef24f40b66c112cfad056628906ea562",
+              "state": "writeStarted",
+              "acceptedBytes": 65536
+            },
+            {
+              "sha256": "7d50e553ac6b92194579b784d0ddb9118308fd5a0ad759ea8de3f3819d0044b9",
+              "state": "outcomeUnknown",
+              "acceptedBytes": 65536
+            }
+          ],
+          "binaryEcho": "256/256 exact bytes; hello is not installed-image attestation"
+        }
+      ],
+      "finalRecoveryReadback": {
+        "reportSHA256": "70b4f4f84826929de0832380f628d411d7fa542251377b805e86d0af19a97df8",
+        "schema": 1,
+        "kind": "final SDK recovery full payload readback after accepted-prefix host interruption",
+        "imageSHA256": "2e2d6082d07fd25257664918de02737ce77585451f3945add56cdcf99643f0a6",
+        "payloadBytes": 144128,
+        "payloadSHA256": "872bf96e5054827b7811ff245d3d057c730ed744d166f93f67bf19930060cbf5",
+        "all563UF2BlocksMatch": true,
+        "picotoolVerifyExitCode": 0,
+        "identitySHA256": "63f3f4d475b00af192df08b006fa7cbe5afb703b99c39fa28e22059d4729c0bf",
+        "newWritePerformed": false,
+        "rebootPerformed": false
+      }
+    },
+    {
+      "kind": "final verified ordinary recovery application state",
+      "sdkEvidenceCommit": "9d50d4945a9ec6dbd59854079359c3fe93e4417e",
+      "sdkEvidenceSHA256": "3897486964ce571414eb28a3b0435e2b672f34f8b02a0cea09967192010b5f27",
+      "finalSDKReportSHA256": "60a646af30234bc6b55af192b78663de7bcb377c35377f33fd3434cdacff132b",
+      "finalSDKRunID": "7AF26799-609C-4699-B000-E8953F5DE7C4",
+      "finalRecordSHA256": "469c5a48a732fae57f547543bed69d24f455ee042962b08e727f37195870d161",
+      "finalResult": "helloMatched",
+      "binaryEcho": "256/256 exact bytes; hello is not installed-image attestation",
+      "imageSHA256": "2e2d6082d07fd25257664918de02737ce77585451f3945add56cdcf99643f0a6",
+      "payloadReadbackSHA256": "872bf96e5054827b7811ff245d3d057c730ed744d166f93f67bf19930060cbf5",
+      "boardState": "ordinary reviewed Firmingo 0.1.0 application, both jumpers removed, USB on Mac"
     }
   ],
-  "executionSourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd"
+  "executionSourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd",
+  "qualificationMeaning": "Selected explicit cases pass as recorded; hardwareQualified=false means no generic production hardware support promotion."
 }

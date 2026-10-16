@@ -7,7 +7,10 @@ manual USB unplugging available. [Build/evidence ledger](../evidence/nano-flash-
 records the exact images and later physical observations. The post-erase manual
 power cut now has exact erased-sector/unchanged-resident readback, invalid-slot
 network boot and a new full SDK recovery with exact echo/payload readback.
-The first-page and partial-SDK-host interruption cases remain open.
+Both checkpoints and the actual partial-SDK host interruption/restart/new full
+recovery now pass the selected byte/readback/echo checks. The first-page initial
+TCP timeout remains preserved. [Dated outcomes](../evidence/nano-flash-checkpoints.md)
+separate these observations from broader production gates.
 
 First establish an independent recovery baseline. The development-signed macOS
 FirmingoKit ROM host has installed the exact reviewed 0.1.0 application, then
