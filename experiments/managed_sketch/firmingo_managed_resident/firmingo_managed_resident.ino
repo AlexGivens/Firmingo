@@ -14,6 +14,16 @@
 #include <pico/rand.h>
 #include <hardware/flash.h>
 #include <hardware/sync.h>
+#ifdef FIRMINGO_FLASH_CHECKPOINT
+#include <hardware/gpio.h>
+#include <hardware/timer.h>
+#if !defined(FIRMINGO_STATEFUL_UPLOAD_PROOF) || (FIRMINGO_FLASH_CHECKPOINT != 1 && FIRMINGO_FLASH_CHECKPOINT != 2)
+#error "Flash checkpoints require an explicit FMS2 upload fault-test build"
+#endif
+// Retained ELF facts distinguish these destructive test images from normal residents.
+extern "C" __attribute__((used)) const uint32_t firmingo_flash_checkpoint_contract[4] = {
+    0x31504346, 1, FIRMINGO_FLASH_CHECKPOINT, 60000};
+#endif
 #include <atomic>
 #include <abi.h>
 #ifdef FIRMINGO_STATEFUL_ALLOCATION_PROOF
@@ -91,7 +101,13 @@ firmingo::Channel channel(backend);
 firmingo::MemorySamples memorySamples;
 #ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
 #ifdef FIRMINGO_STATEFUL_UPLOAD_PROOF
+#if defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 1
+firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulflash-erase-exp1"};
+#elif defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 2
+firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulflash-page-exp1"};
+#else
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulupload-exp1"};
+#endif
 #else
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulboot-exp1"};
 #endif
@@ -129,6 +145,9 @@ class NanoFlash final : public firmingo_managed::ProofFlashPort {
                                  firmingo_managed::kFlashXipAddress ||
         size != firmingo_managed::kProofSectorBytes) return false;
     flash_range_erase(offset, size);
+#if defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 1
+    return hold_after_completed_command();
+#endif
     return true;
   }
   bool program(uint32_t offset, const uint8_t* page, size_t size) override {
@@ -141,12 +160,33 @@ class NanoFlash final : public firmingo_managed::ProofFlashPort {
         source > 0x20042000 - size)
       return false;
     flash_range_program(offset, page, size);
+#if defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 2
+    if (offset == start) return hold_after_completed_command();
+#endif
     return true;
   }
   const uint8_t* slot_data() const override {
     return reinterpret_cast<const uint8_t*>(firmingo_managed::kSlotAddress);
   }
  private:
+#ifdef FIRMINGO_FLASH_CHECKPOINT
+  // XIP has already resumed when this hook runs. Core 1 stays parked and IRQs
+  // stay masked; hardware-timer busy waits need neither interrupts nor USB.
+  // A blinking D13 marks an unfinished installation BETWEEN chip commands.
+  // Expiry returns failure, so no later erase/program command can be issued.
+  bool hold_after_completed_command() {
+    static_assert(LED_BUILTIN == 6u, "Nano D13 checkpoint mapping changed");
+    gpio_init(STATUS_LED_PIN);
+    gpio_set_dir(STATUS_LED_PIN, GPIO_OUT);
+    for (unsigned pulse = 0; pulse < 120; ++pulse) {
+      gpio_put(STATUS_LED_PIN, true);
+      busy_wait_us_32(250000);
+      gpio_put(STATUS_LED_PIN, false);
+      busy_wait_us_32(250000);
+    }
+    return false;
+  }
+#endif
   uint32_t irq_state_ = 0;
   bool active_ = false;
 };

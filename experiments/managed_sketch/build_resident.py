@@ -59,7 +59,11 @@ def main():
                         help="opt-in FMS2 boot runtime with owned arena; all network uploads disabled")
     parser.add_argument("--stateful-upload-proof", action="store_true",
                         help="opt-in FMS2 boot and physically armed target-2 network uploads")
+    parser.add_argument("--flash-checkpoint", choices=("erase", "first-page"),
+                        help="destructive test only: hold after a completed command, then fail; requires --stateful-upload-proof")
     args = parser.parse_args()
+    if args.flash_checkpoint and not args.stateful_upload_proof:
+        parser.error("--flash-checkpoint requires --stateful-upload-proof")
     stateful_runtime = args.stateful_runtime_proof or args.stateful_upload_proof
     cli, config = args.cli.resolve(), args.config_file.resolve()
     board = json.loads((ROOT / "boards/nano_rp2040_connect/baseline.json").read_text())
@@ -99,6 +103,10 @@ def main():
             if args.stateful_upload_proof:
                 command[-3] += " -DFIRMINGO_STATEFUL_UPLOAD_PROOF"
                 command[-1] += " -Wl,-u,firmingo_stateful_upload_contract"
+                if args.flash_checkpoint:
+                    checkpoint = 1 if args.flash_checkpoint == "erase" else 2
+                    command[-3] += f" -DFIRMINGO_FLASH_CHECKPOINT={checkpoint}"
+                    command[-1] += " -Wl,-u,firmingo_flash_checkpoint_contract"
     print("+", " ".join(command), flush=True)
     with (output / "build.log").open("w") as log:
         result = subprocess.run(command, cwd=ROOT, stdout=log,
@@ -175,6 +183,10 @@ def main():
                      "patches/arduino-pico-6.0.0-usb-startup/manifest.json",
                      "patches/arduino-pico-6.0.0-usb-startup/deferred-ncm.patch"):
             report["source_sha256"][name] = sha(ROOT / name)
+    if args.flash_checkpoint:
+        report["status"] = "compile-tested FMS2 flash-checkpoint fault candidate; not flashed"
+        report["flash_checkpoint"] = dict(after=args.flash_checkpoint, hold_ms=60000,
+                                         expiry="fail without continuing", chip_busy_interruption=False)
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({key: value for key, value in report.items()
                       if key != "source_sha256"}, indent=2))

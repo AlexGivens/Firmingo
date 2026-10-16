@@ -190,6 +190,17 @@ jobs:
           python experiments/managed_sketch/export_stateful.py \
             --resident-dir "$output/stateful-upload/resident" --firmware-commit "$GITHUB_SHA" \
             --output "$output/stateful-export" 2>&1 | tee "$output/stateful-export-driver.log"
+      - name: Compile opt-in unfinished-flash checkpoints without hardware execution
+        run: |
+          output=build/managed_sketch/ci
+          for checkpoint in erase first-page; do
+            python experiments/managed_sketch/build_stateful_proof.py --upload-runtime \
+              --flash-checkpoint "$checkpoint" \
+              --cli "$(command -v arduino-cli)" \
+              --config-file build/firmware/nano_rp2040_connect/managed/usb-toolchain/arduino-cli.yaml \
+              --validator build/stateful-check/managed_stateful_check \
+              --output-dir "$output/flash-$checkpoint" 2>&1 | tee "$output/flash-$checkpoint-driver.log"
+          done
       - name: Compose checked FMS2 initial ROM image without device access
         run: |
           python - <<'PY' 2>&1 | tee build/managed_sketch/ci/stateful-initial-driver.log

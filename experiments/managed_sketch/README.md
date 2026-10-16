@@ -501,3 +501,14 @@ The [target-2 increment](../../docs/integration/stateful-upload-contract.md) add
 `--upload-runtime` and `export_stateful.py`: a physically armed FMS2 service and
 versioned, checksummed exact-build contract. Allocation-only and boot-only modes
 remain distinct; no existing compiler/SDK pin is silently upgraded.
+
+## Explicit unfinished-flash qualification
+
+The [selected checkpoint procedure](../../docs/integration/flash-checkpoint-qualification.md)
+adds opt-in `--upload-runtime --flash-checkpoint erase|first-page` builds and
+`checkpoint_flash.py --help`. These destructive test residents pause between
+completed chip commands and fail rather than continue on expiry. They are blocked
+from compiler export and are separate from ordinary builds, smoke and prior
+iPad/iPhone evidence. Manual USB unplugging does not establish an intra-command
+power cut. Exact images, recovery prerequisites and observations live in the
+linked procedure/ledger; no checkpoint has been hardware-qualified at preparation.

@@ -749,3 +749,11 @@ subnet (default 192.168.77.0/24), isolated clean core-6.0.0 build, 18 native cas
 27 host tests (22 existing + 5 flash gates), and 20,000 mutation cases pass.
 ROM-bootloader-only flash command is implemented. One macOS post-flash
 coexistence session subsequently passed; see the local-only evidence report.
+
+## Selected unfinished-flash qualification — 2026-10-16
+
+- [x] Establish an actual signed macOS SDK ROM transfer baseline, fresh hello/exact echo and independent complete payload readback. This replaces the selected FMS2 resident; it does not qualify first installation from non-Firmingo firmware or sandbox execution.
+- [x] Prepare opt-in post-erase and first-page checkpoint residents, exact ELF facts, export rejection and one-shot native harness with durable intent; add both build modes to CI. [Procedure and exact build ledger](docs/integration/flash-checkpoint-qualification.md).
+- [ ] Execute each selected manual power-cut checkpoint, independently verify incomplete sector/resident bytes, and qualify new explicit full SDK recovery.
+- [ ] Separately qualify SDK host restart after an accepted partial UF2 prefix. Keep host acceptance and actual flash contents distinct.
+- [ ] Keep power loss inside a flash-chip command unqualified unless controlled switching/instrumentation becomes available.

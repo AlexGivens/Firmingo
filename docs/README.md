@@ -21,6 +21,11 @@ and native replacement tests. The [target-2 contract/adapter](integration/statef
 adds an exact-commit versioned export and opt-in FMS2 upload build. Compiler/SDK
 adoption and hardware qualification remain open.
 
+The separate [unfinished-flash checkpoints](integration/flash-checkpoint-qualification.md)
+prepare explicit test-only residents and an identity-bound, one-shot native
+harness. Manual power cuts and SDK ROM recovery remain independently qualified
+physical operations; these images cannot be exported as compiler residents.
+
 The experimental [managed-sketch compiler/SDK handoff](integration/managed-sketch-sdk.md)
 provides the M9 contract, portable vectors, pinned reference build recipe,
 and cross-project acceptance checklist. The

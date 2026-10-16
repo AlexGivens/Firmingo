@@ -85,3 +85,14 @@ def test_layout_fields_and_hash_spans_match_independent_fms2_fixture():
         if field['kind']=='zero':assert not any(raw)
     layout['image']['fields'][3]['offset']=9
     with pytest.raises(ValueError,match='offsets'):validate_layout(layout,facts)
+
+
+def test_fault_resident_cannot_be_exported_even_with_normal_report_status(selected, tmp_path):
+    root, resident, commit, report = selected
+    elf = resident_fixture(boot_mode=1, upload=True, checkpoint=(0x31504346, 1, 1, 60000))
+    (resident / 'artifacts/firmingo_managed_resident.ino.elf').write_bytes(elf)
+    report['elf_sha256'] = sha(elf)
+    (resident / 'report.json').write_text(json.dumps(report))
+    with pytest.raises(ValueError, match='fault images cannot be exported'):
+        export_stateful(resident, tmp_path / 'no-export', commit, root)
+    assert not (tmp_path / 'no-export').exists()

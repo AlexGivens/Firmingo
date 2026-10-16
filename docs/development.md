@@ -422,3 +422,12 @@ the same command against the native ARM proof/export; host tests use only
 non-deployable fixtures. [Selected hardware setup](evidence/nano-fms2-initial.md)
 records the separate explicit ROM write/readback, which is not an SDK
 initial-installation backend qualification.
+
+## Unfinished-flash test builds — 2026-10-16
+
+The managed CI job now separately builds both opt-in flash-checkpoint modes via
+`build_stateful_proof.py --upload-runtime --flash-checkpoint erase|first-page`.
+It retains their actual ELF/UF2/native capsule/report bytes without a hardware
+operation. Native/host admission and one-shot journal checks run through the
+normal sanitizer entry point. See [scope and physical procedure](integration/flash-checkpoint-qualification.md);
+these images are not compiler descriptors or release candidates.

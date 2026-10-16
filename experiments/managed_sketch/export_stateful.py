@@ -148,6 +148,8 @@ def export_stateful(resident, output, commit, root=ROOT):
     if sha(elf) != report.get('elf_sha256') or sha(uf2) != report.get('uf2_sha256'):
         raise ValueError('resident artifact/report hash mismatch')
     facts, flash = resident_contract(elf)
+    if facts.get('flashCheckpoint') is not None:
+        raise ValueError('flash checkpoint fault images cannot be exported as compiler residents')
     if not facts['runtimeEnabled'] or not facts['fms2NetworkUploadsEnabled']:
         raise ValueError('ELF lacks FMS2 runtime/upload contract')
     if (facts['linkerBounds']['__end__'] - 0x20000000 != report['static_ram_bytes']

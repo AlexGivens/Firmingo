@@ -141,6 +141,17 @@ def resident_contract(data):
     upload = upload_facts(elf, flash) if "firmingo_stateful_upload_contract" in elf.symbols else None
     if upload and not runtime_enabled:
         raise ValueError("FMS2 uploads require the boot runtime")
+    checkpoint = None
+    if "firmingo_flash_checkpoint_contract" in elf.symbols:
+        marker, section = elf.object("firmingo_flash_checkpoint_contract", 16, 1, 2)
+        value = elf.extent(section[4] + marker - section[3], 16)
+        magic, version, kind, hold_ms = struct.unpack("<4I", value)
+        mappings = [payload[marker - base:marker - base + 16] for base, payload in flash
+                    if base <= marker and marker + 16 <= base + len(payload)]
+        if not upload or (magic, version, hold_ms) != (0x31504346, 1, 60000) or kind not in (1, 2) or mappings != [value]:
+            raise ValueError("invalid flash checkpoint marker or LOAD mapping")
+        checkpoint = dict(after="erase" if kind == 1 else "first-page", hold_ms=hold_ms,
+                          expiry="fail without continuing", chip_busy_interruption=False)
     return {"schema": 1, "purpose": "native stateful proof; no deployment descriptor",
             "board": "nano_rp2040_connect", "imageVersion": 2, "residentABI": 2,
             "apiAddress": address, "apiTableBytes": 52, "apiTableSHA256": sha(table),
@@ -149,7 +160,7 @@ def resident_contract(data):
             "nominalHeapSpanBytes": bounds["__HeapLimit"] - bounds["__end__"],
             "runtimeEnabled": runtime_enabled, "networkUploadsEnabled": not runtime_enabled or bool(upload),
             "fms2NetworkUploadsEnabled": bool(upload), "uploadTarget": upload,
-            "hardwareTested": False}, flash
+            "hardwareTested": False, **({"flashCheckpoint": checkpoint} if checkpoint else {})}, flash
 
 
 def upload_facts(elf, flash):
@@ -234,9 +245,13 @@ def main():
     parser.add_argument("--boot-runtime", action="store_true",
                         help="link the opt-in FMS2 boot runtime; network uploads remain disabled")
     parser.add_argument("--upload-runtime", action="store_true", help="link experimental target-2 FMS2 upload adapter")
+    parser.add_argument("--flash-checkpoint", choices=("erase", "first-page"),
+                        help="opt-in unfinished-write fault resident; requires --upload-runtime")
     args = parser.parse_args()
     if args.boot_runtime and args.upload_runtime:
         parser.error("select one runtime mode")
+    if args.flash_checkpoint and not args.upload_runtime:
+        parser.error("--flash-checkpoint requires --upload-runtime")
     runtime_enabled = args.boot_runtime or args.upload_runtime
     output = args.output_dir.resolve()
     output.mkdir(parents=True, exist_ok=False)
@@ -256,15 +271,20 @@ def main():
         compiler = tool_bin / "arm-none-eabi-g++"
         if not compiler.is_file() or not args.validator.is_file():
             raise ValueError("pinned ARM compiler or native validator missing")
-        run([sys.executable, HERE / "build_resident.py", "--cli", args.cli.resolve(),
+        resident_command = [sys.executable, HERE / "build_resident.py", "--cli", args.cli.resolve(),
              "--config-file", config, "--output-dir", output / "resident",
-             "--stateful-upload-proof" if args.upload_runtime else "--stateful-runtime-proof" if args.boot_runtime else "--stateful-allocation-proof"])
+             "--stateful-upload-proof" if args.upload_runtime else "--stateful-runtime-proof" if args.boot_runtime else "--stateful-allocation-proof"]
+        if args.flash_checkpoint:
+            resident_command += ["--flash-checkpoint", args.flash_checkpoint]
+        run(resident_command)
         resident = output / "resident"
         resident_report = json.loads(bounded_file(resident / "report.json", 262144), object_pairs_hook=unique_object)
         expected_status = ("compile-tested FMS2 boot runtime candidate; network uploads disabled; not flashed" if runtime_enabled
                            else "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed")
         if args.upload_runtime:
             expected_status = "compile-tested FMS2 upload candidate; not flashed"
+        if args.flash_checkpoint:
+            expected_status = "compile-tested FMS2 flash-checkpoint fault candidate; not flashed"
         if (resident_report.get("status") != expected_status
                 or resident_report.get("stateful_runtime_enabled") is not runtime_enabled or ("upload_target" in resident_report) != args.upload_runtime):
             raise ValueError("select explicit candidate allocation build")
@@ -273,6 +293,8 @@ def main():
         if sha(elf) != resident_report["elf_sha256"] or sha(uf2) != resident_report["uf2_sha256"]:
             raise ValueError("resident report/artifacts mismatch")
         contract, flash = resident_contract(elf)
+        if (contract.get("flashCheckpoint") or {}).get("after") != args.flash_checkpoint or contract.get("flashCheckpoint") != resident_report.get("flash_checkpoint"):
+            raise ValueError("flash checkpoint differs between selected mode, ELF and report")
         if contract["runtimeEnabled"] is not runtime_enabled or contract["fms2NetworkUploadsEnabled"] is not args.upload_runtime:
             raise ValueError("resident runtime marker differs from selected build mode")
         report["runtimeEnabled"] = runtime_enabled

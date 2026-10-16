@@ -42,7 +42,7 @@ def fixture(sections, symbols, loads):
     return bytes(data)
 
 
-def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000, boot_mode=None, upload=False):
+def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000, boot_mode=None, upload=False, checkpoint=None):
     calls = [0x10000041] * 8
     rodata = struct.pack("<IHH8I", 0x49504146, 1, 40, *calls)
     rodata += struct.pack("<IHH11I", 0x49504146, version, 52, *calls, state, 4096, 4096)
@@ -53,7 +53,12 @@ def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, 
         rodata += struct.pack("<IHH4I16s16s", 0x32505546, 1, 56, 2, 4096, 1024, 30000,
                               b"nano-managed-v2", b"physical-d2-gnd")
         rodata += b"0.1.0-statefulupload-exp1\0"
-    rodata += bytes((256 if upload else 128) - len(rodata))
+    if checkpoint is not None:
+        rodata += bytes(-len(rodata) % 4)
+    checkpoint_address = 0x10000080 + len(rodata)
+    if checkpoint is not None:
+        rodata += struct.pack("<4I", *checkpoint)
+    rodata += bytes((256 if upload or checkpoint is not None else 128) - len(rodata))
     sections = [(".text", 1, 6, 0x10000000, bytes(128), 0, 0),
                 (".rodata", 1, 2, 0x10000080, rodata, 0, 0),
                 (".bss", arena_type, 3, 0x20002000, 4096 if arena_type == 8 else bytes(4096), 0, 0)]
@@ -71,6 +76,8 @@ def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, 
         symbols.append(("firmingo_stateful_boot_mode", 0x100000dc, 4, 0x11, 2))
     if upload:
         symbols.append(("firmingo_stateful_upload_contract", upload_address, 56, 0x11, 2))
+    if checkpoint is not None:
+        symbols.append(("firmingo_flash_checkpoint_contract", checkpoint_address, 16, 0x11, 2))
     return fixture(sections, symbols, [(1, 0x10000000, 128 + len(rodata))])
 
 
@@ -168,3 +175,37 @@ def test_existing_proof_output_is_never_overwritten(tmp_path, monkeypatch):
     with pytest.raises(FileExistsError):
         main()
     assert receipt.read_text() == "previous evidence"
+
+
+@pytest.mark.parametrize('kind,phase', [(1, 'erase'), (2, 'first-page')])
+def test_fault_checkpoint_facts_come_from_actual_mapped_marker(kind, phase):
+    contract, _ = resident_contract(resident_fixture(boot_mode=1, upload=True,
+        checkpoint=(0x31504346, 1, kind, 60000)))
+    assert contract['flashCheckpoint'] == dict(after=phase, hold_ms=60000,
+        expiry='fail without continuing', chip_busy_interruption=False)
+    normal, _ = resident_contract(resident_fixture(boot_mode=1, upload=True))
+    assert 'flashCheckpoint' not in normal
+
+
+@pytest.mark.parametrize('marker', [(0, 1, 1, 60000), (0x31504346, 2, 1, 60000),
+    (0x31504346, 1, 0, 60000), (0x31504346, 1, 3, 60000), (0x31504346, 1, 1, 0)])
+def test_unknown_fault_marker_never_acquires_normal_resident_meaning(marker):
+    with pytest.raises(ValueError, match='flash checkpoint'):
+        resident_contract(resident_fixture(boot_mode=1, upload=True, checkpoint=marker))
+
+
+@pytest.mark.parametrize('script,mode', [('build_resident', []), ('build_stateful_proof', []),
+    ('build_stateful_proof', ['--boot-runtime'])])
+def test_fault_mode_requires_upload_before_acquiring_tools_or_creating_outputs(tmp_path, monkeypatch, script, mode):
+    import importlib
+    import sys
+    output = tmp_path / 'must-not-exist'
+    arguments = [script, '--cli', 'absent', '--config-file', 'absent', '--output-dir', str(output),
+                 '--flash-checkpoint', 'erase', *mode]
+    if script == 'build_stateful_proof':
+        arguments += ['--validator', 'absent']
+    monkeypatch.setattr(sys, 'argv', arguments)
+    with pytest.raises(SystemExit) as error:
+        importlib.import_module('experiments.managed_sketch.' + script).main()
+    assert error.value.code == 2
+    assert not output.exists()
