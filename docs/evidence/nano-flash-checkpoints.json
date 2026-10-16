@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-16",
-  "status": "compiled/preflight-checked only; selected Nano currently in ROM; checkpoints not executed",
+  "status": "erase-checkpoint composite ROM-verified and fresh exact hello matched; waiting for operator D2/readiness before one commit",
   "hardwareQualified": false,
   "powerControl": "manual USB unplug only",
   "chipCommandPowerCutQualified": false,
@@ -203,7 +203,14 @@
     "ordinaryFMS2UF2Unchanged": "1ef766226ce6a2c51c668562cd51a71ed0bfbe1634b76b54d704c7e710ca1b2f",
     "workflow": "YAML and every bash run block parsed; explicit bash preserves pipefail; actionlint unavailable; remote run pending",
     "upstreamWarnings": "pinned WiFiClient overloaded-virtual warnings remain in actual resident build logs; not newly qualified behavior",
-    "ordinaryABIoneUF2Unchanged": "f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba"
+    "ordinaryABIoneUF2Unchanged": "f2fbe7d76e378a61ce09ebe7ca6a69c2f3efaccc96e3ba16ff72222c22d008ba",
+    "remoteCIAuthentication": "installed gh API credentials returned HTTP 401; public unauthenticated Actions API works",
+    "remoteCI": {
+      "runID": 38963164981,
+      "url": "https://github.com/AlexGivens/Firmingo/actions/runs/38963164981",
+      "status": "in_progress",
+      "conclusion": null
+    }
   },
   "limits": [
     "No checkpoint power cut, paused SDK transfer, host-restart recovery or interrupted-write recovery pass yet.",
@@ -212,5 +219,29 @@
     "Fault images change exact resident/API identities and cannot be compiler-exported.",
     "No rollback, data preservation, minimum-OS, Pico or direct iOS/iPadOS ROM claim."
   ],
-  "observations": []
+  "observations": [
+    {
+      "kind": "exact erase-checkpoint initial ROM installation",
+      "reportSHA256": "044657d864393f292a597d2a557a6c7365245328691c5953907c2f52b2db1be4",
+      "schema": 1,
+      "imageSHA256": "9a20f7a09e7d22d2f72f947ccb7e3215861cbf565cbf3fdeeeccda2673cb1ee1",
+      "sourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd",
+      "residentUF2SHA256": "aa19f6523166abd94697ed4aa1bd2576c2c94bdec0509afaed601a6440e8b04a",
+      "capsuleSHA256": "00548071fd8417e3838c1185e5ec738667df7ef0f742236163dc28462c84f95d",
+      "verifiedUF2PayloadBytes": 158208,
+      "residentReadbackBytes": 154112,
+      "residentReadbackSHA256": "866c52eb97c7ed01103d9d81eb85cb6de43d627eed89382b58921e21de0e394f",
+      "sectorReadbackBytes": 4096,
+      "sectorReadbackSHA256": "5df3405bc7d8e881e919eccbf53a5b2a7ba099daed30b7b3f7cb15b7f4cc60b2",
+      "checkpointTriggered": false,
+      "rebootPerformed": false
+    },
+    {
+      "kind": "explicit reboot and one read-only hello after exact composite verification",
+      "helloSHA256": "adda49ef92725e3a15eb97eff7bf1fdf7c9010bdf191484a75c9561b8060831b",
+      "rebootLogSHA256": "ec01d4b1cb33d63c2cc601a53215453468ad30b007b147b0b732cc1f09d648d9",
+      "result": "selected Nano ID, 0.1.0-statefulflash-erase-exp1, exact target-2 capabilities matched; no upload sent"
+    }
+  ],
+  "executionSourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd"
 }
