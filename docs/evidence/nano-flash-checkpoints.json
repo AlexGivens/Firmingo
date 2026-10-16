@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-16",
-  "status": "erase-checkpoint composite ROM-verified and fresh exact hello matched; waiting for operator D2/readiness before one commit",
+  "status": "erase checkpoint: observed power removal, exact erased-sector/unchanged-resident readback and invalid-slot network boot passed; new SDK full recovery pending",
   "hardwareQualified": false,
   "powerControl": "manual USB unplug only",
   "chipCommandPowerCutQualified": false,
@@ -210,7 +210,8 @@
       "url": "https://github.com/AlexGivens/Firmingo/actions/runs/38963164981",
       "status": "in_progress",
       "conclusion": null
-    }
+    },
+    "remoteCIReportedStatus": "all ten job conclusions report success for 38c24bc; raw-log retrieval requires authorization (public API HTTP 403), so remote test contents are not independently verified"
   },
   "limits": [
     "No checkpoint power cut, paused SDK transfer, host-restart recovery or interrupted-write recovery pass yet.",
@@ -241,6 +242,65 @@
       "helloSHA256": "adda49ef92725e3a15eb97eff7bf1fdf7c9010bdf191484a75c9561b8060831b",
       "rebootLogSHA256": "ec01d4b1cb33d63c2cc601a53215453468ad30b007b147b0b732cc1f09d648d9",
       "result": "selected Nano ID, 0.1.0-statefulflash-erase-exp1, exact target-2 capabilities matched; no upload sent"
+    },
+    {
+      "kind": "one erase-checkpoint managed commit and manual power removal",
+      "capsuleSHA256": "00548071fd8417e3838c1185e5ec738667df7ef0f742236163dc28462c84f95d",
+      "events": [
+        {
+          "sha256": "71adf2f7d51848da423bfb3707915800b8f94c65ff126aeec321122b245b15a9",
+          "state": null,
+          "commitAttempts": null,
+          "replyState": null
+        },
+        {
+          "sha256": "3dc360c9448c5995624010f2d88336c342840d0b04783a4295184f6167b0b88b",
+          "state": "staging",
+          "commitAttempts": 0,
+          "replyState": null
+        },
+        {
+          "sha256": "d44e6983058acec17043569b00a3f5c0bec78818388274f1136523e9fe8289c8",
+          "state": "commitIntent",
+          "commitAttempts": 1,
+          "replyState": null
+        },
+        {
+          "sha256": "5563408f0191bf890ab94f7516ce2a4e37a2ecf3a7628ef876eb7b91a98c9c8c",
+          "state": "committing",
+          "commitAttempts": 1,
+          "replyState": "committing"
+        }
+      ],
+      "hostResult": "one durable commit intent followed by one acknowledged committing reply; no automatic status query or retry",
+      "manualReportSHA256": "8f4a7665351b5fdd3c0b5c495fd84b715b36bb46b7c0defd167a993818330830",
+      "operatorReport": "Slower D13 pulses observed, then USB disconnected",
+      "flashReadback": "pending; no checkpoint pass claimed yet",
+      "chipBusyInterruption": false
+    },
+    {
+      "kind": "erase-checkpoint readback before any boot or recovery write",
+      "reportSHA256": "16ad0f1907e2a1ba7ce3ff543170adba280343184c279c78f4f3bb20ed4659b1",
+      "schema": 1,
+      "residentReadbackBytes": 154112,
+      "residentSHA256": "866c52eb97c7ed01103d9d81eb85cb6de43d627eed89382b58921e21de0e394f",
+      "residentMatchesInitialReadback": true,
+      "residentUF2VerifyExitCode": 0,
+      "managedSectorBytes": 4096,
+      "managedSectorSHA256": "f47a8ec3e9aff2318d896942282ad4fe37d6391c82914f54a5da8a37de1300c6",
+      "managedSectorAllFF": true,
+      "productionValidatorExitCode": 1,
+      "productionValidatorResult": "capsule rejected",
+      "identitySHA256": "63f3f4d475b00af192df08b006fa7cbe5afb703b99c39fa28e22059d4729c0bf",
+      "newWritePerformed": false,
+      "rebootPerformed": false,
+      "chipBusyInterruptionQualified": false
+    },
+    {
+      "kind": "one explicit boot after erased-slot readback",
+      "helloSHA256": "a7d8fe1a967acda2f84944e05414488c824ef351cb8ab4173df43a289d9d1b8c",
+      "result": "fresh exact erase-checkpoint hello and target-2 capabilities matched; no upload sent",
+      "meaning": "resident networking survived this unfinished installation; no exhaustive instruction trace/nonexecution claim"
     }
   ],
   "executionSourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd"
