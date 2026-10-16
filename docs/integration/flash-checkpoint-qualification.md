@@ -4,7 +4,10 @@ This explicit destructive experiment prepares two **test-only** FMS2 residents.
 It is separate from the default firmware, compiler descriptors, WASM assets and
 prior iPad/iPhone qualification. The user selected a recoverable Nano and has
 manual USB unplugging available. [Build/evidence ledger](../evidence/nano-flash-checkpoints.json)
-records the exact images; hardware checkpoints remain unexecuted at preparation.
+records the exact images and later physical observations. The post-erase manual
+power cut now has exact erased-sector/unchanged-resident readback, invalid-slot
+network boot and a new full SDK recovery with exact echo/payload readback.
+The first-page and partial-SDK-host interruption cases remain open.
 
 First establish an independent recovery baseline. The development-signed macOS
 FirmingoKit ROM host has installed the exact reviewed 0.1.0 application, then

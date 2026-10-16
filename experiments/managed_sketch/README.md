@@ -511,4 +511,6 @@ completed chip commands and fail rather than continue on expiry. They are blocke
 from compiler export and are separate from ordinary builds, smoke and prior
 iPad/iPhone evidence. Manual USB unplugging does not establish an intra-command
 power cut. Exact images, recovery prerequisites and observations live in the
-linked procedure/ledger; no checkpoint has been hardware-qualified at preparation.
+linked procedure/ledger. The later post-erase manual checkpoint/new full SDK
+recovery passes its scoped readback/boot/echo checks; first-page and SDK partial
+transfer cases remain open.

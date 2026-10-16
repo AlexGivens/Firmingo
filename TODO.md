@@ -754,6 +754,7 @@ coexistence session subsequently passed; see the local-only evidence report.
 
 - [x] Establish an actual signed macOS SDK ROM transfer baseline, fresh hello/exact echo and independent complete payload readback. This replaces the selected FMS2 resident; it does not qualify first installation from non-Firmingo firmware or sandbox execution.
 - [x] Prepare opt-in post-erase and first-page checkpoint residents, exact ELF facts, export rejection and one-shot native harness with durable intent; add both build modes to CI. [Procedure and exact build ledger](docs/integration/flash-checkpoint-qualification.md).
-- [ ] Execute each selected manual power-cut checkpoint, independently verify incomplete sector/resident bytes, and qualify new explicit full SDK recovery.
+- [x] Qualify the selected post-erase manual power cut: all 4096 managed-sector bytes erased, all resident bytes unchanged, invalid-slot network boot and new full SDK recovery with exact echo/ROM readback.
+- [ ] Execute the separate first-page manual power cut, verify the exact incomplete sector/unchanged resident and qualify its new full SDK recovery.
 - [ ] Separately qualify SDK host restart after an accepted partial UF2 prefix. Keep host acceptance and actual flash contents distinct.
 - [ ] Keep power loss inside a flash-chip command unqualified unless controlled switching/instrumentation becomes available.

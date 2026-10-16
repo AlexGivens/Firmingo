@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "date": "2026-10-16",
-  "status": "erase checkpoint: observed power removal, exact erased-sector/unchanged-resident readback and invalid-slot network boot passed; new SDK full recovery pending",
+  "status": "both exact power-cut byte patterns verified; first-page boot had one connection timeout followed by separately selected successful hello without reset; first-page SDK recovery pending",
   "hardwareQualified": false,
   "powerControl": "manual USB unplug only",
   "chipCommandPowerCutQualified": false,
@@ -214,7 +214,7 @@
     "remoteCIReportedStatus": "all ten job conclusions report success for 38c24bc; raw-log retrieval requires authorization (public API HTTP 403), so remote test contents are not independently verified"
   },
   "limits": [
-    "No checkpoint power cut, paused SDK transfer, host-restart recovery or interrupted-write recovery pass yet.",
+    "Post-erase full SDK recovery passes exact echo/readback. First-page exact interrupted bytes/resident readback pass; initial post-boot TCP timeout is preserved alongside later read-only success. Its SDK recovery and paused-host test remain open.",
     "Manual power removal during a deliberate between-command hold cannot establish a flash-chip-busy power cut.",
     "Native GCC capsules do not extend prior WASM/iPad/iPhone qualification.",
     "Fault images change exact resident/API identities and cannot be compiler-exported.",
@@ -301,6 +301,148 @@
       "helloSHA256": "a7d8fe1a967acda2f84944e05414488c824ef351cb8ab4173df43a289d9d1b8c",
       "result": "fresh exact erase-checkpoint hello and target-2 capabilities matched; no upload sent",
       "meaning": "resident networking survived this unfinished installation; no exhaustive instruction trace/nonexecution claim"
+    },
+    {
+      "kind": "exact SDK recovered-image ROM readback after erase-checkpoint power cut",
+      "reportSHA256": "77c606ed9813a743411503263aab786658a34f681d121181143f7fc358ed020d",
+      "schema": 1,
+      "imageSHA256": "2e2d6082d07fd25257664918de02737ce77585451f3945add56cdcf99643f0a6",
+      "payloadBytes": 144128,
+      "payloadSHA256": "872bf96e5054827b7811ff245d3d057c730ed744d166f93f67bf19930060cbf5",
+      "allUF2BlocksMatch": true,
+      "managedSectorRemainsErased": true,
+      "managedSectorSHA256": "f47a8ec3e9aff2318d896942282ad4fe37d6391c82914f54a5da8a37de1300c6",
+      "picotoolVerifyExitCode": 0,
+      "identitySHA256": "63f3f4d475b00af192df08b006fa7cbe5afb703b99c39fa28e22059d4729c0bf",
+      "newWritePerformed": false,
+      "rebootPerformed": false,
+      "sdkFreshHelloAndEcho": "matched release 0.1.0 and exact 256-byte echo",
+      "sdkInstallRunID": "D31D8E01-3181-4CFD-A52C-F76ADF23AD86",
+      "newOperationAndAttachment": true,
+      "automaticReplayOrResume": false,
+      "sdkEvidenceCommit": "aef5a9976f1ce443ecf9e79a9eb4da7b6545ec85",
+      "sdkEvidenceSHA256": "35ada1b69d439e56aa7464f1cc4a8261c6e7a02527c7e0a37a96c4588e369c96"
+    },
+    {
+      "kind": "exact first-page checkpoint initial ROM installation",
+      "reportSHA256": "9a70fa58a37dd9a94e933944f521b354c881007eb4199b12aa457a8acbc0768b",
+      "schema": 1,
+      "imageSHA256": "8d97ca5bb3ba3b0cd9b195805a6466c87cbf4485515580a0e1d4af1e5cb587be",
+      "sourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd",
+      "residentUF2SHA256": "5025f2c96f741f470be81b978fb66b6450154a190ea759c06f002e088c1ef879",
+      "capsuleSHA256": "8453dc9c07ade9c7d4289291e6a9767fc587f46e72e491b344ec0065cc261aa2",
+      "verifiedUF2PayloadBytes": 158208,
+      "residentReadbackBytes": 154112,
+      "residentReadbackSHA256": "a5bb1635a5a23a6c4587a80fe85c38b5c4382a0f896d8f1b78715a94ccb8f9ca",
+      "sectorReadbackBytes": 4096,
+      "sectorReadbackSHA256": "bd5250edb1f1078d1bb34756a918a6cbf626f044d83156609ef2403be52e611a",
+      "checkpointTriggered": false,
+      "rebootPerformed": false
+    },
+    {
+      "kind": "first-page initial boot hello",
+      "sha256": "7f6fc83e85fd5219a64ec04a80b4e7b5203d9cb511e8dae6ff67d4ac8f14a763",
+      "result": "exact test identity and target-2 matched; no upload sent"
+    },
+    {
+      "kind": "one first-page checkpoint commit and operator power removal",
+      "capsuleSHA256": "8453dc9c07ade9c7d4289291e6a9767fc587f46e72e491b344ec0065cc261aa2",
+      "events": [
+        {
+          "sha256": "84cd88503fe641596addb73ac5ea9f4cd132b461a893afd5ca75456e9ad6815d",
+          "state": null,
+          "commitAttempts": null,
+          "replyState": null
+        },
+        {
+          "sha256": "11ae0237828edbd4366c9c93fc31f2f1030f1fed1fa481950923c32f34bd66e8",
+          "state": "staging",
+          "commitAttempts": 0,
+          "replyState": null
+        },
+        {
+          "sha256": "1a170f9dcd615b94188f8e8983f74e72134c281db5158c7aecbf5ba019d7dcc2",
+          "state": "commitIntent",
+          "commitAttempts": 1,
+          "replyState": null
+        },
+        {
+          "sha256": "38cfc52c4be23a28038efc149f9b56425ada668ac43d8dbd2881907f6e8f80f5",
+          "state": "committing",
+          "commitAttempts": 1,
+          "replyState": "committing"
+        }
+      ],
+      "manualReportSHA256": "194a37ec7c58710b22625d01ff836732a5458c46653f0e5b55a4b2188d8ee8f9",
+      "operatorReport": "D13 pulses slowed; power removed",
+      "flashReadback": "pending; no first-page pass claimed yet",
+      "automaticReplay": false,
+      "chipBusyInterruption": false
+    },
+    {
+      "kind": "first-page checkpoint readback before any boot or recovery write",
+      "reportSHA256": "dd463268e4a05bf6bf230754a9b55e68e2a15c940a01963f873619c552d8b1b5",
+      "schema": 1,
+      "residentReadbackBytes": 154112,
+      "residentSHA256": "a5bb1635a5a23a6c4587a80fe85c38b5c4382a0f896d8f1b78715a94ccb8f9ca",
+      "residentMatchesInitialReadback": true,
+      "residentUF2VerifyExitCode": 0,
+      "managedSectorBytes": 4096,
+      "managedSectorSHA256": "515885ef30bebc2fbee0322483a18f13f6ce11a56fde1c9baa79be225a12774f",
+      "first256BytesMatchSelectedHeaderPage": true,
+      "remaining3840BytesAllFF": true,
+      "headerHashMatches": true,
+      "payloadHashMismatch": true,
+      "validatorInputBytes": 380,
+      "validatorInputSHA256": "e35442dd190d4b02d256ce5099f5505b163d863ab3b8a56ed73d99ad93e41903",
+      "productionValidatorExitCode": 1,
+      "productionValidatorResult": "capsule rejected",
+      "identitySHA256": "63f3f4d475b00af192df08b006fa7cbe5afb703b99c39fa28e22059d4729c0bf",
+      "newWritePerformed": false,
+      "rebootPerformed": false,
+      "chipBusyInterruptionQualified": false
+    },
+    {
+      "kind": "first read-only hello after invalid first-page slot boot",
+      "result": "socket.create_connection timed out at 5 seconds; no hello received",
+      "automaticRetry": false,
+      "resetOrWriteSent": false,
+      "reportSHA256": "ad4e683790810d5c6b723734403b1a4a2e1822e2a1182da8dc7513b813d0fa4f"
+    },
+    {
+      "kind": "separately selected read-only inspection after recorded USB/route diagnostics",
+      "priorFailurePreserved": true,
+      "resetOrWriteSent": false,
+      "result": "exact expected hello/capabilities matched",
+      "helloSHA256": "fda09fff6a63bbf8ab4130971c168e1777038e7b09373d072e31c8eb2741db3c",
+      "reportSHA256": "eeb06457bcdcf9086ee39f2898e1d490e9df4cd16144d232f92a8719ce3d3681"
+    },
+    {
+      "kind": "layered read-only diagnostics between first-page hello attempts",
+      "captures": [
+        {
+          "role": "ifconfig-r1.local.txt",
+          "sha256": "bbd19ea42d058a362d263ce4e2575493ff33b9383dd5e7a2422875b05c37d6f7"
+        },
+        {
+          "role": "nwi-r1.local.txt",
+          "sha256": "f50e6ab42132f7251d953ed532aff2fccc1a5974b95f47532b3e4d84671571b2"
+        },
+        {
+          "role": "route-r1.local.txt",
+          "sha256": "d86303003b5a1acb95e4151f3958acba6ed02fc18a2e7cd47cf11abf36cbfafb"
+        },
+        {
+          "role": "usb-r1.local.txt",
+          "sha256": "65d9f2dba63b2119f0d9ba97656737669eb3db18f27912d76de2f40a6287a49d"
+        },
+        {
+          "role": "arp-r1.local.txt",
+          "sha256": "6ed40a4064ac94dbdfc4d68f10ed8aaa49c6fee2b5d705358be710517c1ddab1"
+        }
+      ],
+      "observed": "Nano USB device and active en5 with expected IPv4/route present; no ARP entry at that observation",
+      "cause": "unresolved; diagnostics and later hello do not identify the lost exchange or timing cause"
     }
   ],
   "executionSourceCommit": "38c24bc26e1e2d2206dfd81c9b3a1c5898722afd"
