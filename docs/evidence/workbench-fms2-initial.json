@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "date": "2026-11-04",
+  "status": "Experimental FMS2 initial setup ROM-verified before reboot; subsequent scoped Workbench iPad evidence linked separately",
+  "scope": "Explicit prerequisite setup for Workbench build 11, not a new firmware release/support claim",
+  "board": "nano_rp2040_connect",
+  "deviceID": "5031503337360009",
+  "residentFirmwareCommit": "97be7bbbe29ef1d18ec886ae6eea1a2d41905869",
+  "residentUF2SHA256": "1ef766226ce6a2c51c668562cd51a71ed0bfbe1634b76b54d704c7e710ca1b2f",
+  "residentELFSHA256": "bf32639c7fc2181c9ff6f99aaf8c64e19bda4f83f9690321e2b098bc81e451a8",
+  "initialImagePreflight": {
+    "report": {
+      "schema": 1,
+      "status": "prepared FMS2 initial ROM image; not flashed or hardware-qualified",
+      "board": "nano_rp2040_connect",
+      "profile": "nano-managed-v2",
+      "residentUF2SHA256": "1ef766226ce6a2c51c668562cd51a71ed0bfbe1634b76b54d704c7e710ca1b2f",
+      "capsuleSHA256": "537ce260fc33d4b23b2f8829aee6a9b12653236db6baad4c317040dbf087fd89",
+      "capsuleBytes": 544,
+      "compositeUF2SHA256": "205e2fcf502b0d36132610a5ac425e039e6510eee2da90979241c390e569d6d1",
+      "compositeUF2Bytes": 316416,
+      "apiAddress": 268578932,
+      "stateAddress": 536906044,
+      "stateCapacityBytes": 4096,
+      "managedSectorAddress": 270532608,
+      "managedSectorBytes": 4096,
+      "validatorSHA256": "803a617da0b1d55af2a869963b546de70f7316c401b5a5e5c04e052cf8de30d4",
+      "nativeCheck": "FMS2 linked capsule: code=284 data=4 bss=20; guarded initialization, generation replacement and host boot dispatch passed; ARM NOT executed",
+      "effect": "Replace resident payload regions and initialize first managed sector; other flash outside image",
+      "hardwareQualified": false
+    },
+    "reportSHA256": "ad17178549722594a6fafe7e8e7fd79b9745a787c4b819df4de76a043e9fc057",
+    "validatorSourceCommit": "85009abaed0b58d124bdabb5bf5001328b235c38",
+    "freshNativeBuild": true,
+    "legacyNativeCacheFailure": "Old build/native-sanitize cache referenced removed MacOSX27.0.sdk; fresh isolated native checker built using installed SDK before the final r2 preflight.",
+    "firmwareWritten": false
+  },
+  "romVerification": {
+    "schema": 1,
+    "status": "all included bytes matched before reboot",
+    "board": "nano_rp2040_connect",
+    "selectedDeviceID": "5031503337360009",
+    "residentUF2SHA256": "1ef766226ce6a2c51c668562cd51a71ed0bfbe1634b76b54d704c7e710ca1b2f",
+    "initialCompositeSHA256": "205e2fcf502b0d36132610a5ac425e039e6510eee2da90979241c390e569d6d1",
+    "loadVerifyPassed": true,
+    "independentVerifyPassed": true,
+    "readbacks": [
+      {
+        "region": "resident",
+        "start": 268435456,
+        "bytes": 154112,
+        "sha256": "87e42a42f1c0fe047981c3ace52b41b905cc207fb3ee373482048e7399eab63c",
+        "comparedBytes": 154112
+      },
+      {
+        "region": "sector",
+        "start": 270532608,
+        "bytes": 4096,
+        "sha256": "0f335abfbf01d221100f354c88a8feff495e7d3796b896cd1be659773572930e",
+        "comparedBytes": 4096
+      }
+    ],
+    "allIncludedBytesCompared": 158208,
+    "rebooted": true,
+    "scope": "Initial ROM setup only; SDK managed stage/commit/startup/behavior not yet qualified"
+  },
+  "sdkSourceCommit": "dd718468f6d498a825c1fa760f9e644c78fcd43f",
+  "workbenchBuild": "11",
+  "sdkEvidence": "https://github.com/AlexGivens/FirmingoKit/blob/main/docs/workbench-managed-preparation.json",
+  "softwareReplacementAuthorized": true,
+  "deviceSelector": "Exact ROM --ser plus matched flash ID before load",
+  "picotoolSHA256": "d25535c5d179aa7268a57d5746c46873f53d6c215613c3eaa85caa16ec0d3153",
+  "firmwareSourceChanged": false,
+  "limitations": [
+    "Same reviewed historical experimental resident; no new ARM firmware build or current-release qualification",
+    "Initial ROM programming is prerequisite setup, not SDK managed upload or SDK ROM writer qualification",
+    "Only included image bytes compared; no preservation/attestation claim for unrelated flash",
+    "No cold-attachment, Internet, minimum-OS, rollback, electrical or Pico result"
+  ],
+  "subsequentManagedQualification": {
+    "repository": "FirmingoKit",
+    "ledger": "docs/workbench-managed-ipad-qualification.json",
+    "url": "https://github.com/AlexGivens/FirmingoKit/blob/main/docs/workbench-managed-ipad-qualification.json",
+    "appBuild": "11",
+    "scope": "Selected iPad fixed FMS2 replacements, abort/disconnect, saved-context app restart, RAM-only power-cycle unknown/explicit host retirement, exact echo and manual GPIO observations; no SDK ROM writer or flash-fault qualification",
+    "residentRebuilt": false
+  }
+}
