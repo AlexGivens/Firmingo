@@ -27,8 +27,16 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
   Nano overlay and independent ELF/UF2 validation. The local `1.0.0-rc.1`
   build reports 135,472 flash bytes, 104,904 static RAM bytes and 153,984
   compared ELF/UF2 bytes.
-- [ ] Run the exact-commit export from the selected revision and review its
-  Compiler recipe/SDK catalogue entry and initial ROM image.
+- [x] Export the candidate from firmware commit
+  7f9bb169436621aceea533fcab4231a1a8e14bc3 and verify both outer references
+  plus all 39 compiler resource lengths and hashes. Outer manifest SHA-256
+  7d244b53e50079ac47b3a0ee530c51c6d24932bb04dcf0006b896e1cd39d23a1,
+  compiler manifest SHA-256
+  44489d5d035dd8a11eef8b05ffc2c9e628fb958b92d74f8450dfcba9434f4bb1.
+  The pinned rebuild reproduced the resident ELF and UF2. Local verification
+  passed 23 sanitizer-native and 267 Python host tests.
+- [ ] Review the candidate Compiler import and SDK catalogue entry and compose
+  a checked initial ROM image for qualification.
 - [ ] Qualify the exact candidate through Workbench on each claimed host,
   preserving the earlier experimental runs as separate evidence.
 
