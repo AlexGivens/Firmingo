@@ -7,9 +7,16 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from tools.version import fms2_candidate_version
+
+FMS2_UPLOAD_STATUS = "compile-tested FMS2 upload candidate; not flashed"
+FMS2_RELEASE_STATUS = "compile-tested FMS2 release candidate; not flashed"
 
 
 def sha(path):
@@ -45,6 +52,31 @@ def checked_ram_park(config, elf):
     return address, size
 
 
+def source_inventory(sketch, args, stateful_runtime):
+    names = [
+        "build_resident.py", "abi.h", "image.h", "image.cpp", "mailbox.h", "console.h",
+        "core1_pause.h", "core1_pause.cpp", "stage.h", "stage.cpp", "install.h", "install.cpp",
+        "switch.h", "switch.cpp", "fmgo_upload.h", "fmgo_upload.cpp", "upload_wire.h",
+        "upload_wire.cpp", "upload_server.h", "upload_server.cpp",
+    ]
+    if args.stateful_allocation_proof or stateful_runtime:
+        names.append("stateful_abi.h")
+    if stateful_runtime:
+        names.extend(("stateful_image.h", "stateful_image.cpp", "stateful_runtime.h", "stateful_runtime.cpp"))
+    if args.stateful_upload_proof:
+        names.extend(("stateful_upload.h", "stateful_upload.cpp"))
+    paths = [sketch / "firmingo_managed_resident.ino", ROOT / "boards/nano_rp2040_connect/baseline.json",
+             *(HERE / name for name in names), *(p for p in (ROOT / "src").rglob("*") if p.is_file())]
+    if args.stateful_upload_proof:
+        paths.extend(ROOT / name for name in (
+            "boards/nano_rp2040_connect/core-lock.json",
+            "patches/arduino-pico-6.0.0-usb-startup/manifest.json",
+            "patches/arduino-pico-6.0.0-usb-startup/deferred-ncm.patch"))
+    if args.fms2_release_candidate:
+        paths.extend((ROOT / "library.properties", ROOT / "tools/version.py"))
+    return {path.relative_to(ROOT).as_posix(): sha(path) for path in sorted(paths)}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cli", required=True, type=Path,
@@ -59,9 +91,17 @@ def main():
                         help="opt-in FMS2 boot runtime with owned arena; all network uploads disabled")
     parser.add_argument("--stateful-upload-proof", action="store_true",
                         help="opt-in FMS2 boot and physically armed target-2 network uploads")
+    parser.add_argument("--fms2-release-candidate", action="store_true",
+                        help="build the normal FMS2 upload runtime with its release-candidate identity")
     parser.add_argument("--flash-checkpoint", choices=("erase", "first-page"),
                         help="destructive test only: hold after a completed command, then fail; requires --stateful-upload-proof")
     args = parser.parse_args()
+    candidate_version = None
+    if args.fms2_release_candidate:
+        if args.stateful_allocation_proof or args.stateful_runtime_proof or args.stateful_upload_proof or args.flash_checkpoint:
+            parser.error("select the FMS2 release candidate without experimental or fault modes")
+        candidate_version = fms2_candidate_version((ROOT / "src/core/version.h").read_bytes())
+        args.stateful_upload_proof = True
     if args.flash_checkpoint and not args.stateful_upload_proof:
         parser.error("--flash-checkpoint requires --stateful-upload-proof")
     stateful_runtime = args.stateful_runtime_proof or args.stateful_upload_proof
@@ -84,6 +124,7 @@ def main():
     # A failed rebuild must never leave an older successful report behind.
     (output / "report.json").unlink(missing_ok=True)
     sketch = HERE / "firmingo_managed_resident"
+    sources = source_inventory(sketch, args, stateful_runtime)
     command = [
         str(cli), "--config-file", str(config), "compile",
         "--fqbn", board["fqbn"], "--warnings", "all",
@@ -103,6 +144,8 @@ def main():
             if args.stateful_upload_proof:
                 command[-3] += " -DFIRMINGO_STATEFUL_UPLOAD_PROOF"
                 command[-1] += " -Wl,-u,firmingo_stateful_upload_contract"
+                if candidate_version is not None:
+                    command[-3] += " -DFIRMINGO_FMS2_RELEASE_CANDIDATE"
                 if args.flash_checkpoint:
                     checkpoint = 1 if args.flash_checkpoint == "erase" else 2
                     command[-3] += f" -DFIRMINGO_FLASH_CHECKPOINT={checkpoint}"
@@ -126,6 +169,8 @@ def main():
     if not elf.is_file() or not uf2.is_file():
         raise SystemExit("resident ELF or UF2 missing")
     park_address, park_bytes = checked_ram_park(config, elf)
+    if source_inventory(sketch, args, stateful_runtime) != sources:
+        raise SystemExit("resident sources changed during compilation")
     report = {
         "status": "compile-tested experimental resident; not flashed",
         "board": board["board"],
@@ -141,48 +186,25 @@ def main():
         "uf2_sha256": sha(uf2),
         "core1_park_ram_address": f"0x{park_address:08x}",
         "core1_park_bytes": park_bytes,
-        "source_sha256": {
-            str(p.relative_to(ROOT)): sha(p)
-            for p in sorted([
-                sketch / "firmingo_managed_resident.ino",
-                HERE / "build_resident.py",
-                HERE / "abi.h", HERE / "image.h", HERE / "image.cpp",
-                HERE / "mailbox.h", HERE / "console.h",
-                HERE / "core1_pause.h", HERE / "core1_pause.cpp",
-                HERE / "stage.h", HERE / "stage.cpp",
-                HERE / "install.h", HERE / "install.cpp",
-                HERE / "switch.h", HERE / "switch.cpp",
-                HERE / "fmgo_upload.h", HERE / "fmgo_upload.cpp",
-                HERE / "upload_wire.h", HERE / "upload_wire.cpp",
-                HERE / "upload_server.h", HERE / "upload_server.cpp",
-                ROOT / "boards/nano_rp2040_connect/baseline.json",
-                *[p for p in (ROOT / "src").rglob("*") if p.is_file()],
-            ])
-        },
+        "source_sha256": sources,
     }
     if args.stateful_allocation_proof or stateful_runtime:
         report["status"] = "compile-tested stateful allocation candidate; FMS2 runtime disabled; not flashed"
         report["legacy_upload_target"] = report.pop("upload_target")
         report["stateful_runtime_enabled"] = False
-        report["source_sha256"][str((HERE / "stateful_abi.h").relative_to(ROOT))] = sha(HERE / "stateful_abi.h")
     if stateful_runtime:
         report["status"] = "compile-tested FMS2 boot runtime candidate; network uploads disabled; not flashed"
         report.pop("legacy_upload_target")
         report["stateful_runtime_enabled"] = True
         report["network_uploads_enabled"] = False
-        for name in ("stateful_image.h", "stateful_image.cpp", "stateful_runtime.h", "stateful_runtime.cpp"):
-            report["source_sha256"][str((HERE / name).relative_to(ROOT))] = sha(HERE / name)
     if args.stateful_upload_proof:
-        report["status"] = "compile-tested FMS2 upload candidate; not flashed"
+        report["status"] = FMS2_UPLOAD_STATUS
         report["network_uploads_enabled"] = True
         report["upload_target"] = {"id": 2, "format": "nano-managed-v2", "max_size": 4096,
                                    "max_chunk": 1024, "authorization": "physical-d2-gnd"}
-        for name in ("stateful_upload.h", "stateful_upload.cpp"):
-            report["source_sha256"][str((HERE / name).relative_to(ROOT))] = sha(HERE / name)
-        for name in ("boards/nano_rp2040_connect/core-lock.json",
-                     "patches/arduino-pico-6.0.0-usb-startup/manifest.json",
-                     "patches/arduino-pico-6.0.0-usb-startup/deferred-ncm.patch"):
-            report["source_sha256"][name] = sha(ROOT / name)
+    if candidate_version is not None:
+        report["status"] = FMS2_RELEASE_STATUS
+        report["firmware_version"] = candidate_version
     if args.flash_checkpoint:
         report["status"] = "compile-tested FMS2 flash-checkpoint fault candidate; not flashed"
         report["flash_checkpoint"] = dict(after=args.flash_checkpoint, hold_ms=60000,

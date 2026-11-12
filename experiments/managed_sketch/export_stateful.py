@@ -15,6 +15,8 @@ from experiments.managed_sketch.export_resident import (
     ELF_LIMIT, UF2_LIMIT, COMMIT, HASH, bounded_file, check_uf2, git_blob, sha, unique_object,
 )
 from experiments.managed_sketch.build_stateful_proof import resident_contract
+from experiments.managed_sketch.build_resident import FMS2_RELEASE_STATUS, FMS2_UPLOAD_STATUS
+from tools.version import fms2_candidate_version
 
 RESOURCES = {
     'contract/abi.h': 'experiments/managed_sketch/abi.h',
@@ -111,21 +113,68 @@ def validate_layout(layout, facts):
             raise ValueError('contract/upload ELF mismatch: ' + key)
 
 
-def export_stateful(resident, output, commit, root=ROOT):
-    if not COMMIT.fullmatch(commit):
-        raise ValueError('select an exact lowercase firmware commit')
-    resident, root = Path(resident), Path(root)
+def read_stateful_build_report(resident, *, release_candidate=False):
+    """Require the exact build mode and full FMS2 upload facts before reading images."""
     report_bytes = bounded_file(resident / 'report.json', 262144)
     report = json.loads(report_bytes, object_pairs_hook=unique_object)
     target = dict(id=2, format='nano-managed-v2', max_size=4096, max_chunk=1024, authorization='physical-d2-gnd')
-    if (not isinstance(report, dict) or report.get('status') != 'compile-tested FMS2 upload candidate; not flashed'
+    expected_status = FMS2_RELEASE_STATUS if release_candidate else FMS2_UPLOAD_STATUS
+    if (not isinstance(report, dict) or report.get('status') != expected_status
             or report.get('board') != 'nano_rp2040_connect' or report.get('core') != 'rp2040:rp2040@6.0.0'
             or report.get('stateful_runtime_enabled') is not True or report.get('network_uploads_enabled') is not True
             or report.get('upload_target') != target):
-        raise ValueError('select the explicit FMS2 upload build, not boot-only/allocation/ABI one')
+        raise ValueError('select the expected FMS2 build mode')
     sources = report.get('source_sha256')
-    if not isinstance(sources, dict) or not REQUIRED <= sources.keys() or len(sources) > 256:
+    required = REQUIRED | ({'library.properties', 'tools/version.py'} if release_candidate else set())
+    if not isinstance(sources, dict) or not required <= sources.keys() or len(sources) > 256:
         raise ValueError('incomplete FMS2 resident source inventory')
+    for field, budget in (('flash_bytes', 1048576), ('static_ram_bytes', 196608)):
+        if type(report.get(field)) is not int or not 0 < report[field] <= budget or report.get(field.replace('bytes', 'budget_bytes')) != budget:
+            raise ValueError('resident memory budget mismatch')
+    return report_bytes, report
+
+
+def read_stateful_images(resident, report):
+    """Verify actual readonly API/upload tables, memory extents, and ELF/UF2 agreement."""
+    elf = bounded_file(resident / 'artifacts/firmingo_managed_resident.ino.elf', ELF_LIMIT)
+    uf2 = bounded_file(resident / 'artifacts/firmingo_managed_resident.ino.uf2', UF2_LIMIT)
+    if sha(elf) != report.get('elf_sha256') or sha(uf2) != report.get('uf2_sha256'):
+        raise ValueError('resident artifact/report hash mismatch')
+    facts, flash = resident_contract(elf)
+    if facts.get('flashCheckpoint') is not None:
+        raise ValueError('flash checkpoint fault images cannot be exported as compiler residents')
+    if not facts['runtimeEnabled'] or not facts['fms2NetworkUploadsEnabled']:
+        raise ValueError('ELF lacks FMS2 runtime/upload contract')
+    if (facts['linkerBounds']['__end__'] - 0x20000000 != report['static_ram_bytes']
+            or any(address + len(data) > 0x10100000 for address, data in flash)):
+        raise ValueError('actual ELF memory extents disagree with budget/report')
+    compared = check_uf2(uf2, flash)
+    return elf, uf2, facts, flash, compared
+
+
+def verify_stateful_version(version_source, report, flash, *, release_candidate=False):
+    """Match the report and selected source identity to initialized ELF bytes."""
+    if release_candidate:
+        version = fms2_candidate_version(version_source)
+        if report.get('firmware_version') != version:
+            raise ValueError('resident report differs from selected FMS2 candidate version')
+    else:
+        match = re.search(rb'^#define FIRMINGO_VERSION "([0-9.]+)"$', version_source, re.MULTILINE)
+        if match is None:
+            raise ValueError('missing selected firmware version')
+        version = match[1].decode() + '-statefulupload-exp1'
+    if not any(version.encode() + b'\0' in data for _, data in flash):
+        raise ValueError('ELF lacks selected firmware identity')
+    return version
+
+
+def export_stateful(resident, output, commit, root=ROOT, *, release_candidate=False):
+    """Write the schema-three compiler input after exact source and binary checks."""
+    if not COMMIT.fullmatch(commit):
+        raise ValueError('select an exact lowercase firmware commit')
+    resident, root = Path(resident), Path(root)
+    report_bytes, report = read_stateful_build_report(resident, release_candidate=release_candidate)
+    sources = report['source_sha256']
     tracked = subprocess.run(['git', '--no-replace-objects', '-C', str(root), 'ls-tree', '-r', '--name-only', commit, '--', 'src'],
                              capture_output=True, text=True, check=True, timeout=15).stdout.splitlines()
     if any(name not in sources for name in tracked if name.endswith(('.h', '.hpp', '.cpp', '.c', '.inc', '.s', '.S'))):
@@ -140,29 +189,9 @@ def export_stateful(resident, output, commit, root=ROOT):
     baseline = json.loads(git_blob(root, commit, 'boards/nano_rp2040_connect/baseline.json'))
     if report.get('fqbn') != baseline['fqbn']:
         raise ValueError('resident FQBN differs from committed Nano pin')
-    for field, budget in (('flash_bytes', 1048576), ('static_ram_bytes', 196608)):
-        if type(report.get(field)) is not int or not 0 < report[field] <= budget or report.get(field.replace('bytes', 'budget_bytes')) != budget:
-            raise ValueError('resident memory budget mismatch')
-    elf = bounded_file(resident / 'artifacts/firmingo_managed_resident.ino.elf', ELF_LIMIT)
-    uf2 = bounded_file(resident / 'artifacts/firmingo_managed_resident.ino.uf2', UF2_LIMIT)
-    if sha(elf) != report.get('elf_sha256') or sha(uf2) != report.get('uf2_sha256'):
-        raise ValueError('resident artifact/report hash mismatch')
-    facts, flash = resident_contract(elf)
-    if facts.get('flashCheckpoint') is not None:
-        raise ValueError('flash checkpoint fault images cannot be exported as compiler residents')
-    if not facts['runtimeEnabled'] or not facts['fms2NetworkUploadsEnabled']:
-        raise ValueError('ELF lacks FMS2 runtime/upload contract')
-    if (facts['linkerBounds']['__end__'] - 0x20000000 != report['static_ram_bytes']
-            or any(address + len(data) > 0x10100000 for address, data in flash)):
-        raise ValueError('actual ELF memory extents disagree with budget/report')
-    compared = check_uf2(uf2, flash)
-    version_source = git_blob(root, commit, 'src/core/version.h')
-    match = re.search(rb'^#define FIRMINGO_VERSION "([0-9.]+)"$', version_source, re.MULTILINE)
-    if match is None:
-        raise ValueError('missing committed firmware version')
-    version = match[1].decode() + '-statefulupload-exp1'
-    if not any(version.encode() + b'\0' in data for _, data in flash):
-        raise ValueError('ELF lacks selected firmware identity')
+    elf, uf2, facts, flash, compared = read_stateful_images(resident, report)
+    version = verify_stateful_version(git_blob(root, commit, 'src/core/version.h'), report, flash,
+                                      release_candidate=release_candidate)
     resources = {name: git_blob(root, commit, source) for name, source in RESOURCES.items()}
     layout = json.loads(resources['contract/image-layout.json'], object_pairs_hook=unique_object)
     validate_layout(layout, facts)
@@ -182,7 +211,8 @@ def export_stateful(resident, output, commit, root=ROOT):
     layout['firmwareCommit'] = commit
     layout['resources'] = [dict(path=name, sourcePath=RESOURCES[name], bytes=len(data), sha256=sha(data)) for name, data in resources.items()]
     contract_bytes = (json.dumps(layout, sort_keys=True, indent=2) + '\n').encode()
-    validator_hashes = {name: sha(git_blob(root, commit, name)) for name in VALIDATORS}
+    validators = (*VALIDATORS, 'tools/version.py') if release_candidate else VALIDATORS
+    validator_hashes = {name: sha(git_blob(root, commit, name)) for name in validators}
     for name, expected in validator_hashes.items():
         if sha((ROOT / name).read_bytes()) != expected:
             raise ValueError('use the exporter/validators from the selected firmware commit')

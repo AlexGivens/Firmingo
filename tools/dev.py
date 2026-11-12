@@ -148,9 +148,9 @@ def test(args):
 def build(args):
     manifest = load_manifest(args.board)
     check_baseline(manifest)
-    if args.firmware == "managed":
+    if args.firmware in ("managed", "fms2-rc"):
         from tools.managed_profile import build_managed
-        return build_managed(args, manifest)
+        return build_managed(args, manifest, release_candidate=args.firmware == "fms2-rc")
     sketch = selected_sketch(manifest, args.firmware)
     cli = check_arduino(manifest)
     out = ROOT / "build" / "firmware" / args.board
@@ -283,6 +283,14 @@ def package(args):
     return 0
 
 
+def export_fms2_candidate(args):
+    from tools.fms2_release import export_candidate
+
+    profile = ROOT / "build/firmware/nano_rp2040_connect/fms2-rc"
+    print(json.dumps(export_candidate(profile, args.output, args.firmware_commit, ROOT), indent=2))
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -293,12 +301,16 @@ def main():
     p.set_defaults(function=test)
     p = commands.add_parser("build", help="compile a selected firmware profile; never upload")
     p.add_argument("--board", required=True, choices=BOARDS)
-    p.add_argument("--firmware", choices=["baseline", *REFERENCE_SKETCHES, "managed"], default="baseline",
-                   help="managed builds the experimental Nano resident; production qualification remains separate")
+    p.add_argument("--firmware", choices=["baseline", *REFERENCE_SKETCHES, "managed", "fms2-rc"], default="baseline",
+                   help="managed selects experimental ABI one; fms2-rc selects the Nano FMS2 release candidate")
     p.add_argument("--subnet-octet", type=int, choices=range(256), default=77,
                    metavar="0..255", help="reference builds: 192.168.X.0/24 (default 77)")
     p.add_argument("--verbose", action="store_true")
     p.set_defaults(function=build)
+    p = commands.add_parser("export-fms2-rc", help="export a verified Nano FMS2 release candidate; never flash")
+    p.add_argument("--firmware-commit", required=True, help="exact lowercase Git commit of the build inputs")
+    p.add_argument("--output", required=True, type=Path, help="new output directory with an existing parent")
+    p.set_defaults(function=export_fms2_candidate)
     p = commands.add_parser("smoke", help="explicit-target, nondestructive hardware suite")
     p.add_argument("--board", required=True, choices=BOARDS)
     p.add_argument("--address", required=True, help="numeric IPv4 address; no implicit default")
@@ -348,7 +360,7 @@ def main():
     args = parser.parse_args()
     try:
         return args.function(args)
-    except (OSError, RuntimeError, ValueError, subprocess.TimeoutExpired) as exc:
+    except (OSError, RuntimeError, ValueError, subprocess.SubprocessError) as exc:
         print(f"ERROR: {exc}\nRerun: {shlex.join([sys.executable, *sys.argv])}", file=sys.stderr)
         return 1
 

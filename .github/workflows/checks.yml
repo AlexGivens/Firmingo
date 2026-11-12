@@ -73,6 +73,8 @@ jobs:
             firmware: application
           - board: nano_rp2040_connect
             firmware: uart
+          - board: nano_rp2040_connect
+            firmware: fms2-rc
           - board: raspberry_pi_pico
             firmware: local-only
           - board: raspberry_pi_pico
@@ -97,6 +99,12 @@ jobs:
           mkdir -p "$output"
           echo "FIRMWARE_OUTPUT=$output" >> "$GITHUB_ENV"
           python tools/dev.py build --board "$BUILD_BOARD" --firmware "$BUILD_FIRMWARE" 2>&1 | tee "$output/driver.log"
+      - name: Export exact Nano FMS2 candidate and compiler contract
+        if: matrix.firmware == 'fms2-rc'
+        shell: bash
+        run: |
+          python tools/dev.py export-fms2-rc --firmware-commit "$GITHUB_SHA" \
+            --output "$FIRMWARE_OUTPUT/release-export" 2>&1 | tee "$FIRMWARE_OUTPUT/export-driver.log"
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always() && env.FIRMWARE_OUTPUT != ''
         with:
@@ -105,6 +113,11 @@ jobs:
             ${{ env.FIRMWARE_OUTPUT }}/*.log
             ${{ env.FIRMWARE_OUTPUT }}/report.json
             ${{ env.FIRMWARE_OUTPUT }}/artifacts/*
+            ${{ env.FIRMWARE_OUTPUT }}/profile-report.json
+            ${{ env.FIRMWARE_OUTPUT }}/resident/report.json
+            ${{ env.FIRMWARE_OUTPUT }}/resident/build.log
+            ${{ env.FIRMWARE_OUTPUT }}/resident/artifacts/*
+            ${{ env.FIRMWARE_OUTPUT }}/release-export/**
           if-no-files-found: error
 
   managed-sketch-build:

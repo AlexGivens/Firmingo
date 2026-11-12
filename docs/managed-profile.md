@@ -62,3 +62,43 @@ neither native tests nor compilation supplies physical evidence.
 
 [Initial local evidence](evidence/managed-profile.md) records the actual build,
 20 sanitizer CTest targets, 217 host cases, exact-commit export and compiler import.
+
+## Nano FMS2 release candidate
+
+Build and export the target-2 candidate from a checkout of the exact source
+revision to review. The same pinned Arduino CLI/core and USB-startup overlay
+are used as above.
+
+```sh
+python3 tools/dev.py build --board nano_rp2040_connect --firmware fms2-rc
+python3 tools/dev.py export-fms2-rc \
+  --firmware-commit "$(git rev-parse HEAD)" \
+  --output build/firmware/nano_rp2040_connect/fms2-rc/release-export
+```
+
+The build emits a resident-only UF2 with hello identity `1.0.0-rc.1`.
+Its FMS2 runtime owns the 4 KiB sketch arena and exposes managed upload
+target 2 with the existing D2-to-GND authorization. The build verifies the
+version in initialized ELF bytes, the FAPI and upload descriptors, the
+resident and sketch memory ranges, ELF/UF2 agreement and the absence of
+flash fault checkpoints. Build results and logs are in the
+`build/firmware/nano_rp2040_connect/fms2-rc/` tree.
+
+The exporter requires a successful candidate build tied to the selected Git
+commit. It verifies the resident and profile inputs, then writes a new output
+directory. Its outer `manifest.json` records the candidate version, exact
+commit, resident UF2 hash, compiler handoff hash and the digest of the included
+`profile-report.json`. The `compiler-export/`
+subdirectory contains the schema-3 manifest, ELF, UF2, build facts, contract
+and fixtures. The inner schema and experimental contract identifier are
+retained for compatibility. Review the new export and explicitly add its
+exact hashes in Firmingo-Compiler before using it in a recipe or SDK catalogue.
+The existing experimental recipes and device associations continue to refer
+to their own exact builds.
+
+CI builds the Nano candidate as a separate firmware matrix entry and exports it
+from the checked-out commit. The CI artifact includes the profile and resident
+reports, diagnostics and successful export. The normal beta `package` and
+`flash` workflows still select their reference firmware. These candidate
+commands perform offline build and export; qualification of these exact bytes
+on a board and a checked initial ROM image are separate release steps.

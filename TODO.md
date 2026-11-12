@@ -21,6 +21,19 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
 
 ## Current position and next action
 
+### Nano FMS2 release candidate
+
+- [x] Build `fms2-rc` through the normal development driver with the pinned
+  Nano overlay and independent ELF/UF2 validation. The local `1.0.0-rc.1`
+  build reports 135,472 flash bytes, 104,904 static RAM bytes and 153,984
+  compared ELF/UF2 bytes.
+- [ ] Run the exact-commit export from the selected revision and review its
+  Compiler recipe/SDK catalogue entry and initial ROM image.
+- [ ] Qualify the exact candidate through Workbench on each claimed host,
+  preserving the earlier experimental runs as separate evidence.
+
+See the [candidate build and export instructions](docs/managed-profile.md#nano-fms2-release-candidate).
+
 Production direction accepted on 2026-10-15:
 [Nano-first 1.0 gates](docs/integration/production-v1.md) cover mutable sketch RAM,
 explicit source bundles, reproducible delivery, normal SDK setup and exact-candidate

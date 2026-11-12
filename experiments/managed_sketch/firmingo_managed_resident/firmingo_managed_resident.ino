@@ -99,9 +99,16 @@ class ManagedApplicationEndpoint final : public firmingo::ApplicationEndpoint {
 ManagedApplicationEndpoint backend;
 firmingo::Channel channel(backend);
 firmingo::MemorySamples memorySamples;
+#if defined(FIRMINGO_FMS2_RELEASE_CANDIDATE) && \
+    (!defined(FIRMINGO_STATEFUL_UPLOAD_PROOF) || !defined(FIRMINGO_STATEFUL_RUNTIME_PROOF) || \
+     defined(FIRMINGO_FLASH_CHECKPOINT))
+#error "The release candidate requires the normal FMS2 upload runtime"
+#endif
 #ifdef FIRMINGO_STATEFUL_RUNTIME_PROOF
 #ifdef FIRMINGO_STATEFUL_UPLOAD_PROOF
-#if defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 1
+#if defined(FIRMINGO_FMS2_RELEASE_CANDIDATE)
+firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_FMS2_CANDIDATE_VERSION};
+#elif defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 1
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulflash-erase-exp1"};
 #elif defined(FIRMINGO_FLASH_CHECKPOINT) && FIRMINGO_FLASH_CHECKPOINT == 2
 firmingo::Identity identity{{},{},FIRMINGO_BOARD_ID,FIRMINGO_VERSION "-statefulflash-page-exp1"};

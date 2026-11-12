@@ -1,8 +1,4 @@
-"""First-class Nano managed build using the existing resident and independent validators.
-
-This is a release-engineering foundation, not promotion of the experimental ABI.
-The separate profile report records failure before any toolchain or build work.
-"""
+"""Build the selected Nano managed profile with the pinned resident toolchain."""
 
 import json
 from pathlib import Path
@@ -12,6 +8,15 @@ import sys
 from experiments.managed_sketch.export_resident import (
     ELF_LIMIT, UF2_LIMIT, bounded_file, check_uf2, resident_elf, sha, unique_object,
 )
+
+FMS2_PROFILE = "fms2-rc"
+PROFILE_INPUTS = (
+    "tools/dev.py", "tools/managed_profile.py", "tools/usb_core.py",
+    "boards/nano_rp2040_connect/baseline.json",
+    "boards/nano_rp2040_connect/core-lock.json",
+    "patches/arduino-pico-6.0.0-usb-startup/manifest.json",
+)
+FMS2_PROFILE_INPUTS = (*PROFILE_INPUTS, "tools/version.py", "tools/fms2_release.py")
 
 
 def verify_outputs(root, resident, manifest):
@@ -69,7 +74,32 @@ def verify_outputs(root, resident, manifest):
     }
 
 
-def build_managed(args, manifest):
+def verify_fms2_outputs(root, resident, manifest):
+    from experiments.managed_sketch.export_stateful import (
+        read_stateful_build_report, read_stateful_images, verify_stateful_version,
+    )
+
+    report_bytes, report = read_stateful_build_report(resident, release_candidate=True)
+    if report.get("fqbn") != manifest["fqbn"]:
+        raise ValueError("FMS2 candidate FQBN differs from the Nano pin")
+    for name, expected in report["source_sha256"].items():
+        if Path(name).is_absolute() or any(part in ("", ".", "..") for part in name.split("/")):
+            raise ValueError("unsafe FMS2 resident source path")
+        if sha(bounded_file(root / name, 2 * 1024 * 1024)) != expected:
+            raise ValueError("FMS2 resident source changed during build: " + name)
+    elf, uf2, facts, flash, compared = read_stateful_images(resident, report)
+    version = verify_stateful_version((root / "src/core/version.h").read_bytes(), report, flash,
+                                      release_candidate=True)
+    return {
+        "firmware_version": version, "resident_report_sha256": sha(report_bytes),
+        "resident_elf_sha256": sha(elf), "resident_uf2_sha256": sha(uf2),
+        "api_address": f"0x{facts['apiAddress']:08x}",
+        "resident_abi": facts["residentABI"], "elf_uf2_compared_bytes": compared,
+        "flash_bytes": report["flash_bytes"], "static_ram_bytes": report["static_ram_bytes"],
+    }
+
+
+def build_managed(args, manifest, *, release_candidate=False):
     """Prepare the pinned overlay, build once and validate without contacting hardware."""
     from tools import dev
     from tools.usb_core import prepare
@@ -78,10 +108,12 @@ def build_managed(args, manifest):
         raise ValueError("managed firmware is available only for nano_rp2040_connect")
     if args.subnet_octet != 77 or args.verbose:
         raise ValueError("managed currently fixes subnet 77 and uses resident/build.log; omit subnet/verbose overrides")
-    output = dev.ROOT / "build/firmware" / args.board / "managed"
+    firmware = FMS2_PROFILE if release_candidate else "managed"
+    qualification = "release-candidate" if release_candidate else "experimental"
+    output = dev.ROOT / "build/firmware" / args.board / firmware
     output.mkdir(parents=True, exist_ok=True)
-    profile = {"schema": 1, "firmware": "managed", "board": args.board,
-               "status": "failed", "qualification": "experimental",
+    profile = {"schema": 1, "firmware": firmware, "board": args.board,
+               "status": "failed", "qualification": qualification,
                "production_ready": False, "hardware_tested": False,
                "resident_report": "resident/report.json"}
     receipt = output / "profile-report.json"
@@ -91,11 +123,8 @@ def build_managed(args, manifest):
     if (resident / "report.json").exists():
         (resident / "report.json").unlink()
     try:
-        profile["source_sha256"] = {name: dev.digest(dev.ROOT / name) for name in (
-            "tools/dev.py", "tools/managed_profile.py", "tools/usb_core.py",
-            "boards/nano_rp2040_connect/baseline.json",
-            "boards/nano_rp2040_connect/core-lock.json",
-            "patches/arduino-pico-6.0.0-usb-startup/manifest.json")}
+        inputs = FMS2_PROFILE_INPUTS if release_candidate else PROFILE_INPUTS
+        profile["source_sha256"] = {name: dev.digest(dev.ROOT / name) for name in inputs}
         cli = dev.check_arduino(manifest)
         config = dev.effective_arduino_config(cli)
         cli, overlay = prepare(dev.ROOT, cli, config, output / "usb-toolchain")
@@ -108,8 +137,11 @@ def build_managed(args, manifest):
             raise RuntimeError("selected Arduino CLI executable is no longer available")
         command = [sys.executable, dev.ROOT / "experiments/managed_sketch/build_resident.py",
                    "--cli", executable, "--config-file", cli[2], "--output-dir", resident]
+        if release_candidate:
+            command.append("--fms2-release-candidate")
         dev.run(command, timeout=660)
-        profile.update(verify_outputs(dev.ROOT, resident, manifest))
+        verify = verify_fms2_outputs if release_candidate else verify_outputs
+        profile.update(verify(dev.ROOT, resident, manifest))
         for name, expected in profile["source_sha256"].items():
             if dev.digest(dev.ROOT / name) != expected:
                 raise ValueError("managed profile input changed during build: " + name)
@@ -119,5 +151,5 @@ def build_managed(args, manifest):
         raise
     finally:
         receipt.write_text(json.dumps(profile, indent=2) + "\n")
-    print(f"Managed profile report: {receipt}; experimental ABI one, hardware NOT tested")
+    print(f"Managed profile report: {receipt}; {qualification}, hardware NOT tested")
     return 0

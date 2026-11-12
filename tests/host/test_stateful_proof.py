@@ -42,7 +42,8 @@ def fixture(sections, symbols, loads):
     return bytes(data)
 
 
-def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000, boot_mode=None, upload=False, checkpoint=None):
+def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, heap=0x20040000,
+                     boot_mode=None, upload=False, checkpoint=None, firmware_version="0.1.0-statefulupload-exp1"):
     calls = [0x10000041] * 8
     rodata = struct.pack("<IHH8I", 0x49504146, 1, 40, *calls)
     rodata += struct.pack("<IHH11I", 0x49504146, version, 52, *calls, state, 4096, 4096)
@@ -52,7 +53,7 @@ def resident_fixture(*, arena_type=8, alias=False, version=2, state=0x20002000, 
     if upload:
         rodata += struct.pack("<IHH4I16s16s", 0x32505546, 1, 56, 2, 4096, 1024, 30000,
                               b"nano-managed-v2", b"physical-d2-gnd")
-        rodata += b"0.1.0-statefulupload-exp1\0"
+        rodata += firmware_version.encode("ascii") + b"\0"
     if checkpoint is not None:
         rodata += bytes(-len(rodata) % 4)
     checkpoint_address = 0x10000080 + len(rodata)

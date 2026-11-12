@@ -55,7 +55,7 @@ background compilation or automatic rollback without implementation and evidence
 
 | Gate | Owner | Required result |
 | --- | --- | --- |
-| V1-FW-BUILD | Firmingo | One ordinary managed build entry point, pinned overlay, actual ELF/UF2 comparison, source/artifact identities, memory checks and durable failed-build records. Current implementation still builds the experimental resident |
+| V1-FW-BUILD | Firmingo | An ordinary managed build entry point, pinned overlay, actual ELF/UF2 comparison, source/artifact identities, memory checks and durable failed-build records. The `fms2-rc` profile builds the Nano target-2 release candidate |
 | V1-STATE | Firmingo, then Compiler/SDK consumption | Versioned stateful image/ABI, bounded RAM ownership and initialization on boot/replacement; independent native/parser tests plus actual compiler outputs. Retain the old contract explicitly during migration |
 | V1-SOURCE | Compiler, then SDK adapter | Portable immutable source bundle, deterministic preprocessing/compile/link, per-file diagnostics, bounded local includes and versioned serialized requests. No host filesystem/library discovery |
 | V1-PACKAGE | Firmingo and Compiler | Fresh pinned resident build/export; exact recipe and catalogue; reviewed binary with corresponding source/notices and independently trusted inventory; reproducible provisioned consumer |
@@ -94,10 +94,12 @@ derives candidate API/linker facts and validates an independently linked ARM
 capsule through host initialization. The [runtime increment](stateful-runtime.md)
 adds an opt-in board boot adapter and native-tested replacement failure handling.
 The [versioned contract export and upload adapter](stateful-upload-contract.md)
-now provide a separate target-2 candidate. Compiler recipe/packaging and SDK
-validation come next, followed by exact-candidate hardware qualification.
-V1-SOURCE can progress against explicit versioned fixtures while hardware work
-remains separate.
+provide the target-2 contract. The [Nano FMS2 release-candidate build and export](../managed-profile.md#nano-fms2-release-candidate)
+add a distinct `1.0.0-rc.1` resident identity and exact-commit compiler
+handoff. The release path still needs a reviewed recipe and catalogue for
+those exact bytes, a checked initial ROM image and qualification through the
+supported Workbench workflows. Existing experimental runs remain separately
+identified evidence. V1-SOURCE can progress against versioned contract fixtures.
 
 See [compiler ownership/exports](compiler-contract.md),
 [release publication gates](../releasing.md), and
