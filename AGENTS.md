@@ -308,9 +308,37 @@ should identify the case, input, expected result, actual result, and rerun comma
 Use bounded timeouts; never hide flaky attachment with automatic reset/retry.
 Hardware absence should be reported as skipped, not passed.
 
-Once CI exists, run native tests, relevant sanitizers, and the supported-board
-compile matrix on pull requests. Keep hardware tests opt-in on an attached
-developer machine initially; dedicated runners are optional later. Do not block
+CI exists in `.github/workflows/checks.yml`, with shared pinned firmware setup in
+`.github/actions/setup-firmware/action.yml`. The user reported all Actions jobs
+passing on `main` after commit `f17fdf0` on 2026-09-28. This is reported CI evidence,
+not hardware qualification.
+
+Keep GitHub Actions aligned with the local development workflow as part of each
+relevant change. When adding or changing native/host tests, sanitizer or bounded
+fuzz jobs, board/firmware profiles, experimental build recipes, dependencies, or
+toolchain requirements, review and update the workflows and CI documentation in
+the same change. Run the same production test/build entry points in CI where
+possible. Include every declared build-supported profile and maintained
+experimental build path; document any deliberate exclusion. Keep normal tests,
+bounded fuzzing, and firmware builds independently observable.
+
+Preserve CLI/core/compiler and dependency pins; review action runtime upgrades
+separately from firmware toolchain upgrades. Account for differences between
+local macOS/Clang and Ubuntu/GCC, including warnings treated as errors and fresh
+CLI configuration defaults. A local pass does not establish a GitHub pass.
+
+Logging pipelines must preserve the failing command's exit status: explicitly
+select `shell: bash` for Actions `run` steps using `tee` so `pipefail` is enabled.
+Retain configuration/compiler logs even when failure occurs before CTest or a
+build report. Keep firmware matrix `fail-fast: false`, collect artifacts from
+the actual output paths, and preserve successful reports and exported images.
+Do not infer successful tests/builds from a green job or uploaded logs alone.
+Validate workflow edits with actionlint when available and check failure
+propagation; verify the subsequent GitHub run before claiming CI success.
+
+Run native tests, relevant sanitizers/fuzz jobs, and the supported-board compile
+matrix on pull requests. Keep hardware tests opt-in on an attached developer
+machine initially; dedicated runners are optional later. Do not block
 documentation-only work on hardware tests. A firmware release needs recorded
 hardware checks for its claimed targets; CI compilation alone cannot supply them.
 
