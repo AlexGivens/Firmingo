@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "date": "2026-11-16",
+  "scope": "Selected Nano candidate ROM preparation and full readback of included flash ranges",
+  "board": "nano_rp2040_connect",
+  "firmwareVersion": "1.0.0-rc.1",
+  "firmwareCommit": "7f9bb169436621aceea533fcab4231a1a8e14bc3",
+  "firmwareExportManifestSHA256": "7d244b53e50079ac47b3a0ee530c51c6d24932bb04dcf0006b896e1cd39d23a1",
+  "compilerExportManifestSHA256": "44489d5d035dd8a11eef8b05ffc2c9e628fb958b92d74f8450dfcba9434f4bb1",
+  "firmwareBuildID": "33a0e866c2873b20aaf9303dc10c7af4d6920e99bb1ba2eee6b0c009034523b5",
+  "consumerManifestSHA256": "d02bb505fb41cc54620aa7dec42bf1914f8eced06cacfc58583a0dece4fbc3e0",
+  "initialImagePreflight": {
+    "schema": 1,
+    "status": "prepared FMS2 initial ROM image; not flashed or hardware-qualified",
+    "board": "nano_rp2040_connect",
+    "profile": "nano-managed-v2",
+    "residentUF2SHA256": "2c7acee46a85c66fe5abc1c1604cce78ccb6c160546e837583ded11edea04069",
+    "capsuleSHA256": "537ce260fc33d4b23b2f8829aee6a9b12653236db6baad4c317040dbf087fd89",
+    "capsuleBytes": 544,
+    "compositeUF2SHA256": "5fdb0ed35ed5f68b357a01351f32ed11480679cb868ad593af3d05d00c7e90af",
+    "compositeUF2Bytes": 316416,
+    "apiAddress": 268578932,
+    "stateAddress": 536906044,
+    "stateCapacityBytes": 4096,
+    "managedSectorAddress": 270532608,
+    "managedSectorBytes": 4096,
+    "validatorSHA256": "803a617da0b1d55af2a869963b546de70f7316c401b5a5e5c04e052cf8de30d4",
+    "nativeCheck": "FMS2 linked capsule: code=284 data=4 bss=20; guarded initialization, generation replacement and host boot dispatch passed; ARM NOT executed",
+    "effect": "Replace resident payload regions and initialize first managed sector; other flash outside image",
+    "hardwareQualified": false
+  },
+  "initialImagePreflightSHA256": "bed93b00ef4174211620d86f7a20c6ea68ae85c111c6a465acf7f08d3e159ad7",
+  "romVerification": {
+    "initialImageSHA256": "5fdb0ed35ed5f68b357a01351f32ed11480679cb868ad593af3d05d00c7e90af",
+    "deviceID": "5031503337360009",
+    "beforeReboot": true,
+    "comparedBytes": 158208,
+    "regions": [
+      {
+        "region": "resident",
+        "start": 268435456,
+        "bytes": 154112,
+        "sha256": "73aac6e51862755535c8a53d409631bd2e0b33f4f9d37d79049e68cf37c9af48"
+      },
+      {
+        "region": "sector",
+        "start": 270532608,
+        "bytes": 4096,
+        "sha256": "0f335abfbf01d221100f354c88a8feff495e7d3796b896cd1be659773572930e"
+      }
+    ]
+  },
+  "picotoolSHA256": "d25535c5d179aa7268a57d5746c46873f53d6c215613c3eaa85caa16ec0d3153",
+  "softwareReplacementAuthorized": true,
+  "loadVerifyPassed": true,
+  "independentVerifyPassed": true
+}

@@ -40,8 +40,11 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
   that all 602 resident pages match and the only added range is the first
   managed sector. Initial image SHA-256
   `5fdb0ed35ed5f68b357a01351f32ed11480679cb868ad593af3d05d00c7e90af`.
-  The image is an offline build artifact awaiting selected-board readback and
-  qualification.
+  The selected Nano was programmed in ROM and all 158,208 included flash bytes
+  matched before boot. [ROM readback evidence](docs/evidence/nano-fms2-rc1-initial.json).
+- [x] Verify the installed candidate's identity, State A initialized data, zero
+  BSS, advancing counters and exact binary echo through Workbench 13 on the
+  selected iPad. Record this as one boot with D2 and REC disconnected.
 - [ ] Qualify the exact candidate through Workbench on each claimed host,
   preserving the earlier experimental runs as separate evidence.
 
