@@ -45,6 +45,11 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
 - [x] Verify the installed candidate's identity, State A initialized data, zero
   BSS, advancing counters and exact binary echo through Workbench 13 on the
   selected iPad. Record this as one boot with D2 and REC disconnected.
+- [x] Qualify candidate managed upload and scoped recovery on the selected iPad
+  through Workbench 13. State B and A startup, slot-untouched abort/disconnect,
+  restored-commit refusal, and RAM-only power-cycle uncertainty/recovery are
+  recorded in FirmingoKit's `docs/workbench-nano-fms2-rc1-managed-ipad.json`
+  (SHA-256 `1cf166898b43daa46b68a406a8a9303c4b537a3f26bd05f5054b459e6f9e5237`).
 - [ ] Qualify the exact candidate through Workbench on each claimed host,
   preserving the earlier experimental runs as separate evidence.
 
