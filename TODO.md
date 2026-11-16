@@ -35,8 +35,13 @@ changing priorities, acceptance checks, and evidence; it is not a second policy 
   44489d5d035dd8a11eef8b05ffc2c9e628fb958b92d74f8450dfcba9434f4bb1.
   The pinned rebuild reproduced the resident ELF and UF2. Local verification
   passed 23 sanitizer-native and 267 Python host tests.
-- [ ] Review the candidate Compiler import and SDK catalogue entry and compose
-  a checked initial ROM image for qualification.
+- [x] Pair the candidate Compiler import and SDK catalogue entry. Compose the
+  initial ROM image with the Workbench State A capsule and verify independently
+  that all 602 resident pages match and the only added range is the first
+  managed sector. Initial image SHA-256
+  `5fdb0ed35ed5f68b357a01351f32ed11480679cb868ad593af3d05d00c7e90af`.
+  The image is an offline build artifact awaiting selected-board readback and
+  qualification.
 - [ ] Qualify the exact candidate through Workbench on each claimed host,
   preserving the earlier experimental runs as separate evidence.
 
