@@ -45,12 +45,29 @@ def test_exact_resident_and_entire_managed_sector_preserved(validator):
     image, result = initial.compose(resident(), capsule(), API, STATE, CAPACITY, validator)
     assert "ARM NOT executed" in result
     blocks = [image[i:i + 512] for i in range(0, len(image), 512)]
-    assert len(blocks) == 18
+    assert len(blocks) == 32
     for index, block in enumerate(blocks):
-        assert struct.unpack_from("<II", block, 20) == (index, 18)
+        assert struct.unpack_from("<II", block, 20) == (index, 32)
     assert b"".join(b[32:288] for b in blocks[:2]) == b"".join(resident()[i + 32:i + 288] for i in (0, 512))
-    assert [struct.unpack_from("<I", b, 12)[0] for b in blocks[2:]] == list(range(0x10200000, 0x10201000, 256))
-    assert b"".join(b[32:288] for b in blocks[2:]) == capsule() + b"\xff" * (4096 - len(capsule()))
+    assert [struct.unpack_from("<I", b, 12)[0] for b in blocks[:16]] == list(range(0x10000000, 0x10001000, 256))
+    assert b"".join(b[32:288] for b in blocks[2:16]) == b"\xff" * (14 * 256)
+    assert [struct.unpack_from("<I", b, 12)[0] for b in blocks[16:]] == list(range(0x10200000, 0x10201000, 256))
+    assert b"".join(b[32:288] for b in blocks[16:]) == capsule() + b"\xff" * (4096 - len(capsule()))
+
+
+def test_sparse_resident_sectors_leave_untouched_gap_outside_rom_image(validator):
+    selected = bytearray(resident())
+    third = bytearray(selected[:512])
+    struct.pack_into("<I", third, 12, 0x10002100)
+    third[32:288] = b"x" * 256
+    selected.extend(third)
+    for index in range(3):
+        struct.pack_into("<II", selected, index * 512 + 20, index, 3)
+    image, _ = initial.compose(selected, capsule(), API, STATE, CAPACITY, validator)
+    blocks = [image[i:i + 512] for i in range(0, len(image), 512)]
+    assert [struct.unpack_from("<I", blocks[i], 12)[0] for i in (0, 16, 32)] == [0x10000000, 0x10002000, 0x10200000]
+    assert blocks[16][32:288] == b"\xff" * 256
+    assert blocks[17][32:288] == b"x" * 256
 
 
 def test_wrong_resident_facts_and_native_capsule_rejection_prevent_composition(validator):

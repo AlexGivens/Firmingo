@@ -16,7 +16,7 @@ spec.loader.exec_module(initial)
 
 
 def compose(resident, capsule, api, state, capacity, validator):
-    """Check actual UF2 FAPI/state bytes and production FMS2 validation before composing the first full sector."""
+    """Check the capsule and emit one full UF2 block group per touched physical sector."""
     blocks = initial.uf2.checked_resident_bytes(resident)
     memory = {struct.unpack_from('<I', b, 12)[0] + i: b[32 + i] for b in blocks for i in range(256)}
     try: table = bytes(memory[api + i] for i in range(52))
@@ -31,17 +31,29 @@ def compose(resident, capsule, api, state, capacity, validator):
                                capture_output=True, text=True, timeout=15)
     if check.returncode or len(check.stdout) > 8192 or len(check.stderr) > 8192:
         raise ValueError('Production FMS2 checker rejected the selected capsule: ' + check.stderr[:512])
-    sector = capsule + bytes([255]) * (4096 - len(capsule))
-    total = len(blocks) + 16
-    for index, block in enumerate(blocks): struct.pack_into('<II', block, 20, index, total)
-    for offset in range(0, 4096, 256):
-        block = bytearray(512)
-        struct.pack_into('<8I', block, 0, *initial.uf2.MAGIC_START, 0x2000, initial.uf2.SLOT + offset,
-                         256, len(blocks), total, initial.uf2.FAMILY)
-        block[32:288] = sector[offset:offset + 256]
-        struct.pack_into('<I', block, 508, initial.uf2.MAGIC_END)
-        blocks.append(block)
-    return b''.join(blocks), check.stdout.strip()
+    # The RP2040 USB MSC ROM tracks erases by UF2 block number / 16. If a new
+    # physical sector begins mid-group, a later group erases its earlier pages.
+    erased = b'\xff' * initial.SECTOR_BYTES
+    sectors = {initial.uf2.SLOT: bytearray(capsule + erased[len(capsule):])}
+    for block in blocks:
+        address = struct.unpack_from('<I', block, 12)[0]
+        base = address & ~(initial.SECTOR_BYTES - 1)
+        if base not in sectors:
+            sectors[base] = bytearray(erased)
+        offset = address - base
+        sectors[base][offset:offset + 256] = block[32:288]
+
+    image = []
+    total = len(sectors) * (initial.SECTOR_BYTES // 256)
+    for base, sector in sorted(sectors.items()):
+        for offset in range(0, initial.SECTOR_BYTES, 256):
+            block = bytearray(512)
+            struct.pack_into('<8I', block, 0, *initial.uf2.MAGIC_START, 0x2000, base + offset,
+                             256, len(image), total, initial.uf2.FAMILY)
+            block[32:288] = sector[offset:offset + 256]
+            struct.pack_into('<I', block, 508, initial.uf2.MAGIC_END)
+            image.append(block)
+    return b''.join(image), check.stdout.strip()
 
 
 def main():
@@ -64,9 +76,12 @@ def main():
               'board': 'nano_rp2040_connect', 'profile': 'nano-managed-v2', 'residentUF2SHA256': initial.uf2.sha(resident),
               'capsuleSHA256': initial.uf2.sha(capsule), 'capsuleBytes': len(capsule), 'compositeUF2SHA256': initial.uf2.sha(image),
               'compositeUF2Bytes': len(image), 'apiAddress': a.expected_api_address, 'stateAddress': a.expected_state_address,
+              'romLayout': 'erase-sector-aligned',
+              'residentPaddingBytes': (len(image) - len(resident)) // 2 - initial.SECTOR_BYTES,
               'stateCapacityBytes': a.expected_state_capacity, 'managedSectorAddress': initial.uf2.SLOT, 'managedSectorBytes': 4096,
               'validatorSHA256': hashlib.sha256(a.validator.read_bytes()).hexdigest(), 'nativeCheck': result,
-              'effect': 'Replace resident payload regions and initialize first managed sector; other flash outside image', 'hardwareQualified': False}
+              'effect': 'Replace touched resident sectors and initialize first managed sector; untouched sectors outside image',
+              'hardwareQualified': False}
     a.output_dir.mkdir(parents=True, exist_ok=False)
     (a.output_dir / 'initial.uf2').write_bytes(image)
     (a.output_dir / 'report.json').write_text(json.dumps(report, indent=2) + '\n')

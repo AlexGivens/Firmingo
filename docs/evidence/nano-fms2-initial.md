@@ -29,6 +29,16 @@ managed sector contains that checked capsule plus `0xff`. Other flash is outside
 the image. Native validation checks initialized data/BSS, guarded generations
 and host boot dispatch; it does not execute ARM instructions.
 
+The historical sparse composite above was verified with the ROM protocol
+`picotool` uses. The RP2040 USB mass-storage ROM tracks erased sectors by UF2
+block number in groups of sixteen. For the later Nano 1.0.0-rc.1 candidate,
+the original 602 resident blocks put the first six starter pages in the
+resident's last group. An iPad boot-drive write left the resident intact and
+the starter sector erased. The composer now emits full physical sectors with
+erased padding and starts each at a new group. The reviewed resident and
+starter payload bytes are preserved. Completely untouched sectors are left
+out of the image. See the [RP2040 ROM implementation](https://github.com/raspberrypi/pico-bootrom-rp2040/blob/master/bootrom/virtual_disk.c).
+
 Before writing, the selected ROM identity and exact composite hash/size were
 checked again. `picotool load -v` and a separate `picotool verify` passed. Two
 independent `save -r … -t bin` operations then read all 154,112 resident bytes

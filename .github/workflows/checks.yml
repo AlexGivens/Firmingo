@@ -214,7 +214,8 @@ jobs:
               --validator build/stateful-check/managed_stateful_check \
               --output-dir "$output/flash-$checkpoint" 2>&1 | tee "$output/flash-$checkpoint-driver.log"
           done
-      - name: Compose checked FMS2 initial ROM image without device access
+      - name: Compose sector-aligned FMS2 initial ROM image without device access
+        shell: bash
         run: |
           python - <<'PY' 2>&1 | tee build/managed_sketch/ci/stateful-initial-driver.log
           import json, subprocess, sys
