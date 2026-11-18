@@ -80,3 +80,30 @@ D2 after completion. These are scoped experimental iPad results, distinct from
 initial ROM setup, complete SDK installation, other hosts and production gates.
 The later [combined iPad/iPhone record](nano-fms2-hardware.md) also records the
 identical signed app's separate iPhone pass and final upload-arm removal.
+
+## Later release-candidate mobile first installation
+
+On 2026-11-18, the selected Nano's non-Firmingo starting condition was established
+with a minimal blink sketch built using the pinned Arduino CLI 1.5.1 and
+Arduino-Pico 6.0.0. Its UF2 SHA-256 was
+`d927b605db3a63f8d68864641299a62d2a3a51c001abf0610548bac56c150b47`.
+The ROM flash identity matched the selected board, and a separate 71,168-byte
+readback matched every baseline payload byte before reboot. The user then
+observed D13 blinking on the iPhone. This baseline is hardware-test preparation.
+
+The user entered ROM mode on an iPhone 15 Pro Max running iOS 27.2.1 and
+selected the boot-drive root through Workbench 16. The corrected sector-aligned
+319,488-byte candidate composite had SHA-256
+`c37f6ad2fba3f0c3071b4446386fec888cd35089ed68ca67d6c7d1d37b87a584`.
+Workbench installed it from the iPhone, checked startup, the State A starter
+and an exact 256-byte reply, then saved the device association automatically.
+The user reported successful installation and D13 off. No new permission prompt
+appeared. The initial picker-navigation difficulty was resolved by returning to
+Browse/Locations before any write began.
+
+FirmingoKit retains the exact baseline source, binary and app identities,
+installation journal and association hashes in
+`docs/workbench-mobile-rom-iphone.json`. This result qualifies that selected
+Nano/iPhone first-install path. The iPad first-install starting condition,
+physically interrupted mobile transfer, broader device matrix and final
+post-install flash readback require separate evidence.
