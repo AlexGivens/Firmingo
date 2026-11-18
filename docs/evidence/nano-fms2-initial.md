@@ -107,3 +107,21 @@ installation journal and association hashes in
 Nano/iPhone first-install path. The iPad first-install starting condition,
 physically interrupted mobile transfer, broader device matrix and final
 post-install flash readback require separate evidence.
+
+The subsequent selected iPad first-install check on 2026-11-18 started with
+the same non-Firmingo baseline, freshly programmed and read back over all
+71,168 payload bytes. The user observed the blink on an 11-inch iPad Pro
+(3rd generation), iPadOS 27.2.1. Workbench 16 installed the same corrected
+composite through its in-app boot-drive picker, checked a new boot, the
+State A starter and exact 256-byte reply, and saved an association for the
+new operation. The new journal differed from the captured prior iPad operation
+and boot. The user reported the ready status, exact-reply result and D13 off.
+Approval prompts appeared on initial attachment and after the automatic restart.
+The user confirmed that no physical reconnect was required after selection.
+Prompt wording was not captured, so the permission type is unclassified.
+
+FirmingoKit records the iPad identities, readback, journals and observations in
+`docs/workbench-mobile-rom-ipad.json`. First installation from the non-Firmingo
+baseline now passes on both selected mobile hosts. Physically interrupted
+transfers, the post-install offline multi-file upload, broader hardware matrix
+and final post-install flash readback remain separate qualification items.
